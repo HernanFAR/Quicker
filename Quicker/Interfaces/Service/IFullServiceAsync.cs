@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Quicker.Interfaces.Service
 {
-    public interface IFullService<TKey, TEntity> : IOpenServiceAsync<TKey, TEntity>
+    public interface IFullServiceAsync<TKey, TEntity> : IOpenServiceAsync<TKey, TEntity>
         where TEntity : class, IAbstractModel<TKey>
     {
         Task<TEntity> Update(TKey key, TEntity entity);
