@@ -11,7 +11,7 @@ namespace Quicker.Interfaces.Service
     public interface IBaseService<TKey, TEntity>
         where TEntity : class, IAbstractModel<TKey>
     {
-        Task<IQueryable<TEntity>> QueryAll();
+        IQueryable<TEntity> QueryAll();
 
         Task<TEntity> QuerySingle(TKey key);
     }
