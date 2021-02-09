@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30907.101
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quicker", "Quicker\Quicker.csproj", "{B56D162A-5016-429B-8BBC-9971B9CA306E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B56D162A-5016-429B-8BBC-9971B9CA306E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B56D162A-5016-429B-8BBC-9971B9CA306E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B56D162A-5016-429B-8BBC-9971B9CA306E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B56D162A-5016-429B-8BBC-9971B9CA306E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D4BEFDB5-C1BB-4F88-ADB7-E14C2B64F4FB}
+	EndGlobalSection
+EndGlobal
