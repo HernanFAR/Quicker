@@ -16,7 +16,7 @@ namespace Quicker.Interfaces.Service
 
     public interface IOpenServiceAsync<TKey, TEntity, TEntityDTO> : ICloseServiceAsync<TKey, TEntity, TEntityDTO>
         where TEntity : class, IAbstractModel<TKey>, IDomainOf<TEntityDTO>
-        where TEntityDTO : class, IAbstractModel<TKey>, IDomainOf<TEntity>
+        where TEntityDTO : class, IAbstractModel<TKey>, IDTOOf<TEntity>
     {
         Task<TEntityDTO> Create(TEntityDTO entity);
 

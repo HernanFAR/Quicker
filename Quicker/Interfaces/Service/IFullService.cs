@@ -14,7 +14,7 @@ namespace Quicker.Interfaces.Service
 
     public interface IFullService<TKey, TEntity, TEntityDTO> : IOpenServiceAsync<TKey, TEntity, TEntityDTO>
         where TEntity : class, IAbstractModel<TKey>, IDomainOf<TEntityDTO>
-        where TEntityDTO : class, IAbstractModel<TKey>, IDomainOf<TEntity>
+        where TEntityDTO : class, IAbstractModel<TKey>, IDTOOf<TEntity>
     {
         Task<TEntityDTO> Update(TKey key, TEntityDTO entity);
     }

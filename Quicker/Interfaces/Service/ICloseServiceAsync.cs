@@ -17,7 +17,7 @@ namespace Quicker.Interfaces.Service
 
     public interface ICloseServiceAsync<TKey, TEntity, TEntityDTO> : IBaseService<TKey, TEntity, TEntityDTO>
         where TEntity : class, IAbstractModel<TKey>, IDomainOf<TEntityDTO>
-        where TEntityDTO : class, IAbstractModel<TKey>, IDomainOf<TEntity>
+        where TEntityDTO : class, IAbstractModel<TKey>, IDTOOf<TEntity>
     {
         Task<IEnumerable<TEntityDTO>> Read();
 

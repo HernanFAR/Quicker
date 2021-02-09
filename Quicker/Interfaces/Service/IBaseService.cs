@@ -18,14 +18,14 @@ namespace Quicker.Interfaces.Service
 
     public interface IBaseService<TKey, TEntity, TEntityDTO>
         where TEntity : class, IAbstractModel<TKey>, IDomainOf<TEntityDTO>
-        where TEntityDTO : class, IAbstractModel<TKey>, IDomainOf<TEntity>
+        where TEntityDTO : class, IAbstractModel<TKey>, IDTOOf<TEntity>
     {
-        Task<IQueryable<TEntity>> QueryAll();
+        IQueryable<TEntity> QueryAll();
 
         Task<TEntity> QuerySingle(TKey key);
 
-        TEntityDTO ToDTO(IMapper mapper, TEntity entity);
+        TEntityDTO ToDTO(TEntity entity);
 
-        TEntity ToDomain(IMapper mapper, TEntityDTO entity);
+        TEntity ToDomain(TEntityDTO entity);
     }
 }
