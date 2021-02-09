@@ -10,9 +10,15 @@ using System.Threading.Tasks;
 
 namespace Quicker.Abstracts.Service
 {
+    /// <summary>
+    /// <para>Main implementation of <seealso cref="IBaseService{TKey, TEntity}"/>.</para>
+    /// </summary>
     public abstract class BaseService<TKey, TEntity> : IBaseService<TKey, TEntity>
         where TEntity : class, IAbstractModel<TKey>
     {
+        /// <summary>
+        /// <para>Database context of the service.</para>
+        /// </summary>
         protected DbContext Context { get; set; }
 
         public BaseService(DbContext context)
@@ -20,31 +26,41 @@ namespace Quicker.Abstracts.Service
             Context = context;
         }
 
+        /// <summary>
+        /// <para>Main implementation of <seealso cref="IBaseService{TKey, TEntity}.QueryAll"/>.</para>
+        /// <para>Return a <em>"AsNoTracking"</em> list, to avoid problems with EF Core</para>
+        /// </summary>
         public IQueryable<TEntity> QueryAll()
-        {
-            var entities = Context
+            => Context
                 .Set<TEntity>()
                 .AsNoTracking();
 
-            return entities;
-        }
-
+        /// <summary>
+        /// <para>Main implementation of <seealso cref="IBaseService{TKey, TEntity}.QuerySingle(TKey)"/>.</para>
+        /// <para>Return a entity tracked by the context to fulfill with related entities.</para>
+        /// </summary>
         public async Task<TEntity> QuerySingle(TKey key)
-        {
-            var entity = await Context
+            => await Context
                 .Set<TEntity>()
                 .FindAsync(key);
 
-            return entity;
-        }
     }
-    
+
+    /// <summary>
+    /// <para>Main implementation of <seealso cref="IBaseService{TKey, TEntity}"/>.</para>
+    /// </summary>
     public abstract class BaseService<TKey, TEntity,TEntityDTO> : IBaseService<TKey, TEntity, TEntityDTO>
         where TEntity : class, IAbstractModel<TKey>, IDomainOf<TEntityDTO>
         where TEntityDTO : class, IAbstractModel<TKey>, IDTOOf<TEntity>
     {
+        /// <summary>
+        /// <para>Database context of the service.</para>
+        /// </summary>
         protected DbContext Context { get; }
-        
+
+        /// <summary>
+        /// <para>Mapper property to map the DTO to Domain, a viceversa.</para>
+        /// </summary>
         protected IMapper Mapper { get;  }
 
         public BaseService(DbContext context, IMapper mapper)
@@ -53,27 +69,37 @@ namespace Quicker.Abstracts.Service
             Mapper = mapper;
         }
 
+
+        /// <summary>
+        /// <para>Main implementation of <seealso cref="IBaseService{TKey, TEntity, TEntityDTO}.QueryAll"/>.</para>
+        /// <para>Return a <em>"AsNoTracking"</em> list, to avoid problems with EF Core</para>
+        /// </summary>
         public IQueryable<TEntity> QueryAll()
-        {
-            var entities = Context
+            => Context
                 .Set<TEntity>()
                 .AsNoTracking();
 
-            return entities;
-        }
-
+        /// <summary>
+        /// <para>Main implementation of <seealso cref="IBaseService{TKey, TEntity, TEntityDTO}.QuerySingle(TKey)"/>.</para>
+        /// <para>Return a entity tracked by the context to fulfill with related entities.</para>
+        /// </summary>
         public async Task<TEntity> QuerySingle(TKey key)
-        {
-            var entity = await Context
+            => await Context
                 .Set<TEntity>()
                 .FindAsync(key);
 
-            return entity;
-        }
 
+        /// <summary>
+        /// <para>Main implementation of <seealso cref="IBaseService{TKey, TEntity, TEntityDTO}.ToDTO(TEntity)"/>.</para>
+        /// <para>This function uses AutoMapper to work.</para>
+        /// </summary>
         public TEntityDTO ToDTO(TEntity entity)
             => Mapper.Map<TEntity, TEntityDTO>(entity);
 
+        /// <summary>
+        /// <para>Main implementation of <seealso cref="IBaseService{TKey, TEntity, TEntityDTO}.ToDomain(TEntityDTO)"/>.</para>
+        /// <para>This function uses AutoMapper to work.</para>
+        /// </summary>
         public TEntity ToDomain(TEntityDTO entity)
             => Mapper.Map<TEntityDTO, TEntity>(entity);
     }
