@@ -3,13 +3,13 @@ using Quicker.Interfaces.Service;
 using Service.Test.Mappers;
 using Service.Test.Models;
 using Service.Test.Repository;
-using Service.Test.Services;
+using Service.Test.Services.Base;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Service.Test
+namespace Service.Test.Base
 {
     public class SecondLevelServiceTest : IDisposable
     {

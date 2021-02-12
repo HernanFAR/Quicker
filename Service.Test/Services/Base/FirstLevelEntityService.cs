@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Service.Test.Services
+namespace Service.Test.Services.Base
 {
     public class FirstLevelEntityService : BaseService<int, FirstLevelEntity>
     {
