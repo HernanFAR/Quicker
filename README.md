@@ -6,7 +6,7 @@ Ussually, the main functionality structure to apply in most of cases, is the CRU
 
 That is the main propourse of this package, serve a aproach to reduce that, in a few abstract classes that do all the work, letting you to center in the important things. Also, this package will help you in the mapping of classes between layers too, of course!
 
-This package use EntityFrameworkCore and AutoMapper to work.
+This package use EntityFrameworkCore and AutoMapper to work, and DataAnnotations for validate by default, but you can use any validator (Like FluentValidator) overriding the ValidateObject virtual method in any class that inherent from OpenService class
 
 Todo:
 
@@ -18,5 +18,5 @@ Posibble added in future, if there are plausible:
 - Add a implementation with more than one Primary key (Max four)
 - Add a optional soft delete
 - Add abstractions of MVC Controllers
-- Add a implementation of all in DPT pattern, for a multitenant solution.
-
+- Add a implementation of all in DPT pattern, for a multitenant solution
+- Add a pre executing method layer for validation of parameters (Aspect Oriented)
