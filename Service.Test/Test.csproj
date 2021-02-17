@@ -7,8 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="5.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="5.0.2" />
+    <Compile Remove="Unitary\**" />
+    <EmbeddedResource Remove="Unitary\**" />
+    <None Remove="Unitary\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="5.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="5.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.2" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
     <PackageReference Include="xunit" Version="2.4.1" />
@@ -24,10 +30,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Quicker\Quicker.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Unitary\" />
+    <ProjectReference Include="..\Repository\Repository.csproj" />
+    <ProjectReference Include="..\Service\Service.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,13 +1,13 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Repository;
 using System;
 
-namespace Service.Test.Repository
+namespace Test
 {
     public class ConnectionFactory : IDisposable
     {
-
-        private bool disposedValue = false; // To detect redundant calls
+        private bool _DisposedValue = false; // To detect redundant calls
 
         public TestContext CreateContextForInMemory()
         {
@@ -46,13 +46,13 @@ namespace Service.Test.Repository
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if (!_DisposedValue)
             {
                 if (disposing)
                 {
                 }
 
-                disposedValue = true;
+                _DisposedValue = true;
             }
         }
 
