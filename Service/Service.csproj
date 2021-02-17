@@ -8,8 +8,4 @@
     <Folder Include="Interfaces\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Repository\Repository.csproj" />
-  </ItemGroup>
-
 </Project>

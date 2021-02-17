@@ -1,9 +1,9 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Repository;
+using Quicker.Test.Repository;
 using System;
 
-namespace Test
+namespace Quicker.Test
 {
     public class ConnectionFactory : IDisposable
     {

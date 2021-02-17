@@ -30,8 +30,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Quicker\Quicker.csproj" />
-    <ProjectReference Include="..\Repository\Repository.csproj" />
-    <ProjectReference Include="..\Service\Service.csproj" />
   </ItemGroup>
 
 </Project>
