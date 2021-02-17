@@ -15,7 +15,8 @@ Todo:
 
 Posibble added in future, if there are plausible:
 
+- Add a implementation with more than one Primary key (Max four)
 - Add a optional soft delete
 - Add abstractions of MVC Controllers
-- Add a optional use of Dapper insert of EntityFrameworkCore
+- Add a implementation of all in DPT pattern, for a multitenant solution.
 
