@@ -23,7 +23,7 @@ namespace Quicker.Abstracts.Service
         /// <summary>
         /// <para>Main implementation of <seealso cref="ICloseServiceAsync{TKey, TEntity}.FindManyByConditions(IEnumerable{Expression{Func{TEntity, bool}}})"/>.</para>
         /// </summary>
-        public async Task<IEnumerable<TEntity>> FindManyByConditions(IEnumerable<Expression<Func<TEntity, bool>>> expressions)
+        protected async Task<IEnumerable<TEntity>> FindManyByConditions(IEnumerable<Expression<Func<TEntity, bool>>> expressions)
         {
             var query = QueryAll();
 
@@ -38,7 +38,7 @@ namespace Quicker.Abstracts.Service
         /// <summary>
         /// <para>Main implementation of <seealso cref="ICloseServiceAsync{TKey, TEntity}.FindManyByCondition(Expression{Func{TEntity, bool}})"/>.</para>
         /// </summary>
-        public async Task<IEnumerable<TEntity>> FindManyByCondition(Expression<Func<TEntity, bool>> expression)
+        protected async Task<IEnumerable<TEntity>> FindManyByCondition(Expression<Func<TEntity, bool>> expression)
         {
             var entities = await QueryAll()
                 .Where(expression)
@@ -50,7 +50,7 @@ namespace Quicker.Abstracts.Service
         /// <summary>
         /// <para>Main implementation of <seealso cref="ICloseServiceAsync{TKey, TEntity}.FindOneByConditions(IEnumerable{Expression{Func{TEntity, bool}}}))"/>.</para>
         /// </summary>
-        public async Task<TEntity> FindOneByConditions(IEnumerable<Expression<Func<TEntity, bool>>> expressions)
+        protected async Task<TEntity> FindOneByConditions(IEnumerable<Expression<Func<TEntity, bool>>> expressions)
         {
             var query = QueryAll();
 
@@ -65,7 +65,7 @@ namespace Quicker.Abstracts.Service
         /// <summary>
         /// <para>Main implementation of <seealso cref="ICloseServiceAsync{TKey, TEntity}.FindOneByCondition(Expression{Func{TEntity, bool}})"/>.</para>
         /// </summary>
-        public async Task<TEntity> FindOneByCondition(Expression<Func<TEntity, bool>> expression)
+        protected async Task<TEntity> FindOneByCondition(Expression<Func<TEntity, bool>> expression)
         {
             var entity = await QueryAll()
                 .Where(expression)
@@ -77,7 +77,7 @@ namespace Quicker.Abstracts.Service
         /// <summary>
         /// <para>Main implementation of <seealso cref="ICloseServiceAsync{TKey, TEntity}.FindFirstByCondition(Expression{Func{TEntity, bool}})"/>.</para>
         /// </summary>
-        public async Task<TEntity> FindFirstByCondition(Expression<Func<TEntity, bool>> expression)
+        protected async Task<TEntity> FindFirstByCondition(Expression<Func<TEntity, bool>> expression)
         {
             var entity = await QueryAll()
                 .Where(expression)
@@ -89,7 +89,7 @@ namespace Quicker.Abstracts.Service
         /// <summary>
         /// <para>Main implementation of <seealso cref="ICloseServiceAsync{TKey, TEntity}.FindFirstByConditions(IEnumerable{Expression{Func{TEntity, bool}}}))"/>.</para>
         /// </summary>
-        public async Task<TEntity> FindFirstByConditions(IEnumerable<Expression<Func<TEntity, bool>>> expressions)
+        protected async Task<TEntity> FindFirstByConditions(IEnumerable<Expression<Func<TEntity, bool>>> expressions)
         {
             var query = QueryAll();
 
@@ -152,7 +152,7 @@ namespace Quicker.Abstracts.Service
         /// <summary>
         /// <para>Main implementation of <seealso cref="ICloseServiceAsync{TKey, TEntity, TEntityDTO}.FindManyByConditions(IEnumerable{Expression{Func{TEntity, bool}}})"/>.</para>
         /// </summary>
-        public async Task<IEnumerable<TEntityDTO>> FindManyByConditions(IEnumerable<Expression<Func<TEntity, bool>>> expressions)
+        protected async Task<IEnumerable<TEntityDTO>> FindManyByConditions(IEnumerable<Expression<Func<TEntity, bool>>> expressions)
         {
             var query = QueryAll();
 
@@ -168,7 +168,7 @@ namespace Quicker.Abstracts.Service
         /// <summary>
         /// <para>Main implementation of <seealso cref="ICloseServiceAsync{TKey, TEntity, TEntityDTO}.FindManyByCondition(Expression{Func{TEntity, bool}})"/>.</para>
         /// </summary>
-        public async Task<IEnumerable<TEntityDTO>> FindManyByCondition(Expression<Func<TEntity, bool>> expression)
+        protected async Task<IEnumerable<TEntityDTO>> FindManyByCondition(Expression<Func<TEntity, bool>> expression)
         {
             var entities = (await QueryAll()
                 .Where(expression)
@@ -181,7 +181,7 @@ namespace Quicker.Abstracts.Service
         /// <summary>
         /// <para>Main implementation of <seealso cref="ICloseServiceAsync{TKey, TEntity, TEntityDTO}.FindOneByConditions(IEnumerable{Expression{Func{TEntity, bool}}}))"/>.</para>
         /// </summary>
-        public async Task<TEntityDTO> FindOneByConditions(IEnumerable<Expression<Func<TEntity, bool>>> expressions)
+        protected async Task<TEntityDTO> FindOneByConditions(IEnumerable<Expression<Func<TEntity, bool>>> expressions)
         {
             var query = QueryAll();
 
@@ -197,7 +197,7 @@ namespace Quicker.Abstracts.Service
         /// <summary>
         /// <para>Main implementation of <seealso cref="ICloseServiceAsync{TKey, TEntity, TEntityDTO}.FindOneByCondition(Expression{Func{TEntity, bool}})"/>.</para>
         /// </summary>
-        public async Task<TEntityDTO> FindOneByCondition(Expression<Func<TEntity, bool>> expression)
+        protected async Task<TEntityDTO> FindOneByCondition(Expression<Func<TEntity, bool>> expression)
         {
             var entity = await QueryAll()
                 .Where(expression)
@@ -211,7 +211,7 @@ namespace Quicker.Abstracts.Service
         /// <summary>
         /// <para>Main implementation of <seealso cref="ICloseServiceAsync{TKey, TEntity, TEntityDTO}.FindFirstByCondition(Expression{Func{TEntity, bool}})"/>.</para>
         /// </summary>
-        public async Task<TEntityDTO> FindFirstByCondition(Expression<Func<TEntity, bool>> expression)
+        protected async Task<TEntityDTO> FindFirstByCondition(Expression<Func<TEntity, bool>> expression)
         {
             var entity = await QueryAll()
                 .Where(expression)
@@ -225,7 +225,7 @@ namespace Quicker.Abstracts.Service
         /// <summary>
         /// <para>Main implementation of <seealso cref="ICloseServiceAsync{TKey, TEntity, TEntityDTO}.FindFirstByConditions(IEnumerable{Expression{Func{TEntity, bool}}}))"/>.</para>
         /// </summary>
-        public async Task<TEntityDTO> FindFirstByConditions(IEnumerable<Expression<Func<TEntity, bool>>> expressions)
+        protected async Task<TEntityDTO> FindFirstByConditions(IEnumerable<Expression<Func<TEntity, bool>>> expressions)
         {
             var query = QueryAll();
 
