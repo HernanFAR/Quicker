@@ -1,22 +1,53 @@
-## Quicker
+# Quicker
 
-This is a framework is centred to reduce the ammount of boilerplate code written by a Developer in a proyect, and provide a design pattern for develop a profesional software.
+## Sobre el framework
+> Este es un micro-framework centrado en reducir la cantidad de _boilerplate code_ codificado por un desarrollador en un proyecto, y proveer un patron de arquitectura para desarrollar un software profesional.
 
-Ussually, the main functionality structure to apply in most of cases, is the CRUD. I mean, there is  in EVERY PROJECT... so, why not do a OOP aproach to reduce that boilerplate code in a shot ammount of letters? :)
+Usualmente, una de las funcionalidades basicas a implementar en un proyecto, es el CRUD (Acronimo de Create, Read, Update y Delete), esto normalmente se suele aplicar a cada tabla de una base de datos (Salvo algo excepciones), e incluso, si no es el CRUD en si, es _una parte de el_, por ejemplo, la solo la R, solo CRD, etc. 
 
-That is the main propourse of this package, serve a aproach to reduce that, in a few abstract classes that do all the work, letting you to center in the important things. Also, this package will help you in the mapping of classes between layers too, of course!
+Por eso, el proposito de este micro-framework, es brindar una aproximacion en C# para reducir todo ese codigo, a solo unas pocas lineas, mediante POO.
 
-This package use EntityFrameworkCore and AutoMapper to work, and DataAnnotations for validate by default, but you can use any validator (Like FluentValidator) overriding the ValidateObject virtual method in any class that inherent from OpenService class
+## Dependencias
 
-Todo:
+En esta instante, tiene estas dependencias:
 
-- Complete the Service abstractions, and test it in the most of cases
-- Complete the Controller Web API abstractions, and test it in the most of cases
+- EntityFrameworkCore: obligatorio, ya que ayuda con la capa de repositorio
+- AutoMapper: Opcional, ayuda con la implementacion de un mappeador de clases entre las capas
+- DataAnnotations: Opcional, ayuda con la implementacion de un validador de objetos
 
-Posibble added in future, if there are plausible:
+## Arquitectura de trabajo que provee
 
-- Add abstractions of MVC Controllers
-- Add a implementation with more than one Primary key (Max four)
-- Add a optional soft delete
-- Add a implementation of all in DPT pattern, for a multitenant solution
-- Add a pre executing method layer for validation of parameters (Aspect Oriented)
+_work in progress_
+
+## Funciones que presta y sus diagramas
+
+_work in progress_
+
+## Pasos futuros
+
+Actualmente, el paquete se encuentra en desarrollo, por lo que aqui abajo hay una lista con los hitos a cumplir, y debajo de ella, los otros hitos a futuro.
+
+Pendiente para la 1.0:
+
+- Agregar diagramas y explicaciones de la funcionalidad interna del framework
+- Agregar un equivalente en ingles del readme.md
+- Completar las abstracciones de servicios.
+- Completar las abstracciones de WebAPI Controllers.
+
+Pendientes para el futuro, si son posibles:
+
+- Agregar abstracciones de MVC Controllers
+- Agregar implementaciones con mas de una clave primaria.
+- Agregar un _soft delete_ opcional.
+- Agregar una implementacion de todo eso, Add a implementation of all in DPT pattern, for a multitenant solution
+- Agregar una _capa de preejecucion_ **opcional** para la validacion de parametros (AOP)
+
+## Agradecimientos
+
+- A Alvaro, por ser un apoyo muy grande desde que me converti en desarrollador profesional.
+
+## Inspiraciones
+
+- El pensamiento de _"Si estas repitiendo alguna funcionalidad, algo estas haciendo mal"_.
+- A Django, por representar un punto a alcanzar en todo momento, gracias al ORM que ofrece un monton de funciones que ayudan al desarrollador.
+-
