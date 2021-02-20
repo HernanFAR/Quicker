@@ -1,10 +1,13 @@
 ﻿namespace Quicker.Interfaces.Model
 {
-    /// <summary>.
-    /// <para>Marker interface to specify the Domain related classes.</para>
-    /// <para>Counterpart of: <seealso cref="IDomainOf{TDTO}"/></para>
-    /// </summary> 
+
+    /// <summary>
+    ///     <em>Marker Interface</em> para señalar que esta clase es la entidad DTO del dominio relacionado.
+    /// </summary>
+    /// <typeparam name="TDomain">Entidad Dominio que se relaciona con esta entidad de DTO. Debe ser una clase</typeparam>
+    /// 
     public interface IDTOOf<TDomain>
+        where TDomain : class
     {
     }
 }
