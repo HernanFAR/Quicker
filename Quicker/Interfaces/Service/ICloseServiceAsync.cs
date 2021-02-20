@@ -7,71 +7,117 @@ using System.Threading.Tasks;
 namespace Quicker.Interfaces.Service
 {
     /// <summary>
-    ///     Interface to specify a close service, with entities that doesn't have a DTO related entity.
+    ///     Interface para especificar un <em>servicio cerrado</em>, con entidades que no tienen un DTO relacionado.
     /// </summary>
     /// <remarks>
     ///     <para>
-    ///         A close service consist in functions to ONLY READ the elements in database, so it brings the R in CRUD.
+    ///         Un <em>servicio cerrado</em> provee funciones de solo lectura de elementos en la base de datos, dando la R de el CRUD.
     ///     </para>
     /// </remarks>
+    /// <typeparam name="TKey">Tipo de la PK en la base de datos</typeparam>
+    /// <typeparam name="TEntity">
+    ///     <para>
+    ///         Tipo de la entidad que debe devolver el servicio. 
+    ///     </para>
+    ///     <para>
+    ///         Debe ser una clase e implementar <see cref="IAbstractModel{TKey}"/>.
+    ///     </para>
+    /// </typeparam>
     /// 
-    public interface ICloseServiceAsync<TKey, TEntity> : IBaseService<TKey, TEntity>
+    public interface ICloseServiceAsync<TKey, TEntity> 
         where TEntity : class, IAbstractModel<TKey>
     {
         /// <summary>
-        ///     Reads ALL elements in database.
+        ///     Lee todos los elementos de la base de datos.
         /// </summary> 
         /// <returns>
-        ///     A <see cref="IEnumerable{T}"/> with of type <typeparamref cref="TEntity"/>
+        ///     Un <see cref="Task"/> que devuelve un <see cref="IEnumerable{T}"/> con tipo <typeparamref name="TEntity"/>.
         /// </returns>
+        /// 
         Task<IEnumerable<TEntity>> Read();
 
         /// <summary>
-        ///     Read ONE element in database of type <typeparamref cref="TEntity"/>.
+        ///     Lee un elemento en la base de datos.
         /// </summary> 
         /// <returns>
-        ///     The entity related to the primary key
+        ///     Un <see cref="Task"/> que devuelve la <typeparamref name="TEntity"/> relacionada con esa clave primaria.
         /// </returns>
-        /// <param name="key">Primary key value to find the element in DB</param>
+        /// <param name="key">Valor de la Primary key a encontrar en la base de datos.</param>
+        /// 
         Task<TEntity> Read(TKey key);
 
         /// <summary>
-        ///     Reads paginated elements in database.
+        ///     Lee elementos de la base de datos, de forma paginada.
         /// </summary> 
         /// <returns>
-        ///     A <see cref="IEnumerable{T}"/> with of type <typeparamref name="TEntity"/> with large of <paramref name="number"/>
+        ///     Un <see cref="Task"/> que devuelve un <see cref="IEnumerable{T}"/> con tipo <typeparamref name="TEntity"/>, con un largo de maximo <paramref name="number"/>.
         /// </returns>
-        /// <param name="number">Ammount of elements to take</param>
-        /// <param name="page">Page of paginated elements</param>
+        /// <param name="number">Cantidad de elementos a tomar de la base de datos.</param>
+        /// <param name="page">Numero de pagina de los elementos</param>
+        /// 
         Task<IEnumerable<TEntity>> Paginate(int number, int page);
     }
 
-    /// <summary>.
-    /// <para>Interface to specify a close service, with entities that have a DTO related entity.</para>
-    /// <para>A close service consist in functions to ONLY READ the elements in database </para>
-    /// </summary> 
-    public interface ICloseServiceAsync<TKey, TEntity, TEntityDTO> : IBaseService<TKey, TEntity, TEntityDTO>
+    /// <summary>
+    ///     Interface para especificar un <em>servicio cerrado</em>, con entidades que si tienen un DTO relacionado.
+    /// </summary>
+    /// <remarks>
+    ///     <para>
+    ///         Un <em>servicio cerrado</em> provee funciones de solo lectura de elementos en la base de datos, dando la R de el CRUD.
+    ///     </para>
+    /// </remarks>
+    /// <typeparam name="TKey">Tipo de la PK en la base de datos</typeparam>
+    /// <typeparam name="TEntity">
+    ///     <para>
+    ///         Tipo de la entidad que debe devolver la base de datos. 
+    ///     </para>
+    ///     <para>
+    ///         Debe ser una clase, implementar <see cref="IAbstractModel{TKey}"/> y <see cref="IDTOOf{TDomain}"/>, 
+    ///         con TDomain de valor <typeparamref name="TEntityDTO"/>
+    ///     </para>
+    /// </typeparam>
+    /// <typeparam name="TEntityDTO">
+    ///     <para>
+    ///         Tipo de la entidad que debe devolver el servicio. 
+    ///     </para>
+    ///     <para>
+    ///         Debe ser una clase, implementar <see cref="IAbstractModel{TKey}"/> y <see cref="IDomainOf{TDTO}"/>, 
+    ///         con TDTO de valor <typeparamref name="TEntity"/>
+    ///     </para>
+    /// </typeparam>
+    /// 
+    public interface ICloseServiceAsync<TKey, TEntity, TEntityDTO>
         where TEntity : class, IAbstractModel<TKey>, IDomainOf<TEntityDTO>
         where TEntityDTO : class, IAbstractModel<TKey>, IDTOOf<TEntity>
     {
-        /// <summary>.
-        /// <para>Reads ALL elements in database.</para>
+        /// <summary>
+        ///     Lee todos los elementos de la base de datos.
         /// </summary> 
+        /// <returns>
+        ///     Un <see cref="Task"/> que devuelve un <see cref="IEnumerable{T}"/> con tipo <typeparamref name="TEntityDTO"/>.
+        /// </returns>
+        /// 
         Task<IEnumerable<TEntityDTO>> Read();
 
-        /// <summary>.
-        /// <para>Reads ONE elements in database.</para>
-        /// <para><paramref name="key"/>: Primary key value to find the element in DB </para>
+        /// <summary>
+        ///     Lee un elemento en la base de datos.
         /// </summary> 
+        /// <returns>
+        ///     Un <see cref="Task"/> que devuelve la <typeparamref name="TEntityDTO"/> relacionada con esa clave primaria.
+        /// </returns>
+        /// <param name="key">Valor de la Primary key a encontrar en la base de datos.</param>
+        /// 
         Task<TEntityDTO> Read(TKey key);
 
-        /// <summary>.
-        /// <para>Reads paginated elements in database.</para>
-        /// <list type="bullet">
-        /// <item><paramref name="number"/>: <description>Ammount of elements to take</description></item>
-        /// <item><paramref name="page"/>: <description>Page of paginated elements</description></item>
-        /// </list>
+        /// <summary>
+        ///     Lee elementos de la base de datos, de forma paginada.
         /// </summary> 
+        /// <returns>
+        ///     Un <see cref="Task"/> que devuelve un <see cref="IEnumerable{T}"/> con tipo <typeparamref name="TEntityDTO"/>, con un largo de maximo <paramref name="number"/>.
+        /// </returns>
+        /// <param name="number">Cantidad de elementos a tomar de la base de datos.</param>
+        /// <param name="page">Numero de pagina de los elementos</param>
+        /// 
         Task<IEnumerable<TEntityDTO>> Paginate(int number, int page);
     }
 }
