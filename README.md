@@ -50,4 +50,7 @@ Pendientes para el futuro, si son posibles:
 
 - El pensamiento de _"Si estas repitiendo alguna funcionalidad, algo estas haciendo mal"_.
 - A Django, por representar un punto a alcanzar en todo momento, gracias al ORM que ofrece un monton de funciones que ayudan al desarrollador.
--
+
+## ¿Quieres apoyar?
+
+_work in progress_
