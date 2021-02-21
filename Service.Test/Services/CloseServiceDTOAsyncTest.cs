@@ -13,7 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Quicker.Test
+namespace Quicker.Test.Services
 {
     public class CloseServiceDTOAsyncTest : IDisposable
     {
