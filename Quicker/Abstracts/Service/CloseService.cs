@@ -297,6 +297,62 @@ namespace Quicker.Abstracts.Service
         protected virtual IQueryable<TEntity> ReadFilter(IQueryable<TEntity> entities) => entities;
 
         /// <summary>
+        ///     Retorna todos los elementos que pasan unas condiciones especificas
+        /// </summary>
+        /// <returns>
+        ///     Un <see cref="Task"/> que retorna un <see cref="IEnumerable{T}"/> de tipo <typeparamref name="TEntity"/>
+        /// </returns>
+        /// <exception cref="ArgumentNullException" />
+        /// 
+
+        protected async Task<IEnumerable<TEntityDTO>> FindManyWith(params Expression<Func<TEntity, bool>>[] conditions)
+        {
+            if (conditions is null)
+            {
+                throw new ArgumentNullException(nameof(conditions));
+            }
+
+            var query = Query();
+
+            foreach (var condition in conditions)
+            {
+                query = query.Where(condition);
+            }
+
+            var entities = await query.ToListAsync();
+
+            return entities.Select(e => ToDTO(e));
+        }
+
+        /// <summary>
+        ///     Retorna un solo elemento que pasa unas condiciones especificas
+        /// </summary>
+        /// <returns>
+        ///     Un <see cref="Task"/> que retorna un <see cref="IEnumerable{T}"/> de tipo <typeparamref name="TEntity"/>
+        /// </returns>
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="InvalidOperationException" />
+        /// 
+        protected async Task<TEntityDTO> FindOneWith(params Expression<Func<TEntity, bool>>[] conditions)
+        {
+            if (conditions is null)
+            {
+                throw new ArgumentNullException(nameof(conditions));
+            }
+
+            var query = Query();
+
+            foreach (var condition in conditions)
+            {
+                query = query.Where(condition);
+            }
+
+            var entities = await query.SingleOrDefaultAsync();
+
+            return ToDTO(entities);
+        }
+
+        /// <summary>
         ///     Retorna todos los elementos que pasan el filtro de <see cref="ReadFilter(IQueryable{TEntity})"/>
         /// </summary>
         /// <returns>
@@ -346,6 +402,16 @@ namespace Quicker.Abstracts.Service
 
         public virtual async Task<IEnumerable<TEntityDTO>> Paginate(int number, int page)
         {
+            if (number < 1)
+            {
+                throw new ArgumentException(nameof(number));
+            }
+
+            if (page < 0)
+            {
+                throw new ArgumentException(nameof(page));
+            }
+
             var query = Query();
 
             var entities = await ReadFilter(query)
