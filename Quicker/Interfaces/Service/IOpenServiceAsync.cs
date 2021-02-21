@@ -7,11 +7,13 @@ using System.Threading.Tasks;
 namespace Quicker.Interfaces.Service
 {
     /// <summary>
-    ///     Interface para especificar un <em>servicio abierto</em>, con entidades que no tienen un DTO relacionado.
+    ///     Interface para especificar un <em>servicio abierto</em>, con entidades que no tienen
+    ///     un DTO relacionado.
     /// </summary>
     /// <remarks>
     ///     <para>
-    ///         Un <em>servicio abierto</em> provee funciones de lectura, escritura y borrado de elementos en la base de datos, dando la CRD de el CRUD.
+    ///         Un <em>servicio abierto</em> provee funciones de lectura, escritura y borrado de
+    ///         elementos en la base de datos, dando la CRD de el CRUD.
     ///     </para>
     /// </remarks>
     /// <typeparam name="TKey">Tipo de la PK en la base de datos</typeparam>
@@ -49,11 +51,13 @@ namespace Quicker.Interfaces.Service
     }
 
     /// <summary>
-    ///     Interface para especificar un <em>servicio abierto</em>, con entidades que si tienen un DTO relacionado.
+    ///     Interface para especificar un <em>servicio abierto</em>, con entidades que si tienen
+    ///     un DTO relacionado.
     /// </summary>
     /// <remarks>
     ///     <para>
-    ///         Un <em>servicio abierto</em> provee funciones de lectura, escritura y borrado de elementos en la base de datos, dando la CRD de el CRUD.
+    ///         Un <em>servicio abierto</em> provee funciones de lectura, escritura y borrado de
+    ///         elementos en la base de datos, dando la CRD de el CRUD.
     ///     </para>
     /// </remarks>
     /// <typeparam name="TKey">Tipo de la PK en la base de datos</typeparam>
