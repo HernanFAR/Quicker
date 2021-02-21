@@ -31,7 +31,7 @@ namespace Quicker.Abstracts.Service
     ///     </para>
     /// </typeparam>
     /// 
-    public class CloseServiceAsync<TKey, TEntity> : ICloseServiceAsync<TKey, TEntity>
+    public abstract class CloseServiceAsync<TKey, TEntity> : ICloseServiceAsync<TKey, TEntity>
         where TEntity : class, IAbstractModel<TKey>
     {
         protected readonly DbContext Context;
@@ -236,7 +236,7 @@ namespace Quicker.Abstracts.Service
     ///     </para>
     /// </typeparam>
     /// 
-    public class CloseServiceAsync<TKey, TEntity, TEntityDTO> : ICloseServiceAsync<TKey, TEntity, TEntityDTO>
+    public abstract class CloseServiceAsync<TKey, TEntity, TEntityDTO> : ICloseServiceAsync<TKey, TEntity, TEntityDTO>
         where TEntity : class, IAbstractModel<TKey>, IDomainOf<TEntityDTO>
         where TEntityDTO : class, IAbstractModel<TKey>, IDTOOf<TEntity>
     {
