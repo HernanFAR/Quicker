@@ -4,6 +4,7 @@ using Quicker.Interfaces.Service;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,7 +13,7 @@ namespace Quicker.Abstracts.Service
     /// <summary>
     /// <para>Main implementation of <seealso cref="IOpenServiceAsync{TKey, TEntity}"/>.</para>
     /// </summary>
-    public class OpenService<TKey, TEntity> : CloseService<TKey, TEntity>, IOpenServiceAsync<TKey, TEntity>
+    public class OpenService<TKey, TEntity> : CloseServiceAsync<TKey, TEntity>, IOpenServiceAsync<TKey, TEntity>
         where TEntity : class, IAbstractModel<TKey>
     {
         public OpenService(DbContext context) : 
@@ -62,7 +63,7 @@ namespace Quicker.Abstracts.Service
     /// <summary>
     /// <para>Main implementation of <seealso cref="IOpenServiceAsync{TKey, TEntity, TEntityDTO}"/>.</para>
     /// </summary>
-    public class OpenService<TKey, TEntity, TEntityDTO> : CloseService<TKey, TEntity, TEntityDTO>, IOpenServiceAsync<TKey, TEntity, TEntityDTO>
+    public class OpenService<TKey, TEntity, TEntityDTO> : CloseServiceAsync<TKey, TEntity, TEntityDTO>, IOpenServiceAsync<TKey, TEntity, TEntityDTO>
         where TEntity : class, IAbstractModel<TKey>, IDomainOf<TEntityDTO>
         where TEntityDTO : class, IAbstractModel<TKey>, IDTOOf<TEntity>
     {
@@ -82,7 +83,10 @@ namespace Quicker.Abstracts.Service
             var tracked = Context.Set<TEntityDTO>().Add(entity);
             await Context.SaveChangesAsync();
 
-            var created = await QuerySingle(tracked.Entity.Id);
+            var created = await Query()
+                .Where(e => e.Id.Equals(tracked.Entity.Id))
+                .SingleOrDefaultAsync();
+
             var dto = ToDTO(created);
 
             return dto;
