@@ -415,7 +415,7 @@ namespace Quicker.Abstracts.Service
             var query = Query();
 
             var entities = await ReadFilter(query)
-                .Skip((page - 1) * number)
+                .Skip(page * number)
                 .Take(number)
                 .ToListAsync();
 
