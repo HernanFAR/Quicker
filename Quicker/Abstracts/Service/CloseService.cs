@@ -248,11 +248,13 @@ namespace Quicker.Abstracts.Service
             Context = context;
             Mapper = mapper;
         }
+|
         /// <summary>
         ///     Constructor para inicializar la clase sin implementar el <see cref="IMapper"/>, es util en caso de que
         ///     vayas a implementar un mappeador diferente a AutoMapper
         /// </summary>
         /// <param name="context">Contexto de la base de datos</param>
+        /// 
         public CloseServiceAsync(DbContext context)
         {
             Context = context;
@@ -434,6 +436,7 @@ namespace Quicker.Abstracts.Service
         /// </remarks>
         /// <param name="entity">Entidad de tipo <typeparamref name="TEntity"/> a convertir.</param>
         /// <returns>Una entidad de tipo <typeparamref name="TEntityDTO"/></returns>
+        /// <exception cref="AutoMapperMappingException" />
         /// 
         protected virtual TEntityDTO ToDTO(TEntity entity)
             => Mapper.Map<TEntity, TEntityDTO>(entity);
@@ -450,6 +453,7 @@ namespace Quicker.Abstracts.Service
         /// </remarks>
         /// <param name="entity">Entidad de tipo <typeparamref name="TEntityDTO"/> a convertir.</param>
         /// <returns>Una entidad de tipo <typeparamref name="TEntity"/></returns>
+        /// <exception cref="AutoMapperMappingException" />
         /// 
         protected virtual TEntity ToDomain(TEntityDTO entity)
             => Mapper.Map<TEntityDTO, TEntity>(entity);
