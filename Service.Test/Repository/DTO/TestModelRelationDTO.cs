@@ -1,4 +1,5 @@
 ﻿using Quicker.Abstracts.Model;
+using Quicker.Interfaces.Model;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -6,7 +7,7 @@ using System.Text;
 
 namespace Quicker.Test.Repository.DTO
 {
-    public class TestModelRelationDTO : AbstractModel<int>
+    public class TestModelRelationDTO : AbstractModel<int>, IDTOOf<TestModelRelation>
     {
         [Required, StringLength(15, MinimumLength = 3)]
         public string Name { get; set; }
