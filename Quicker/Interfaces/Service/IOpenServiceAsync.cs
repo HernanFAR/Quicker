@@ -45,6 +45,16 @@ namespace Quicker.Interfaces.Service
         /// <returns>
         ///     Un <see cref="Task"/> que indica cuando termina el procedimiento.
         /// </returns>
+        /// <param name="entity">Entidad a borrar en la base de datos.</param>
+        /// 
+        Task Delete(TEntity entity);
+
+        /// <summary>
+        ///     Borra un elemento en la base de datos.
+        /// </summary> 
+        /// <returns>
+        ///     Un <see cref="Task"/> que indica cuando termina el procedimiento.
+        /// </returns>
         /// <param name="key">PK de la entidad a borrar en la base de datos.</param>
         /// 
         Task Delete(TKey key);
@@ -93,6 +103,16 @@ namespace Quicker.Interfaces.Service
         /// <param name="entity">Entidad a crear en la base de datos.</param>
         /// 
         Task<TEntityDTO> Create(TEntityDTO entity);
+
+        /// <summary>
+        ///     Borra un elemento en la base de datos.
+        /// </summary> 
+        /// <returns>
+        ///     Un <see cref="Task"/> que indica cuando termina el procedimiento.
+        /// </returns>
+        /// <param name="entity">Entidad a borrar en la base de datos.</param>
+        /// 
+        Task Delete(TEntityDTO entity);
 
         /// <summary>
         ///     Borra un elemento en la base de datos.
