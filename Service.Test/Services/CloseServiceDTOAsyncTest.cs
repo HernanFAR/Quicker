@@ -458,5 +458,50 @@ namespace Quicker.Test.Services
                 () => _Service.Paginate(number, page)
             );
         }
+
+        [Fact]
+        public async Task CheckExistence_Success_NotExist()
+        {
+            // Arrange
+            int key = 256;
+
+            var tracked = _Context.TestModels.Add(new TestModel { Name = "Test1", Percent = 10 });
+
+            await _Context.SaveChangesAsync();
+
+            _Context.TestModelRelations.Add(new TestModelRelation { Name = "Test1", TestModelId = tracked.Entity.Id });
+            _Context.TestModelRelations.Add(new TestModelRelation { Name = "Test1", TestModelId = tracked.Entity.Id });
+
+            await _Context.SaveChangesAsync();
+
+
+            // Act
+            var exist = await _Service.CheckExistence(key);
+
+            // Assert
+            Assert.False(exist);
+        }
+
+        [Fact]
+        public async Task CheckExistence_Success_Exist()
+        {
+            // Arrange
+            int key = 1;
+
+            var tracked = _Context.TestModels.Add(new TestModel { Name = "Test1", Percent = 10 });
+
+            await _Context.SaveChangesAsync();
+
+            _Context.TestModelRelations.Add(new TestModelRelation { Name = "Test1", TestModelId = tracked.Entity.Id });
+            _Context.TestModelRelations.Add(new TestModelRelation { Name = "Test1", TestModelId = tracked.Entity.Id });
+
+            await _Context.SaveChangesAsync();
+
+            // Act
+            var exist = await _Service.CheckExistence(key);
+
+            // Assert
+            Assert.True(exist);
+        }
     }
 }

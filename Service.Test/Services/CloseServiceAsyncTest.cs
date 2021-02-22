@@ -433,5 +433,47 @@ namespace Quicker.Test.Services
                 () => _Service.Paginate(number, page)
             );
         }
+
+        [Fact]
+        public async Task CheckExistence_Success_NotExist()
+        {
+            // Arrange
+            int key = 256;
+
+            _Context.TestModels.Add(new TestModel { Name = "Test1", Percent = 10 });
+            _Context.TestModels.Add(new TestModel { Name = "Test2", Percent = 15 });
+            _Context.TestModels.Add(new TestModel { Name = "Test3", Percent = 20 });
+            _Context.TestModels.Add(new TestModel { Name = "Test4", Percent = 25 });
+            _Context.TestModels.Add(new TestModel { Name = "Test4", Percent = 30 });
+
+            await _Context.SaveChangesAsync();
+
+            // Act
+            var exist = await _Service.CheckExistence(key);
+
+            // Assert
+            Assert.False(exist);
+        }
+
+        [Fact]
+        public async Task CheckExistence_Success_Exist()
+        {
+            // Arrange
+            int key = 1;
+
+            _Context.TestModels.Add(new TestModel { Name = "Test1", Percent = 10 });
+            _Context.TestModels.Add(new TestModel { Name = "Test2", Percent = 15 });
+            _Context.TestModels.Add(new TestModel { Name = "Test3", Percent = 20 });
+            _Context.TestModels.Add(new TestModel { Name = "Test4", Percent = 25 });
+            _Context.TestModels.Add(new TestModel { Name = "Test4", Percent = 30 });
+
+            await _Context.SaveChangesAsync();
+
+            // Act
+            var exist = await _Service.CheckExistence(key);
+
+            // Assert
+            Assert.True(exist);
+        }
     }
 }
