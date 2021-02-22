@@ -11,7 +11,7 @@ namespace Quicker.Test.Repository
         [Required, StringLength(15, MinimumLength = 3)]
         public string Name { get; set; }
 
-        [Range(1, 100)]
+        [Range(0, 100)]
         public int Percent { get; set; }
 
         public ICollection<TestModelRelation> TestModelRelationNavigations { get; set; }
