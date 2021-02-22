@@ -252,7 +252,7 @@ namespace Quicker.Abstracts.Service
         /// </summary>
         /// <exception cref="InvalidOperationException" />
         /// 
-        protected virtual void DeleteFilter(TEntityDTO entity) { }
+        protected virtual void DeleteFilter(TEntity entity) { }
 
         /// <summary>
         ///     Borra el registro relacionado a la entidad que se paso por parametro, si pasa el 
