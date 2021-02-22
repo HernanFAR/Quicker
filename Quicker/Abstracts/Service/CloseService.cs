@@ -248,7 +248,7 @@ namespace Quicker.Abstracts.Service
             Context = context;
             Mapper = mapper;
         }
-|
+
         /// <summary>
         ///     Constructor para inicializar la clase sin implementar el <see cref="IMapper"/>, es util en caso de que
         ///     vayas a implementar un mappeador diferente a AutoMapper
