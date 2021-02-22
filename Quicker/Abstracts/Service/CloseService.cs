@@ -204,6 +204,26 @@ namespace Quicker.Abstracts.Service
                 .ToListAsync();
 
             return entities;
+        }
+
+        /// <summary>
+        ///     Verifica la existencia de un recurso en la base ded atos, basandose en la PK
+        /// </summary>
+        /// <returns>
+        ///     Un <see cref="Task"/> que retorna un <see cref="bool"/>.
+        /// </returns>
+        /// <param name="key">PK del elemento a encontrar</param>
+        /// <exception cref="ArgumentException" />
+        /// 
+        public virtual async Task<bool> CheckExistence(TKey key)
+        {
+            var query = Query();
+
+            var exists = await ReadFilter(query)
+                .Where(e => e.Id.Equals(key))
+                .AnyAsync(e => e.Id.Equals(key));
+
+            return exists;
         } 
     }
 
@@ -422,6 +442,26 @@ namespace Quicker.Abstracts.Service
                 .ToListAsync();
 
             return entities.Select(e => ToDTO(e));
+        }
+
+        /// <summary>
+        ///     Verifica la existencia de un recurso en la base ded atos, basandose en la PK
+        /// </summary>
+        /// <returns>
+        ///     Un <see cref="Task"/> que retorna un <see cref="bool"/>.
+        /// </returns>
+        /// <param name="key">PK del elemento a encontrar</param>
+        /// <exception cref="ArgumentException" />
+        /// 
+        public virtual async Task<bool> CheckExistence(TKey key)
+        {
+            var query = Query();
+
+            var exists = await ReadFilter(query)
+                .Where(e => e.Id.Equals(key))
+                .AnyAsync(e => e.Id.Equals(key));
+
+            return exists;
         }
 
         /// <summary>

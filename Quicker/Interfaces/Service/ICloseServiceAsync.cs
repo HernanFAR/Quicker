@@ -63,6 +63,16 @@ namespace Quicker.Interfaces.Service
             [Range(0, int.MaxValue)]
             int page
         );
+
+        /// <summary>
+        ///     Verifica la existencia de un recurso en la base ded atos, basandose en la PK
+        /// </summary>
+        /// <returns>
+        ///     Un <see cref="Task"/> que retorna un <see cref="bool"/>.
+        /// </returns>
+        /// <param name="key">PK del elemento a encontrar</param>
+        /// 
+        Task<bool> CheckExistence(TKey key);
     }
 
     /// <summary>
@@ -134,5 +144,15 @@ namespace Quicker.Interfaces.Service
             [Range(0, int.MaxValue)]
             int page
         );
+
+        /// <summary>
+        ///     Verifica la existencia de un recurso en la base ded atos, basandose en la PK
+        /// </summary>
+        /// <returns>
+        ///     Un <see cref="Task"/> que retorna un <see cref="bool"/>.
+        /// </returns>
+        /// <param name="key">PK del elemento a encontrar</param>
+        /// 
+        Task<bool> CheckExistence(TKey key);
     }
 }
