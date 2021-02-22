@@ -3,9 +3,10 @@ using Quicker.Interfaces.Model;
 using Quicker.Interfaces.Service;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+using DA = System.ComponentModel.DataAnnotations;
+using Fluent = FluentValidation;
+using FluentValidation.Results;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Quicker.Abstracts.Service
@@ -45,9 +46,26 @@ namespace Quicker.Abstracts.Service
         /// 
         protected virtual void ValidateObjectBeforeCreating(TEntity entity)
         {
-            var context = new ValidationContext(entity);
+            var context = new DA.ValidationContext(entity);
+            List<DA.ValidationResult> errors = new List<DA.ValidationResult>();
 
-            Validator.ValidateObject(entity, context);
+            var isValid = DA.Validator.TryValidateObject(entity, context, errors, true);
+
+            if (isValid)
+                return;
+
+            List<ValidationFailure> validationFailures = new List<ValidationFailure>();
+
+            errors.ForEach(e => 
+                validationFailures.Add(
+                    new ValidationFailure(
+                        string.Join(", ", e.MemberNames),
+                        e.ErrorMessage
+                    )
+                )
+            );
+
+            throw new Fluent.ValidationException(validationFailures);
         }
 
         /// <summary>
@@ -60,19 +78,21 @@ namespace Quicker.Abstracts.Service
         /// <summary>
         ///     <para>
         ///         Crea un registro en la base de datos basado en la entidad ingresada por parametro, 
-        ///         si no es una entidad valida, arroja un <see cref="ValidationException"/>.
+        ///         si no es una entidad valida, arroja un <see cref="Fluent.ValidationException"/>.
         ///     </para>
         ///     <para>
         ///         En caso de que haya algun problema al momento de actualizar en la base de datos,
-        ///         arroj a un <see cref="DbUpdateConcurrencyException"/> o un <see cref="DbUpdateException"/>
+        ///         arroja un <see cref="DbUpdateConcurrencyException"/> o un <see cref="DbUpdateException"/>,
+        ///         si hay un conflicto con la ID, arroja un <see cref="InvalidOperationException"/>
         ///     </para>
         /// </summary>
         /// <returns>
-        ///     Un <see cref="Task"/> que retorna un elemento de tipo <typeparamref name="TEntity"/>
+        ///     Un <see cref="Task"/> que retorna un <typeparamref name="TEntity"/>
         /// </returns>
-        /// <exception cref="ValidationException" />
+        /// <exception cref="Fluent.ValidationException" />
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="DbUpdateException" />
+        /// <exception cref="InvalidOperationException" />
         /// <exception cref="DbUpdateConcurrencyException" />
         /// <param name="entity">Entidad con la que se creara el registro</param>
         /// 
@@ -100,7 +120,16 @@ namespace Quicker.Abstracts.Service
         /// </summary>
         /// <exception cref="InvalidOperationException" />
         /// 
-        protected virtual void DeleteFilter(TEntity entity) {}
+        protected virtual void DeleteFilter(TEntity entity) { }
+
+        /// <summary>
+        ///     Borra el registro relacionado a la PK que al modelo pasado por parametro, si pasa el filtro, 
+        ///     si no lo pasa, arroja un <see cref="InvalidOperationException"/>
+        /// </summary>
+        /// <exception cref="InvalidOperationException" />
+        /// 
+        public virtual Task Delete(TEntity entity)
+            => Delete(entity.Id);
 
         /// <summary>
         ///     Borra el registro relacionado a la PK que se paso por parametro, si pasa el filtro, 
@@ -111,6 +140,8 @@ namespace Quicker.Abstracts.Service
         public virtual async Task Delete(TKey key)
         {
             var entity = await Context.Set<TEntity>().FindAsync(key);
+
+            if (entity == null) throw new InvalidOperationException(nameof(entity));
 
             DeleteFilter(entity);
 
@@ -170,7 +201,7 @@ namespace Quicker.Abstracts.Service
         /// </summary>
         protected virtual TEntityDTO ValidateObject(TEntityDTO entity)
         {
-            Validator.ValidateObject(entity, new ValidationContext(entity));
+            DA.Validator.ValidateObject(entity, new DA.ValidationContext(entity));
 
             return entity;
         }
