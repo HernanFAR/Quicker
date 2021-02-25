@@ -77,7 +77,7 @@ namespace Quicker.Abstracts.Service
             if (original == null)
                 return null;
 
-            ValidateObject(entity);
+            ValidateObjectBeforeCreating(entity);
 
             var domain = ToDomain(entity);
 
