@@ -172,7 +172,7 @@ namespace Quicker.Abstracts.Service
         /// <exception cref="Fluent.ValidationException" />
         /// <exception cref="ArgumentNullException" />
         /// 
-        protected virtual void ValidateObject(TEntityDTO entity)
+        protected virtual void ValidateObjectBeforeCreating(TEntityDTO entity)
         {
             var context = new DA.ValidationContext(entity);
             List<DA.ValidationResult> errors = new List<DA.ValidationResult>();
@@ -226,7 +226,7 @@ namespace Quicker.Abstracts.Service
         /// 
         public virtual async Task<TEntityDTO> Create(TEntityDTO entity)
         {
-            ValidateObject(entity);
+            ValidateObjectBeforeCreating(entity);
 
             PresetPropertiesBeforeCreating(entity);
 
