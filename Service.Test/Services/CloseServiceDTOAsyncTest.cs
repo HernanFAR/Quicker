@@ -16,7 +16,6 @@ using Xunit;
 
 namespace Quicker.Test.Services
 {
-#warning Agregar test de CheckExistenceByConditions
     public class CloseServiceDTOAsyncTest : IDisposable
     {
         private TestContext _Context;
@@ -513,6 +512,67 @@ namespace Quicker.Test.Services
 
             // Act
             var exist = await _Service.CheckExistence(key);
+
+            // Assert
+            Assert.True(exist);
+        }
+
+        [Fact]
+        public async Task CheckExistenceByConditions_Failure_ShouldThrowArgumentNullException()
+        {
+            // Act - Assert
+            await Assert.ThrowsAsync<ArgumentNullException>(() => _Service.CheckExistenceByConditions(null));
+        }
+
+        [Fact]
+        public async Task CheckExistenceByConditions_Success_NotExist()
+        {
+            // Arrange
+            string name = "Test1";
+
+            var tracked = _Context.TestModels.Add(new TestModel { Name = "Test1", Percent = 10 });
+            var tracked2da = _Context.TestModels.Add(new TestModel { Name = "Test1", Percent = 10 });
+
+            await _Context.SaveChangesAsync();
+
+            _Context.TestModelRelations.Add(new TestModelRelation { Name = "Test1", TestModelId = tracked.Entity.Id });
+            _Context.TestModelRelations.Add(new TestModelRelation { Name = "Test2", TestModelId = tracked.Entity.Id });
+            _Context.TestModelRelations.Add(new TestModelRelation { Name = "Test3", TestModelId = tracked2da.Entity.Id });
+
+            await _Context.SaveChangesAsync();
+
+            // Act
+            var exist = await _Service.CheckExistenceByConditions(
+                e => e.Name == name,
+                e => e.TestModelId == 3
+            );
+
+            // Assert
+            Assert.False(exist);
+        }
+
+        [Fact]
+        public async Task CheckExistenceByConditions_Success_Exist()
+        {
+            // Arrange
+            string name = "Test2";
+
+            var tracked = _Context.TestModels.Add(new TestModel { Name = "Test1", Percent = 10 });
+            var tracked2da = _Context.TestModels.Add(new TestModel { Name = "Test1", Percent = 10 });
+
+            await _Context.SaveChangesAsync();
+
+            _Context.TestModelRelations.Add(new TestModelRelation { Name = "Test1", TestModelId = tracked.Entity.Id });
+            _Context.TestModelRelations.Add(new TestModelRelation { Name = "Test2", TestModelId = tracked.Entity.Id });
+            _Context.TestModelRelations.Add(new TestModelRelation { Name = "Test3", TestModelId = tracked2da.Entity.Id });
+
+            await _Context.SaveChangesAsync();
+
+            // Act
+            var exist = await _Service.CheckExistenceByConditions(
+                e => e.Name == name,
+                e => e.TestModelId == tracked.Entity.Id
+            );
 
             // Assert
             Assert.True(exist);

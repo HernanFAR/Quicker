@@ -13,7 +13,6 @@ using Xunit;
 
 namespace Quicker.Test.Services
 {
-#warning Agregar test de CheckExistenceByConditions
     public class CloseServiceAsyncTest : IDisposable
     {
         private TestContext _Context;
@@ -447,7 +446,7 @@ namespace Quicker.Test.Services
         }
 
         [Fact]
-        public async Task CheckExistence_Success_NotExist()
+        public async Task CheckExistenceByKey_Success_NotExist()
         {
             // Arrange
             int key = 256;
@@ -468,7 +467,7 @@ namespace Quicker.Test.Services
         }
 
         [Fact]
-        public async Task CheckExistence_Success_Exist()
+        public async Task CheckExistenceByKey_Success_Exist()
         {
             // Arrange
             int key = 1;
@@ -483,6 +482,63 @@ namespace Quicker.Test.Services
 
             // Act
             var exist = await _Service.CheckExistenceByKey(key);
+
+            // Assert
+            Assert.True(exist);
+        }
+
+        [Fact]
+        public async Task CheckExistenceByConditions_Failure_ShouldThrowArgumentNullException()
+        {
+            // Act - Assert
+            await Assert.ThrowsAsync<ArgumentNullException>(() => _Service.CheckExistenceByConditions(null));
+        }
+
+        [Fact]
+        public async Task CheckExistenceByConditions_Success_NotExist()
+        {
+            // Arrange
+            string name = "Test1";
+            int percent = 25;
+
+            _Context.TestModels.Add(new TestModel { Name = "Test1", Percent = 10 });
+            _Context.TestModels.Add(new TestModel { Name = "Test2", Percent = 15 });
+            _Context.TestModels.Add(new TestModel { Name = "Test3", Percent = 20 });
+            _Context.TestModels.Add(new TestModel { Name = "Test4", Percent = 25 });
+            _Context.TestModels.Add(new TestModel { Name = "Test4", Percent = 30 });
+
+            await _Context.SaveChangesAsync();
+
+            // Act
+            var exist = await _Service.CheckExistenceByConditions(
+                e => e.Name == name,
+                e => e.Percent == percent
+            );
+
+            // Assert
+            Assert.False(exist);
+        }
+
+        [Fact]
+        public async Task CheckExistenceByConditions_Success_Exist()
+        {
+            // Arrange
+            string name = "Test3";
+            int percent = 20;
+
+            _Context.TestModels.Add(new TestModel { Name = "Test1", Percent = 10 });
+            _Context.TestModels.Add(new TestModel { Name = "Test2", Percent = 15 });
+            _Context.TestModels.Add(new TestModel { Name = "Test3", Percent = 20 });
+            _Context.TestModels.Add(new TestModel { Name = "Test4", Percent = 25 });
+            _Context.TestModels.Add(new TestModel { Name = "Test4", Percent = 30 });
+
+            await _Context.SaveChangesAsync();
+
+            // Act
+            var exist = await _Service.CheckExistenceByConditions(
+                e => e.Name == name,
+                e => e.Percent == percent
+            );
 
             // Assert
             Assert.True(exist);
