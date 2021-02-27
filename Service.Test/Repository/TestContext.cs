@@ -12,6 +12,17 @@ namespace Quicker.Test.Repository
             base(options) { }
 
         public DbSet<TestModel> TestModels { get; set; }
+
         public DbSet<TestModelRelation> TestModelRelations { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<TestModelRelation>(e => {
+                e.HasIndex(e => e.UniqueName)
+                    .IsUnique();
+            });
+        }
     }
 }

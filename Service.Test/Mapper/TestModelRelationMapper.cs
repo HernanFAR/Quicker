@@ -19,6 +19,9 @@ namespace Quicker.Test.Mapper
                     dest.Name,
                     opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest =>
+                    dest.UniqueName,
+                    opt => opt.MapFrom(src => src.UniqueName))
+                .ForMember(dest =>
                     dest.TestModelId,
                     opt => opt.MapFrom(src => src.TestModelId))
                 .ForMember(dest =>

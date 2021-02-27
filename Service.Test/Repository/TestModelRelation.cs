@@ -16,6 +16,8 @@ namespace Quicker.Test.Repository
         [Range(1, int.MaxValue)]
         public int TestModelId { get; set; }
 
+        public string UniqueName { get; set; }
+
         public TestModel TestModelNavigation { get; set; }
     }
 }

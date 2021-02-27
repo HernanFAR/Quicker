@@ -15,6 +15,8 @@ namespace Quicker.Test.Repository.DTO
         [Range(1, int.MaxValue)]
         public int TestModelId { get; set; }
 
+        public string UniqueName { get; set; }
+
         public string TestModel { get; set; }
     }
 }
