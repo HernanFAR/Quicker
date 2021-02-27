@@ -1,5 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Quicker.Configuration;
 using Quicker.Interfaces.Model;
 using Quicker.Interfaces.Service;
 using System;
@@ -34,10 +37,14 @@ namespace Quicker.Abstracts.Service
         where TEntity : class, IAbstractModel<TKey>
     {
         protected readonly DbContext Context;
+        protected readonly ILogger Logger;
 
-        public CloseServiceAsync(DbContext context)
+        public CloseServiceAsync(QuickerConfiguration configuration, IServiceProvider service)
         {
-            Context = context;
+            Context = service.GetRequiredService<DbContext>();
+
+            if (configuration.UseLogger)
+                Logger = service.GetRequiredService<ILogger>();
         }
 
         /// <summary>
@@ -214,13 +221,42 @@ namespace Quicker.Abstracts.Service
         /// <param name="key">PK del elemento a encontrar</param>
         /// <exception cref="ArgumentException" />
         /// 
-        public virtual async Task<bool> CheckExistence(TKey key)
+        public virtual async Task<bool> CheckExistenceByKey(TKey key)
         {
             var query = Query();
 
             var exists = await ReadFilter(query)
                 .Where(e => e.Id.Equals(key))
                 .AnyAsync(e => e.Id.Equals(key));
+
+            return exists;
+        } 
+
+        /// <summary>
+        ///     Verifica la existencia de un recurso en la base ded atos, basandose en la PK
+        /// </summary>
+        /// <returns>
+        ///     Un <see cref="Task"/> que retorna un <see cref="bool"/>.
+        /// </returns>
+        /// <param name="key">PK del elemento a encontrar</param>
+        /// <exception cref="ArgumentException" />
+        /// 
+        public virtual async Task<bool> CheckExistenceByConditions(params Expression<Func<TEntity, bool>>[] conditions)
+        {
+
+            if (conditions is null)
+            {
+                throw new ArgumentNullException(nameof(conditions));
+            }
+
+            var query = Query();
+
+            foreach (var condition in conditions)
+            {
+                query = query.Where(condition);
+            }
+
+            var exists = await query.AnyAsync();
 
             return exists;
         } 
@@ -260,24 +296,19 @@ namespace Quicker.Abstracts.Service
         where TEntityDTO : class, IAbstractModel<TKey>, IDTOOf<TEntity>
     {
         protected readonly DbContext Context;
+        protected readonly ILogger Logger;
         protected readonly IMapper Mapper;
 
-        public CloseServiceAsync(DbContext context, IMapper mapper)
+        public CloseServiceAsync(QuickerConfiguration configuration, IServiceProvider service)
         {
-            Context = context;
-            Mapper = mapper;
-        }
+            Context = service.GetRequiredService<DbContext>();
 
-        /// <summary>
-        ///     Constructor para inicializar la clase sin implementar el <see cref="IMapper"/>, es util en caso de que
-        ///     vayas a implementar un mappeador diferente a AutoMapper
-        /// </summary>
-        /// <param name="context">Contexto de la base de datos</param>
-        /// 
-        public CloseServiceAsync(DbContext context)
-        {
-            Context = context;
-            Mapper = null;
+            if (configuration.UseLogger)
+                Logger = service.GetRequiredService<ILogger>();
+
+            if (configuration.UseAutoMapper)
+                Mapper = service.GetRequiredService<IMapper>();
+
         }
 
         /// <summary>

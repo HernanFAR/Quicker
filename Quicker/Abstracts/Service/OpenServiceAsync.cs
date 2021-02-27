@@ -8,6 +8,7 @@ using Fluent = FluentValidation;
 using FluentValidation.Results;
 using System.Linq;
 using System.Threading.Tasks;
+using Quicker.Configuration;
 
 namespace Quicker.Abstracts.Service
 {
@@ -34,8 +35,8 @@ namespace Quicker.Abstracts.Service
     public abstract class OpenServiceAsync<TKey, TEntity> : CloseServiceAsync<TKey, TEntity>, IOpenServiceAsync<TKey, TEntity>
         where TEntity : class, IAbstractModel<TKey>
     {
-        public OpenServiceAsync(DbContext context) :
-            base(context) { }
+        public OpenServiceAsync(QuickerConfiguration configuration, IServiceProvider service) :
+            base(configuration, service) { }
 
         /// <summary>
         ///     Metodo para validar una entidad, antes de crearla, si no es valida, arroja un 
@@ -185,11 +186,8 @@ namespace Quicker.Abstracts.Service
         where TEntity : class, IAbstractModel<TKey>, IDomainOf<TEntityDTO>
         where TEntityDTO : class, IAbstractModel<TKey>, IDTOOf<TEntity>
     {
-        public OpenServiceAsync(DbContext context, AutoMapper.IMapper mapper) : 
-            base(context, mapper) { }
-
-        public OpenServiceAsync(DbContext context) :
-            base(context, null)
+        public OpenServiceAsync(QuickerConfiguration configuration, IServiceProvider service) :
+            base(configuration, service)
         { }
 
         /// <summary>

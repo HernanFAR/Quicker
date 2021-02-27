@@ -5,18 +5,36 @@ using System;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using AutoMapper;
+using Quicker.Configuration;
 
 namespace Quicker.Abstracts.Service
 {
-    
     /// <summary>
-    /// <para>Main implementation of <seealso cref="IFullServiceAsync{TKey, TEntity}"/>.</para>
+    ///     Implementacion principal de <see cref="IFullServiceAsync{TKey, TEntity}"/>, que brinda 
+    ///     funciones de ayuda para la creacion, actualizacion y borrado de datos.
     /// </summary>
+    /// <remarks>
+    ///     <para>
+    ///         Un <em>servicio completo</em> provee funciones de lectura, escritura, actualizacion 
+    ///         y borrado de elementos en la base de datos, dando el CRUD.
+    ///     </para>
+    /// </remarks>
+    /// <typeparam name="TKey">Tipo de la PK en la base de datos</typeparam>
+    /// <typeparam name="TEntity">
+    ///     <para>
+    ///         Tipo de la entidad que debe devolver el servicio. 
+    ///     </para>
+    ///     <para>
+    ///         Debe ser una clase e implementar <see cref="IAbstractModel{TKey}"/>.
+    ///     </para>
+    /// </typeparam>
+    /// 
     public abstract class FullServiceAsync<TKey, TEntity> : OpenServiceAsync<TKey, TEntity>, IFullServiceAsync<TKey, TEntity>
         where TEntity : class, IAbstractModel<TKey>
     {
-        public FullServiceAsync(DbContext context) : 
-            base(context) { }
+        public FullServiceAsync(QuickerConfiguration configuration, IServiceProvider service) :
+            base(configuration, service)
+        { }
 
         /// <summary>
         /// <para>Main implementation of <seealso cref="IFullService{TKey, TEntity}.Update(TKey, TEntity)"/>.</para>
@@ -54,13 +72,14 @@ namespace Quicker.Abstracts.Service
     }
     /// <summary>
     /// <para>Main implementation of <seealso cref="IFullServiceAsync{TKey, TEntity}"/>.</para>
-    /// </summary>
+    /// </summary>23
     public abstract class FullServiceAsync<TKey, TEntity, TEntityDTO> : OpenServiceAsync<TKey, TEntity, TEntityDTO>, IFullServiceAsync<TKey, TEntity, TEntityDTO>
         where TEntity : class, IAbstractModel<TKey>, IDomainOf<TEntityDTO>
         where TEntityDTO : class, IAbstractModel<TKey>, IDTOOf<TEntity>
     {
-        public FullServiceAsync(DbContext context, IMapper mapper) : 
-            base(context, mapper) { }
+        public FullServiceAsync(QuickerConfiguration configuration, IServiceProvider service) :
+            base(configuration, service)
+        { }
 
         /// <summary>
         /// <para>Main implementation of <seealso cref="IFullService{TKey, TEntity}.Update(TKey, TEntity)"/>.</para>
