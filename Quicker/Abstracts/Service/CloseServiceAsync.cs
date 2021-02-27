@@ -522,6 +522,10 @@ namespace Quicker.Abstracts.Service
         /// 
         public virtual async Task<IEnumerable<TEntityDTO>> Read()
         {
+            LogIfNotNull(LogLevel.Information,
+                $"Leyendo los registros de tipo {{{typeof(TEntity).Name}}}."
+            );
+
             var query = Query();
 
             var entities = await ReadFilter(query).ToListAsync();
@@ -538,13 +542,32 @@ namespace Quicker.Abstracts.Service
         /// 
         public virtual async Task<TEntityDTO> Read(TKey key)
         {
+            LogIfNotNull(LogLevel.Information,
+                $"Leyendo los registros de tipo {{{typeof(TEntity).Name}}}, para buscar a la entidad de {{Id}} {key}"
+            );
+
             var query = Query();
 
             var entity = await ReadFilter(query)
                 .Where(e => e.Id.Equals(key))
                 .SingleOrDefaultAsync();
 
-            return ToDTO(entity);
+            if (entity != null)
+            {
+                LogIfNotNull(LogLevel.Information,
+                    $"Se ha encontrado el elemento de {{Id}} {key}"
+                );
+
+                Context.Entry(entity).State = EntityState.Detached;
+            }
+            else
+            {
+                LogIfNotNull(LogLevel.Warning,
+                    $"No ha encontrado el elemento de {{Id}} {key}"
+                );
+            }
+
+            return entity == null ? null : ToDTO(entity);
         }
 
         /// <summary>
@@ -570,12 +593,29 @@ namespace Quicker.Abstracts.Service
                 throw new ArgumentException(nameof(page));
             }
 
+            LogIfNotNull(LogLevel.Information,
+                $"Leyendo los registros de tipo {{{typeof(TEntity).Name}}}, para saltar {page * number} y tomar {number}"
+            );
+
             var query = Query();
 
             var entities = await ReadFilter(query)
                 .Skip(page * number)
                 .Take(number)
                 .ToListAsync();
+
+            if (entities.Count != number)
+            {
+                LogIfNotNull(LogLevel.Information,
+                    $"Se tomaron solo {number}, ya que no habian 10"
+                );
+            }
+            else if (entities.Count == 0)
+            {
+                LogIfNotNull(LogLevel.Warning,
+                    $"No se ha tomado ningun elemento."
+                );
+            }
 
             return entities.Select(e => ToDTO(e));
         }
@@ -590,11 +630,28 @@ namespace Quicker.Abstracts.Service
         /// 
         public virtual async Task<bool> CheckExistence(TKey key)
         {
+            LogIfNotNull(LogLevel.Information,
+                $"Buscando un elemento de {{ID}} {key}"
+            );
+
             var query = Query();
 
             var exists = await ReadFilter(query)
                 .Where(e => e.Id.Equals(key))
                 .AnyAsync(e => e.Id.Equals(key));
+
+            if (exists)
+            {
+                LogIfNotNull(LogLevel.Information,
+                    $"Se ha encontrado"
+                );
+            }
+            else
+            {
+                LogIfNotNull(LogLevel.Warning,
+                    $"No se ha encontrado"
+                );
+            }
 
             return exists;
         }
@@ -610,11 +667,14 @@ namespace Quicker.Abstracts.Service
         /// 
         public virtual async Task<bool> CheckExistenceByConditions(params Expression<Func<TEntity, bool>>[] conditions)
         {
-
             if (conditions is null)
             {
                 throw new ArgumentNullException(nameof(conditions));
             }
+
+            LogIfNotNull(LogLevel.Information,
+                $"Buscando un elemento con filtros especificos... "
+            );
 
             var query = Query();
 
@@ -624,6 +684,19 @@ namespace Quicker.Abstracts.Service
             }
 
             var exists = await query.AnyAsync();
+
+            if (exists)
+            {
+                LogIfNotNull(LogLevel.Information,
+                    $"Se ha encontrado"
+                );
+            }
+            else
+            {
+                LogIfNotNull(LogLevel.Warning,
+                    $"No se ha encontrado"
+                );
+            }
 
             return exists;
         }
@@ -659,5 +732,38 @@ namespace Quicker.Abstracts.Service
         /// 
         protected virtual TEntity ToDomain(TEntityDTO entity)
             => Mapper.Map<TEntityDTO, TEntity>(entity);
+
+        protected void LogIfNotNull(LogLevel level, string loggerMessage)
+        {
+            if (Logger != null)
+            {
+                switch (level)
+                {
+                    case LogLevel.Trace:
+                        Logger.LogTrace(loggerMessage);
+                        break;
+
+                    case LogLevel.Debug:
+                        Logger.LogDebug(loggerMessage);
+                        break;
+
+                    case LogLevel.Information:
+                        Logger.LogInformation(loggerMessage);
+                        break;
+
+                    case LogLevel.Warning:
+                        Logger.LogWarning(loggerMessage);
+                        break;
+
+                    case LogLevel.Error:
+                        Logger.LogError(loggerMessage);
+                        break;
+
+                    case LogLevel.Critical:
+                        Logger.LogCritical(loggerMessage);
+                        break;
+                }
+            }
+        }
     }
 }
