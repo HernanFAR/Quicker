@@ -32,8 +32,8 @@ namespace Quicker.Abstracts.Service
     public abstract class FullServiceAsync<TKey, TEntity> : OpenServiceAsync<TKey, TEntity>, IFullServiceAsync<TKey, TEntity>
         where TEntity : class, IAbstractModel<TKey>
     {
-        public FullServiceAsync(QuickerConfiguration configuration, IServiceProvider service) :
-            base(configuration, service)
+        public FullServiceAsync(IServiceProvider service) :
+            base(service)
         { }
 
         /// <summary>
@@ -77,8 +77,8 @@ namespace Quicker.Abstracts.Service
         where TEntity : class, IAbstractModel<TKey>, IDomainOf<TEntityDTO>
         where TEntityDTO : class, IAbstractModel<TKey>, IDTOOf<TEntity>
     {
-        public FullServiceAsync(QuickerConfiguration configuration, IServiceProvider service) :
-            base(configuration, service)
+        public FullServiceAsync(IServiceProvider service) :
+            base(service)
         { }
 
         /// <summary>

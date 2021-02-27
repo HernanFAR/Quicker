@@ -39,9 +39,10 @@ namespace Quicker.Abstracts.Service
         protected readonly DbContext Context;
         protected readonly ILogger Logger;
 
-        public CloseServiceAsync(QuickerConfiguration configuration, IServiceProvider service)
+        public CloseServiceAsync(IServiceProvider service)
         {
             Context = service.GetRequiredService<DbContext>();
+            var configuration = service.GetRequiredService<QuickerConfiguration>();
 
             if (configuration.UseLogger)
             {
@@ -301,9 +302,10 @@ namespace Quicker.Abstracts.Service
         protected readonly ILogger Logger;
         protected readonly IMapper Mapper;
 
-        public CloseServiceAsync(QuickerConfiguration configuration, IServiceProvider service)
+        public CloseServiceAsync(IServiceProvider service)
         {
             Context = service.GetRequiredService<DbContext>();
+            var configuration = service.GetRequiredService<QuickerConfiguration>();
 
             if (configuration.UseLogger)
             {

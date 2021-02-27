@@ -35,8 +35,8 @@ namespace Quicker.Abstracts.Service
     public abstract class OpenServiceAsync<TKey, TEntity> : CloseServiceAsync<TKey, TEntity>, IOpenServiceAsync<TKey, TEntity>
         where TEntity : class, IAbstractModel<TKey>
     {
-        public OpenServiceAsync(QuickerConfiguration configuration, IServiceProvider service) :
-            base(configuration, service) { }
+        public OpenServiceAsync(IServiceProvider service) :
+            base(service) { }
 
         /// <summary>
         ///     Metodo para validar una entidad, antes de crearla, si no es valida, arroja un 
@@ -186,8 +186,8 @@ namespace Quicker.Abstracts.Service
         where TEntity : class, IAbstractModel<TKey>, IDomainOf<TEntityDTO>
         where TEntityDTO : class, IAbstractModel<TKey>, IDTOOf<TEntity>
     {
-        public OpenServiceAsync(QuickerConfiguration configuration, IServiceProvider service) :
-            base(configuration, service)
+        public OpenServiceAsync(IServiceProvider service) :
+            base(service)
         { }
 
         /// <summary>
