@@ -1,4 +1,6 @@
 ﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Quicker.Abstracts.Service;
 using Quicker.Test.Repository;
 using System;
@@ -19,7 +21,13 @@ namespace Quicker.Test.Services
         public OpenServiceAsyncTest()
         {
             _Context = new ConnectionFactory().CreateContextForSQLite();
-            _Service = new FakeServices.FakeOpenService(_Context);
+
+            var container = new ServiceCollection();
+
+            // Se agrego la instancia como singleton
+            container.AddSingleton<DbContext, TestContext>(e => _Context);
+
+            _Service = new FakeServices.FakeOpenService(container.BuildServiceProvider());
         }
 
         public void Dispose()

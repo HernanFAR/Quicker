@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Quicker.Abstracts.Service;
 using Quicker.Test.Mapper;
 using Quicker.Test.Repository;
@@ -28,7 +29,13 @@ namespace Quicker.Test.Services
                 config.AddProfile<TestModelRelationMapper>();
             })
             .CreateMapper();
-            _Service = new FakeServices.FakeCloseServiceDTO(_Context, _Mapper);
+
+            var container = new ServiceCollection();
+
+            container.AddScoped<DbContext, TestContext>(e => _Context);
+            container.AddScoped(e => _Mapper);
+
+            _Service = new FakeServices.FakeCloseServiceDTO(container.BuildServiceProvider());
         }
 
         public void Dispose()
