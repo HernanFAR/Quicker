@@ -44,7 +44,10 @@ namespace Quicker.Abstracts.Service
             Context = service.GetRequiredService<DbContext>();
 
             if (configuration.UseLogger)
-                Logger = service.GetRequiredService<ILogger>();
+            {
+                var factoryLogger = service.GetRequiredService<ILoggerFactory>();
+                Logger = factoryLogger.CreateLogger(GetType().FullName);
+            }
         }
 
         /// <summary>
@@ -230,20 +233,19 @@ namespace Quicker.Abstracts.Service
                 .AnyAsync(e => e.Id.Equals(key));
 
             return exists;
-        } 
+        }
 
         /// <summary>
-        ///     Verifica la existencia de un recurso en la base ded atos, basandose en la PK
+        ///     Verifica la existencia de un recurso en la base de datos, basandose en condiciones 
+        ///     establecidas
         /// </summary>
         /// <returns>
         ///     Un <see cref="Task"/> que retorna un <see cref="bool"/>.
         /// </returns>
-        /// <param name="key">PK del elemento a encontrar</param>
-        /// <exception cref="ArgumentException" />
+        /// <param name="conditions">Condiciones para buscar el elemento</param>
         /// 
         public virtual async Task<bool> CheckExistenceByConditions(params Expression<Func<TEntity, bool>>[] conditions)
         {
-
             if (conditions is null)
             {
                 throw new ArgumentNullException(nameof(conditions));
@@ -304,7 +306,10 @@ namespace Quicker.Abstracts.Service
             Context = service.GetRequiredService<DbContext>();
 
             if (configuration.UseLogger)
-                Logger = service.GetRequiredService<ILogger>();
+            {
+                var factoryLogger = service.GetRequiredService<ILoggerFactory>();
+                Logger = factoryLogger.CreateLogger(GetType().FullName);
+            }
 
             if (configuration.UseAutoMapper)
                 Mapper = service.GetRequiredService<IMapper>();
@@ -481,7 +486,6 @@ namespace Quicker.Abstracts.Service
         ///     Un <see cref="Task"/> que retorna un <see cref="bool"/>.
         /// </returns>
         /// <param name="key">PK del elemento a encontrar</param>
-        /// <exception cref="ArgumentException" />
         /// 
         public virtual async Task<bool> CheckExistence(TKey key)
         {
@@ -490,6 +494,35 @@ namespace Quicker.Abstracts.Service
             var exists = await ReadFilter(query)
                 .Where(e => e.Id.Equals(key))
                 .AnyAsync(e => e.Id.Equals(key));
+
+            return exists;
+        }
+
+        /// <summary>
+        ///     Verifica la existencia de un recurso en la base de datos, basandose en condiciones 
+        ///     establecidas
+        /// </summary>
+        /// <returns>
+        ///     Un <see cref="Task"/> que retorna un <see cref="bool"/>.
+        /// </returns>
+        /// <param name="conditions">Condiciones para buscar el elemento</param>
+        /// 
+        public virtual async Task<bool> CheckExistenceByConditions(params Expression<Func<TEntity, bool>>[] conditions)
+        {
+
+            if (conditions is null)
+            {
+                throw new ArgumentNullException(nameof(conditions));
+            }
+
+            var query = Query();
+
+            foreach (var condition in conditions)
+            {
+                query = query.Where(condition);
+            }
+
+            var exists = await query.AnyAsync();
 
             return exists;
         }
