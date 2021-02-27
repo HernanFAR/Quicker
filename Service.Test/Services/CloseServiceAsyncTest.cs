@@ -23,10 +23,11 @@ namespace Quicker.Test.Services
         {
             _Context = new ConnectionFactory().CreateContextForSQLite();
 
-            var container = new ServiceCollection();
+            var container = new ServiceCollection()
+                .AddLogging();
 
             container.AddQuickerConfiguration(config => {
-                config.UseLogger = false;
+                config.UseLogger = true;
                 config.UseAutoMapper = true;
             });
             container.AddScoped<DbContext, TestContext>(e => _Context);
