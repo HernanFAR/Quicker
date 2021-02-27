@@ -12,7 +12,7 @@ namespace Quicker.Abstracts.Service
     /// <summary>
     /// <para>Main implementation of <seealso cref="IFullServiceAsync{TKey, TEntity}"/>.</para>
     /// </summary>
-    public class FullServiceAsync<TKey, TEntity> : OpenServiceAsync<TKey, TEntity>, IFullServiceAsync<TKey, TEntity>
+    public abstract class FullServiceAsync<TKey, TEntity> : OpenServiceAsync<TKey, TEntity>, IFullServiceAsync<TKey, TEntity>
         where TEntity : class, IAbstractModel<TKey>
     {
         public FullServiceAsync(DbContext context) : 
@@ -55,7 +55,7 @@ namespace Quicker.Abstracts.Service
     /// <summary>
     /// <para>Main implementation of <seealso cref="IFullServiceAsync{TKey, TEntity}"/>.</para>
     /// </summary>
-    public class FullServiceAsync<TKey, TEntity, TEntityDTO> : OpenServiceAsync<TKey, TEntity, TEntityDTO>, IFullServiceAsync<TKey, TEntity, TEntityDTO>
+    public abstract class FullServiceAsync<TKey, TEntity, TEntityDTO> : OpenServiceAsync<TKey, TEntity, TEntityDTO>, IFullServiceAsync<TKey, TEntity, TEntityDTO>
         where TEntity : class, IAbstractModel<TKey>, IDomainOf<TEntityDTO>
         where TEntityDTO : class, IAbstractModel<TKey>, IDTOOf<TEntity>
     {

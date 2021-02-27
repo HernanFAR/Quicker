@@ -31,7 +31,7 @@ namespace Quicker.Abstracts.Service
     ///     </para>
     /// </typeparam>
     /// 
-    public class OpenServiceAsync<TKey, TEntity> : CloseServiceAsync<TKey, TEntity>, IOpenServiceAsync<TKey, TEntity>
+    public abstract class OpenServiceAsync<TKey, TEntity> : CloseServiceAsync<TKey, TEntity>, IOpenServiceAsync<TKey, TEntity>
         where TEntity : class, IAbstractModel<TKey>
     {
         public OpenServiceAsync(DbContext context) :
@@ -152,9 +152,36 @@ namespace Quicker.Abstracts.Service
     }
 
     /// <summary>
-    /// <para>Main implementation of <seealso cref="IOpenServiceAsync{TKey, TEntity, TEntityDTO}"/>.</para>
+    ///     Implementacion principal de <see cref="IOpenServiceAsync{TKey, TEntity}"/>, que brinda 
+    ///     funciones de ayuda para la creacion y borrado de datos.
     /// </summary>
-    public class OpenServiceAsync<TKey, TEntity, TEntityDTO> : CloseServiceAsync<TKey, TEntity, TEntityDTO>, IOpenServiceAsync<TKey, TEntity, TEntityDTO>
+    /// <remarks>
+    ///     <para>
+    ///         Un <em>servicio abierto</em> provee funciones de lectura, escritura y borrado de 
+    ///         elementos en la base de datos, dando la CRD de el CRUD.
+    ///     </para>
+    /// </remarks>
+    /// <typeparam name="TKey">Tipo de la PK en la base de datos</typeparam>
+    /// <typeparam name="TEntity">
+    ///     <para>
+    ///         Tipo de la entidad que debe devolver la base de datos. 
+    ///     </para>
+    ///     <para>
+    ///         Debe ser una clase, implementar <see cref="IAbstractModel{TKey}"/> y <see cref="IDTOOf{TDomain}"/>, 
+    ///         con TDomain de valor <typeparamref name="TEntityDTO"/>
+    ///     </para>
+    /// </typeparam>
+    /// <typeparam name="TEntityDTO">
+    ///     <para>
+    ///         Tipo de la entidad que debe devolver el servicio. 
+    ///     </para>
+    ///     <para>
+    ///         Debe ser una clase, implementar <see cref="IAbstractModel{TKey}"/> y <see cref="IDomainOf{TDTO}"/>, 
+    ///         con TDTO de valor <typeparamref name="TEntity"/>
+    ///     </para>
+    /// </typeparam>
+    /// 
+    public abstract class OpenServiceAsync<TKey, TEntity, TEntityDTO> : CloseServiceAsync<TKey, TEntity, TEntityDTO>, IOpenServiceAsync<TKey, TEntity, TEntityDTO>
         where TEntity : class, IAbstractModel<TKey>, IDomainOf<TEntityDTO>
         where TEntityDTO : class, IAbstractModel<TKey>, IDTOOf<TEntity>
     {
