@@ -7,9 +7,9 @@ using System.Text;
 
 namespace Quicker.Test.FakeServices
 {
-    public class FakeFullServiceDTO : FullServiceAsync<int, TestModel>
+    public class FakeFullService : FullServiceAsync<int, TestModel>
     {
-        public FakeFullServiceDTO(IServiceProvider service) : 
+        public FakeFullService(IServiceProvider service) : 
             base(service) { }
     }
 }
