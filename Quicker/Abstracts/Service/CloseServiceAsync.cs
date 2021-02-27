@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Quicker.Configuration;
 using Quicker.Interfaces.Model;
 using Quicker.Interfaces.Service;
@@ -42,7 +43,7 @@ namespace Quicker.Abstracts.Service
         public CloseServiceAsync(IServiceProvider service)
         {
             Context = service.GetRequiredService<DbContext>();
-            var configuration = service.GetRequiredService<QuickerConfiguration>();
+            var configuration = service.GetRequiredService<IOptions<QuickerConfiguration>>().Value;
 
             if (configuration.UseLogger)
             {
@@ -300,12 +301,12 @@ namespace Quicker.Abstracts.Service
     {
         protected readonly DbContext Context;
         protected readonly ILogger Logger;
-        protected readonly IMapper Mapper;
+        protected readonly IMapper Mapper; 
 
         public CloseServiceAsync(IServiceProvider service)
         {
             Context = service.GetRequiredService<DbContext>();
-            var configuration = service.GetRequiredService<QuickerConfiguration>();
+            var configuration = service.GetRequiredService<IOptions<QuickerConfiguration>>().Value;
 
             if (configuration.UseLogger)
             {
@@ -389,7 +390,6 @@ namespace Quicker.Abstracts.Service
         /// <returns>
         ///     Un <see cref="Task"/> que retorna un <see cref="IEnumerable{T}"/> de tipo <typeparamref name="TEntity"/>
         /// </returns>
-        /// <exception cref="ArgumentNullException" />
         /// <exception cref="InvalidOperationException" />
         /// 
         protected async Task<TEntityDTO> FindOneWith(params Expression<Func<TEntity, bool>>[] conditions)
@@ -418,7 +418,6 @@ namespace Quicker.Abstracts.Service
         ///     Un <see cref="Task"/> que retorna un <see cref="IEnumerable{T}"/> de tipo <typeparamref name="TEntityDTO"/>
         /// </returns>
         /// 
-
         public virtual async Task<IEnumerable<TEntityDTO>> Read()
         {
             var query = Query();
@@ -435,7 +434,6 @@ namespace Quicker.Abstracts.Service
         ///     Un <see cref="Task"/> que retorna un elemento tipo <typeparamref name="TEntityDTO"/>
         /// </returns>
         /// 
-
         public virtual async Task<TEntityDTO> Read(TKey key)
         {
             var query = Query();
@@ -458,7 +456,6 @@ namespace Quicker.Abstracts.Service
         /// <param name="number">Cantidad de elementos a obtener</param>
         /// <param name="page">Pagina de los elementos</param>
         /// 
-
         public virtual async Task<IEnumerable<TEntityDTO>> Paginate(int number, int page)
         {
             if (number < 1)
