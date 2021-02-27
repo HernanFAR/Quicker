@@ -9,7 +9,7 @@ namespace Quicker.Test.FakeServices
 {
     public class FakeCloseService : CloseServiceAsync<int, TestModel>
     {
-        public FakeCloseService(QuickerConfiguration configuration, IServiceProvider service) : 
-            base(configuration, service) { }
+        public FakeCloseService(IServiceProvider service) : 
+            base(service) { }
     }
 }

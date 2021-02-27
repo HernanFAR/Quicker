@@ -9,7 +9,7 @@ namespace Quicker.Test.FakeServices
 {
     public class FakeOpenService : OpenServiceAsync<int, TestModel>
     {
-        public FakeOpenService(QuickerConfiguration configuration, IServiceProvider service) : 
-            base(configuration, service) { }
+        public FakeOpenService(IServiceProvider service) : 
+            base(service) { }
     }
 }

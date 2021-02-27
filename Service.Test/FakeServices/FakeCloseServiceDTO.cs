@@ -11,7 +11,7 @@ namespace Quicker.Test.FakeServices
 {
     public class FakeCloseServiceDTO : CloseServiceAsync<int, TestModelRelation, TestModelRelationDTO>
     {
-        public FakeCloseServiceDTO(QuickerConfiguration configuration, IServiceProvider service) : 
-            base(configuration, service) { }
+        public FakeCloseServiceDTO(IServiceProvider service) : 
+            base(service) { }
     }
 }
