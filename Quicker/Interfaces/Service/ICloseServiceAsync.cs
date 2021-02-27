@@ -77,12 +77,13 @@ namespace Quicker.Interfaces.Service
         Task<bool> CheckExistenceByKey(TKey key);
 
         /// <summary>
-        ///     Verifica la existencia de un recurso en la base ded atos, basandose en la PK
+        ///     Verifica la existencia de un recurso en la base de datos, basandose en condiciones 
+        ///     establecidas
         /// </summary>
         /// <returns>
         ///     Un <see cref="Task"/> que retorna un <see cref="bool"/>.
         /// </returns>
-        /// <param name="key">PK del elemento a encontrar</param>
+        /// <param name="conditions">Condiciones para buscar el elemento</param>
         /// 
         Task<bool> CheckExistenceByConditions(params Expression<Func<TEntity, bool>>[] conditions);
     }
@@ -166,5 +167,16 @@ namespace Quicker.Interfaces.Service
         /// <param name="key">PK del elemento a encontrar</param>
         /// 
         Task<bool> CheckExistence(TKey key);
+
+        /// <summary>
+        ///     Verifica la existencia de un recurso en la base de datos, basandose en condiciones 
+        ///     establecidas
+        /// </summary>
+        /// <returns>
+        ///     Un <see cref="Task"/> que retorna un <see cref="bool"/>.
+        /// </returns>
+        /// <param name="conditions">Condiciones para buscar el elemento</param>
+        /// 
+        Task<bool> CheckExistenceByConditions(params Expression<Func<TEntity, bool>>[] conditions)
     }
 }
