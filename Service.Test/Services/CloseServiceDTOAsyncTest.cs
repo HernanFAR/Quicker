@@ -17,9 +17,9 @@ namespace Quicker.Test.Services
 {
     public class CloseServiceDTOAsyncTest : IDisposable
     {
-        private TestContext _Context;
-        private IMapper _Mapper;
-        private CloseServiceAsync<int, TestModelRelation, TestModelRelationDTO> _Service;
+        private readonly TestContext _Context;
+        private readonly IMapper _Mapper;
+        private readonly CloseServiceAsync<int, TestModelRelation, TestModelRelationDTO> _Service;
 
         public CloseServiceDTOAsyncTest() 
         {

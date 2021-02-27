@@ -14,8 +14,8 @@ namespace Quicker.Test.Services
 {
     public class CloseServiceAsyncTest : IDisposable
     {
-        private TestContext _Context;
-        private CloseServiceAsync<int, TestModel> _Service;
+        private readonly TestContext _Context;
+        private readonly CloseServiceAsync<int, TestModel> _Service;
 
         public CloseServiceAsyncTest() 
         {

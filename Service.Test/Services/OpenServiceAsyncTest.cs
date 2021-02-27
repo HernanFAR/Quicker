@@ -13,8 +13,8 @@ namespace Quicker.Test.Services
 {
     public class OpenServiceAsyncTest : IDisposable
     {
-        private TestContext _Context;
-        private OpenServiceAsync<int, TestModel> _Service;
+        private readonly TestContext _Context;
+        private readonly OpenServiceAsync<int, TestModel> _Service;
 
         public OpenServiceAsyncTest()
         {
