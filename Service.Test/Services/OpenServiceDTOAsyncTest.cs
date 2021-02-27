@@ -7,10 +7,8 @@ using Quicker.Test.Mapper;
 using Quicker.Test.Repository;
 using Quicker.Test.Repository.DTO;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
