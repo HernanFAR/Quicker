@@ -1,6 +1,8 @@
 ﻿using Quicker.Interfaces.Model;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace Quicker.Interfaces.Service
@@ -72,7 +74,17 @@ namespace Quicker.Interfaces.Service
         /// </returns>
         /// <param name="key">PK del elemento a encontrar</param>
         /// 
-        Task<bool> CheckExistence(TKey key);
+        Task<bool> CheckExistenceByKey(TKey key);
+
+        /// <summary>
+        ///     Verifica la existencia de un recurso en la base ded atos, basandose en la PK
+        /// </summary>
+        /// <returns>
+        ///     Un <see cref="Task"/> que retorna un <see cref="bool"/>.
+        /// </returns>
+        /// <param name="key">PK del elemento a encontrar</param>
+        /// 
+        Task<bool> CheckExistenceByConditions(params Expression<Func<TEntity, bool>>[] conditions);
     }
 
     /// <summary>
