@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Quicker.Abstracts.Service;
+using Quicker.Configuration;
 using Quicker.Test.Repository;
 using Quicker.Test.Repository.DTO;
 using System;
@@ -10,7 +11,7 @@ namespace Quicker.Test.FakeServices
 {
     public class FakeCloseServiceDTO : CloseServiceAsync<int, TestModelRelation, TestModelRelationDTO>
     {
-        public FakeCloseServiceDTO(TestContext context, IMapper mapper) :
-            base(context, mapper) { }
+        public FakeCloseServiceDTO(QuickerConfiguration configuration, IServiceProvider service) : 
+            base(configuration, service) { }
     }
 }

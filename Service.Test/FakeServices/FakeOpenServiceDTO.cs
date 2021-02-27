@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Quicker.Abstracts.Service;
+using Quicker.Configuration;
 using Quicker.Test.Repository;
 using Quicker.Test.Repository.DTO;
 using System;
@@ -11,10 +12,7 @@ namespace Quicker.Test.FakeServices
 {
     public class FakeOpenServiceDTO : OpenServiceAsync<int, TestModelRelation, TestModelRelationDTO>
     {
-        public FakeOpenServiceDTO(DbContext context) : 
-            base(context) { }
-
-        public FakeOpenServiceDTO(DbContext context, IMapper mapper) : 
-            base(context, mapper) { }
+        public FakeOpenServiceDTO(QuickerConfiguration configuration, IServiceProvider service) : 
+            base(configuration, service) { }
     }
 }

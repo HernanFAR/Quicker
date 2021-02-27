@@ -1,4 +1,5 @@
 ﻿using Quicker.Abstracts.Service;
+using Quicker.Configuration;
 using Quicker.Test.Repository;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ namespace Quicker.Test.FakeServices
 {
     public class FakeOpenService : OpenServiceAsync<int, TestModel>
     {
-        public FakeOpenService(TestContext context) :
-            base(context) { }
+        public FakeOpenService(QuickerConfiguration configuration, IServiceProvider service) : 
+            base(configuration, service) { }
     }
 }
