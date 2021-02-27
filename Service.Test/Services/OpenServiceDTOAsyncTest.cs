@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Quicker.Abstracts.Service;
 using Quicker.Test.Mapper;
 using Quicker.Test.Repository;
@@ -78,15 +79,16 @@ namespace Quicker.Test.Services
 
         [Theory]
         [InlineData(-1)]
-        [InlineData(101)]
-        public void ValidateObjectBeforeCreating_Failure_InvalidPercentValues(int percent)
+        [InlineData(0)]
+
+        public void ValidateObjectBeforeCreating_Failure_InvalidTestModelIdValues(int testModelId)
         {
             // Arrange
             MethodInfo method = _Service.GetType().GetMethod("ValidateObjectBeforeCreating", BindingFlags.NonPublic | BindingFlags.Instance);
-            var model = new TestModel
+            var model = new TestModelRelationDTO
             {
                 Name = "Test1",
-                Percent = percent
+                TestModelId = testModelId
             };
 
 
@@ -104,7 +106,7 @@ namespace Quicker.Test.Services
             // Asserttion
             if (invEx.InnerException is ValidationException ex)
             {
-                bool hasName = ex.Errors.Any(e => e.PropertyName == "Percent");
+                bool hasName = ex.Errors.Any(e => e.PropertyName == "TestModelId");
 
                 Assert.True(hasName);
             }
@@ -119,10 +121,10 @@ namespace Quicker.Test.Services
         {
             // Arrange
             MethodInfo method = _Service.GetType().GetMethod("ValidateObjectBeforeCreating", BindingFlags.NonPublic | BindingFlags.Instance);
-            var model = new TestModel
+            var model = new TestModelRelationDTO
             {
                 Name = "Test1",
-                Percent = 10
+                TestModelId = 2
             };
 
 
@@ -139,10 +141,10 @@ namespace Quicker.Test.Services
         {
             // Arrange
             MethodInfo method = _Service.GetType().GetMethod("PresetPropertiesBeforeCreating", BindingFlags.NonPublic | BindingFlags.Instance);
-            var model = new TestModel
+            var model = new TestModelRelationDTO
             {
                 Name = "Test1",
-                Percent = 10
+                TestModelId = 2
             };
 
 
@@ -180,6 +182,25 @@ namespace Quicker.Test.Services
 
             await _Context.SaveChangesAsync();
 
+            _Context.TestModelRelations.Add(new TestModelRelation { Name = "Test2", TestModelId = 1 });
+
+            await _Context.SaveChangesAsync();
+
+            var model = new TestModelRelationDTO
+            {
+                Id = 1,
+                Name = "Test1",
+                TestModelId = 1
+            };
+
+            // Act - Assert
+            await Assert.ThrowsAsync<InvalidOperationException>(() => _Service.Create(model));
+        }
+
+        [Fact]
+        public async Task Create_Failure_ShouldThrowDbUpdateException_NotExistingRelation()
+        {
+            // Arrange
             var model = new TestModelRelationDTO
             {
                 Name = "Test1",
@@ -187,7 +208,32 @@ namespace Quicker.Test.Services
             };
 
             // Act - Assert
-            await Assert.ThrowsAsync<InvalidOperationException>(() => _Service.Create(model));
+            await Assert.ThrowsAsync<DbUpdateException>(() => _Service.Create(model));
+
+        }
+
+        [Fact]
+        public async Task Create_Failure_ShouldThrowDbUpdateException_UniqueKeyViolation()
+        {
+            // Arrange
+            var testModel = _Context.TestModels.Add(new TestModel { Name = "Test2", Percent = 20 });
+            var entry = _Context.TestModelRelations.Add(new TestModelRelation { 
+                Name = "Test1", 
+                UniqueName = "Unique",
+                TestModelNavigation = testModel.Entity
+            });
+
+            await _Context.SaveChangesAsync();
+
+            var model = new TestModelRelationDTO
+            {
+                Name = "Test1",
+                UniqueName = "Unique",
+                TestModelId = 1
+            };
+
+            // Act - Assert
+            await Assert.ThrowsAsync<DbUpdateException>(() => _Service.Create(model));
         }
 
         [Fact]
@@ -239,10 +285,10 @@ namespace Quicker.Test.Services
         {
             // Arrange
             MethodInfo method = _Service.GetType().GetMethod("DeleteFilter", BindingFlags.NonPublic | BindingFlags.Instance);
-            var model = new TestModel
+            var model = new TestModelRelation
             {
                 Name = "Test1",
-                Percent = 10
+                TestModelId = 1
             };
 
 
@@ -257,11 +303,6 @@ namespace Quicker.Test.Services
         [Fact]
         public async Task Delete_WithIdAsParameter_Failure_ShouldThrowInvalidOperationException()
         {
-            // Arrange
-            _Context.TestModels.Add(new TestModel { Name = "Test2", Percent = 20 });
-
-            await _Context.SaveChangesAsync();
-
             // Act - Assert
             var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
                 _Service.Delete(256)
@@ -272,7 +313,14 @@ namespace Quicker.Test.Services
         public async Task Delete_WithIdAsParameter_Success()
         {
             // Arrange
-            var entry = _Context.TestModels.Add(new TestModel { Name = "Test2", Percent = 20 });
+            var testModel = _Context.TestModels.Add(new TestModel { Name = "Test1", Percent = 20 });
+            var entry = _Context.TestModelRelations.Add(
+                new TestModelRelation { 
+                    Name = "Test2", 
+                    TestModelId = 0, 
+                    TestModelNavigation = testModel.Entity
+                }
+            );
 
             await _Context.SaveChangesAsync();
 
@@ -280,7 +328,7 @@ namespace Quicker.Test.Services
             await _Service.Delete(entry.Entity.Id);
 
             // Assert
-            Assert.Equal(0, _Context.TestModels.Count());
+            Assert.Equal(0, _Context.TestModelRelations.Count());
         }
     }
 }
