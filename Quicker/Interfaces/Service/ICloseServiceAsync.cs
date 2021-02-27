@@ -177,6 +177,6 @@ namespace Quicker.Interfaces.Service
         /// </returns>
         /// <param name="conditions">Condiciones para buscar el elemento</param>
         /// 
-        Task<bool> CheckExistenceByConditions(params Expression<Func<TEntity, bool>>[] conditions)
+        Task<bool> CheckExistenceByConditions(params Expression<Func<TEntity, bool>>[] conditions);
     }
 }
