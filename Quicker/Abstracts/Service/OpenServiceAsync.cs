@@ -8,7 +8,6 @@ using Fluent = FluentValidation;
 using FluentValidation.Results;
 using System.Linq;
 using System.Threading.Tasks;
-using Quicker.Configuration;
 
 namespace Quicker.Abstracts.Service
 {
@@ -42,6 +41,10 @@ namespace Quicker.Abstracts.Service
         ///     Metodo para validar una entidad, antes de crearla, si no es valida, arroja un 
         ///     <see cref="Fluent.ValidationException"/>.
         /// </summary>
+        /// <remarks>
+        ///     Por defecto, aunque use <see cref="Fluent.ValidationException"/> para la excepcion, 
+        ///     usa DataAnnotations para funcionar.
+        /// </remarks>
         /// <exception cref="Fluent.ValidationException" />
         /// <exception cref="ArgumentNullException" />
         /// 
@@ -78,29 +81,43 @@ namespace Quicker.Abstracts.Service
 
         /// <summary>
         ///     <para>
-        ///         Crea un registro en la base de datos basado en la entidad ingresada por parametro, 
-        ///         si no es una entidad valida, arroja un <see cref="Fluent.ValidationException"/>.
+        ///         Crea un registro en la base de datos basado en la entidad ingresada por parametro, retornando 
+        ///         la entidad una vez sea creada
+        ///     </para>
+        /// </summary>
+        /// <remarks>
+        ///     <para>
+        ///         Si la entidad es nula, arroja un <see cref="ArgumentNullException"/>.
+        ///     </para>
+        ///     <para>
+        ///         Si la entidad no es valida, arroja un <see cref="Fluent.ValidationException"/>
+        ///     </para>
+        ///     <para>
+        ///         Si la entidad ya existe en la base de datos (segun la PK), retorna un <see cref="InvalidOperationException"/>
         ///     </para>
         ///     <para>
         ///         En caso de que haya algun problema al momento de actualizar en la base de datos,
-        ///         arroja un <see cref="DbUpdateConcurrencyException"/> o un <see cref="DbUpdateException"/>,
-        ///         si hay un conflicto con la ID, arroja un <see cref="InvalidOperationException"/>
+        ///         arroja un <see cref="DbUpdateException"/> o un <see cref="DbUpdateConcurrencyException"/>
         ///     </para>
-        /// </summary>
+        /// </remarks>
         /// <returns>
         ///     Un <see cref="Task"/> que retorna un <typeparamref name="TEntity"/>
         /// </returns>
         /// <exception cref="Fluent.ValidationException" />
         /// <exception cref="ArgumentNullException" />
-        /// <exception cref="DbUpdateException" />
         /// <exception cref="InvalidOperationException" />
+        /// <exception cref="DbUpdateException" />
         /// <exception cref="DbUpdateConcurrencyException" />
         /// <param name="entity">Entidad con la que se creara el registro</param>
         /// 
         public virtual async Task<TEntity> Create(TEntity entity)
         {
-            ValidateObjectBeforeCreating(entity);
+            if (entity is null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
 
+            ValidateObjectBeforeCreating(entity);
             PresetPropertiesBeforeCreating(entity);
 
             entity.CreatedAt = DateTime.Now;
