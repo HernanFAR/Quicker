@@ -33,6 +33,11 @@ namespace Quicker.Test.Services
 
             var container = new ServiceCollection();
 
+            container.AddQuickerConfiguration(config =>
+            {
+                config.UseLogger = false;
+                config.UseAutoMapper = true;
+            });
             container.AddScoped<DbContext, TestContext>(e => _Context);
             container.AddScoped(e => _Mapper);
 

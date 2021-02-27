@@ -24,8 +24,12 @@ namespace Quicker.Test.Services
 
             var container = new ServiceCollection();
 
-            // Se agrego la instancia como singleton
-            container.AddSingleton<DbContext, TestContext>(e => _Context);
+            container.AddQuickerConfiguration(config =>
+            {
+                config.UseLogger = false;
+                config.UseAutoMapper = true;
+            });
+            container.AddScoped<DbContext, TestContext>(e => _Context);
 
             _Service = new FakeServices.FakeOpenService(container.BuildServiceProvider());
         }
