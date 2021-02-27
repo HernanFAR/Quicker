@@ -13,6 +13,7 @@ using Xunit;
 
 namespace Quicker.Test.Services
 {
+#warning Agregar test de CheckExistenceByConditions
     public class CloseServiceAsyncTest : IDisposable
     {
         private TestContext _Context;
@@ -459,7 +460,7 @@ namespace Quicker.Test.Services
             await _Context.SaveChangesAsync();
 
             // Act
-            var exist = await _Service.CheckExistence(key);
+            var exist = await _Service.CheckExistenceByKey(key);
 
             // Assert
             Assert.False(exist);
@@ -480,7 +481,7 @@ namespace Quicker.Test.Services
             await _Context.SaveChangesAsync();
 
             // Act
-            var exist = await _Service.CheckExistence(key);
+            var exist = await _Service.CheckExistenceByKey(key);
 
             // Assert
             Assert.True(exist);

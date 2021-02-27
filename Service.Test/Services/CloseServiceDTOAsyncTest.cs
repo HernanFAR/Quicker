@@ -16,6 +16,7 @@ using Xunit;
 
 namespace Quicker.Test.Services
 {
+#warning Agregar test de CheckExistenceByConditions
     public class CloseServiceDTOAsyncTest : IDisposable
     {
         private TestContext _Context;
