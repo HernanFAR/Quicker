@@ -181,6 +181,7 @@ namespace Quicker.Abstracts.Service
         ///     Borra el registro relacionado a la PK que al modelo pasado por parametro, si pasa el filtro, 
         ///     si no lo pasa, arroja un <see cref="InvalidOperationException"/>
         /// </summary>
+        /// <exception cref="ArgumentNullException" />
         /// <exception cref="InvalidOperationException" />
         /// 
         public virtual Task Delete(TEntity entity)
@@ -190,6 +191,7 @@ namespace Quicker.Abstracts.Service
         ///     Borra el registro relacionado a la PK que se paso por parametro, si pasa el filtro, 
         ///     si no lo pasa, arroja un <see cref="InvalidOperationException"/>
         /// </summary>
+        /// <exception cref="ArgumentNullException" />
         /// <exception cref="InvalidOperationException" />
         /// 
         public virtual async Task Delete(TKey key)
@@ -394,6 +396,7 @@ namespace Quicker.Abstracts.Service
         ///     Borra el registro relacionado a la entidad que se paso por parametro, si pasa el 
         ///     filtro, si no lo pasa, arroja un <see cref="InvalidOperationException"/>
         /// </summary>
+        /// <exception cref="ArgumentNullException" />
         /// <exception cref="InvalidOperationException" />
         /// 
         public virtual Task Delete(TEntityDTO entity)
@@ -403,6 +406,7 @@ namespace Quicker.Abstracts.Service
         ///     Borra el registro relacionado a la PK que se paso por parametro, si pasa el filtro, 
         ///     si no lo pasa, arroja un <see cref="InvalidOperationException"/>
         /// </summary>
+        /// <exception cref="ArgumentNullException" />
         /// <exception cref="InvalidOperationException" />
         /// 
         public virtual async Task Delete(TKey key)
