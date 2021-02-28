@@ -21,6 +21,10 @@ En esta instante, tiene estas dependencias:
 
 ## Arquitectura de trabajo que provee
 
+![Imagen de la arquitectura](https://github.com/HernanFAR/Quicker/blob/master/img/Esp/Arquitectura.png?raw=true)
+
+En amarillo, los componentes en los que te ayuda el framework.
+
 _work in progress_
 
 ## Funciones que presta y sus diagramas
@@ -53,7 +57,7 @@ Pendientes para el futuro, si son posibles:
 
 ## Agradecimientos
 
-- A Alvaro, por ser un apoyo muy grande desde que me converti en desarrollador profesional.
+- A Áhlvaro, por ser un apoyo muy grande desde que me converti en desarrollador profesional.
 
 ## Inspiraciones
 
