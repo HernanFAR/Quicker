@@ -45,10 +45,7 @@ namespace Quicker.Interfaces.Service
         /// </returns>
         /// <param name="key">Valor de la Primary key a encontrar en la base de datos.</param>
         /// 
-        Task<TEntity> Read(
-            [Required]
-            TKey key
-        );
+        Task<TEntity> Read(TKey key);
 
         /// <summary>
         ///     Lee elementos de la base de datos, de forma paginada.
@@ -59,12 +56,7 @@ namespace Quicker.Interfaces.Service
         /// <param name="number">Cantidad de elementos a tomar de la base de datos.</param>
         /// <param name="page">Numero de pagina de los elementos</param>
         /// 
-        Task<IEnumerable<TEntity>> Paginate(
-            [Range(1, int.MaxValue)]
-            int number,
-            [Range(0, int.MaxValue)]
-            int page
-        );
+        Task<IEnumerable<TEntity>> Paginate(int number, int page);
 
         /// <summary>
         ///     Verifica la existencia de un recurso en la base ded atos, basandose en la PK
@@ -137,10 +129,7 @@ namespace Quicker.Interfaces.Service
         /// </returns>
         /// <param name="key">Valor de la Primary key a encontrar en la base de datos.</param>
         /// 
-        Task<TEntityDTO> Read(
-            [Required]
-            TKey key
-        );
+        Task<TEntityDTO> Read(TKey key);
 
         /// <summary>
         ///     Lee elementos de la base de datos, de forma paginada.
@@ -151,12 +140,7 @@ namespace Quicker.Interfaces.Service
         /// <param name="number">Cantidad de elementos a tomar de la base de datos.</param>
         /// <param name="page">Numero de pagina de los elementos</param>
         /// 
-        Task<IEnumerable<TEntityDTO>> Paginate(
-            [Range(1, int.MaxValue)]
-            int number,
-            [Range(0, int.MaxValue)]
-            int page
-        );
+        Task<IEnumerable<TEntityDTO>> Paginate(int number, int page);
 
         /// <summary>
         ///     Verifica la existencia de un recurso en la base ded atos, basandose en la PK
