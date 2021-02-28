@@ -29,7 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Quicker\Quicker.csproj" />
+    <ProjectReference Include="..\Quicker\Quicker.Service.csproj" />
   </ItemGroup>
 
   <ItemGroup>
