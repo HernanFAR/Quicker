@@ -21,7 +21,7 @@ namespace Quicker.Interfaces.WebApiController
     ///     </para>
     /// </typeparam>
     /// 
-    public interface IFullControllerAsync<TKey, TEntity>
+    public interface IFullControllerAsync<TKey, TEntity> : IOpenControllerAsync<TKey, TEntity>
         where TEntity : class, IAbstractModel<TKey>
     {
         /// <summary>
@@ -64,7 +64,7 @@ namespace Quicker.Interfaces.WebApiController
     ///     </para>
     /// </typeparam>
     /// 
-    public interface IFullControllerAsync<TKey, TEntity, TEntityDTO>
+    public interface IFullControllerAsync<TKey, TEntity, TEntityDTO> : IOpenControllerAsync<TKey, TEntity, TEntityDTO>
         where TEntity : class, IAbstractModel<TKey>, IDomainOf<TEntityDTO>
         where TEntityDTO : class, IAbstractModel<TKey>, IDTOOf<TEntity>
     {

@@ -89,7 +89,9 @@ namespace Quicker.Interfaces.WebApiController
     ///     </para>
     /// </typeparam>
     /// 
-    public interface IOpenControllerAsync<TKey, TEntity, TEntityDTO>
+    public interface IOpenControllerAsync<TKey, TEntity, TEntityDTO> : ICloseServiceAsync<TKey, TEntity, TEntityDTO>
+        where TEntity : class, IAbstractModel<TKey>, IDomainOf<TEntityDTO>
+        where TEntityDTO : class, IAbstractModel<TKey>, IDTOOf<TEntity>
     {
         /// <summary>
         ///     Crea un elemento en la base de datos.
