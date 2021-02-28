@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 
 namespace Quicker.Abstracts.Controller
 {
-#warning Pendiente agregar version con DTO
 #warning Pendiente agregar documentacion
     [ApiController]
     public abstract class OpenControllerAsync<TKey, TEntity, TServiceInterface> : CloseControllerAsync<TKey, TEntity, TServiceInterface>, IOpenControllerAsync<TKey, TEntity>
@@ -59,6 +58,115 @@ namespace Quicker.Abstracts.Controller
 
         [HttpDelete]
         public async Task<ActionResult> Delete([FromBody] TEntity entity)
+        {
+            ActionResult actionResult;
+
+            try
+            {
+                await Service.Delete(entity);
+
+                actionResult = Ok();
+            }
+            catch (ArgumentNullException)
+            {
+                actionResult = BadRequest();
+            }
+            catch (InvalidOperationException ex)
+            {
+                actionResult = Conflict(ex.Message);
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                actionResult = Conflict(ex.Message);
+            }
+            catch (DbUpdateException ex)
+            {
+                actionResult = UnprocessableEntity(ex.Message);
+            }
+
+            return actionResult;
+        }
+
+        [HttpDelete("{key}")]
+        public async Task<ActionResult> Delete(TKey key)
+        {
+            ActionResult actionResult;
+
+            try
+            {
+                await Service.Delete(key);
+
+                actionResult = Ok();
+            }
+            catch (ArgumentNullException)
+            {
+                actionResult = BadRequest();
+            }
+            catch (InvalidOperationException ex)
+            {
+                actionResult = Conflict(ex.Message);
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                actionResult = Conflict(ex.Message);
+            }
+            catch (DbUpdateException ex)
+            {
+                actionResult = UnprocessableEntity(ex.Message);
+            }
+
+            return actionResult;
+        }
+    }
+
+    [ApiController]
+    public abstract class OpenControllerAsync<TKey, TEntity, TEntityDTO, TServiceInterface> : CloseControllerAsync<TKey, TEntity, TEntityDTO, TServiceInterface>, IOpenControllerAsync<TKey, TEntity, TEntityDTO>
+        where TEntity : class, IAbstractModel<TKey>, IDomainOf<TEntityDTO>
+        where TEntityDTO : class, IAbstractModel<TKey>, IDTOOf<TEntity>
+        where TServiceInterface : IOpenServiceAsync<TKey, TEntity, TEntityDTO>
+    {
+        public OpenControllerAsync(TServiceInterface service) : 
+            base(service) { }
+
+        [HttpPost]
+        public async Task<ActionResult<TEntityDTO>> Create([FromBody] TEntityDTO entity)
+        {
+            ActionResult<TEntityDTO> actionResult;
+
+            try
+            {
+                actionResult = Ok(await Service.Create(entity));
+            }
+            catch (ArgumentNullException)
+            {
+                actionResult = BadRequest();
+            }
+            catch (InvalidOperationException ex)
+            {
+                actionResult = Conflict(ex.Message);
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                actionResult = Conflict(ex.Message);
+            }
+            catch (ValidationException ex)
+            {
+                actionResult = UnprocessableEntity(ex.Errors);
+            }
+            catch (DbUpdateException ex)
+            {
+                actionResult = UnprocessableEntity(ex.Message);
+            }
+
+            return actionResult;
+        }
+
+        [HttpGet("new")]
+        public ActionResult<Dictionary<string, string>> New()
+            => Ok(Service.GetPropertyInformationForCreate());
+
+        [HttpDelete]
+        public async Task<ActionResult> Delete([FromBody] TEntityDTO entity)
         {
             ActionResult actionResult;
 
