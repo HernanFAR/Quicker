@@ -149,7 +149,7 @@ namespace Quicker.Interfaces.Service
         /// </returns>
         /// <param name="key">PK del elemento a encontrar</param>
         /// 
-        Task<bool> CheckExistence(TKey key);
+        Task<bool> CheckExistenceByKey(TKey key);
 
         /// <summary>
         ///     Verifica la existencia de un recurso en la base de datos, basandose en condiciones 

@@ -660,7 +660,7 @@ namespace Quicker.Abstracts.Service
         /// <param name="key">PK del elemento a encontrar</param>
         /// <exception cref="ArgumentNullException" />
         /// 
-        public virtual async Task<bool> CheckExistence(TKey key)
+        public virtual async Task<bool> CheckExistenceByKey(TKey key)
         {
             LogIfNotNull(LogLevel.Information,
                 $"Buscando un elemento de {{ID}} {key}"
