@@ -64,7 +64,6 @@ namespace Quicker.Interfaces.Service
     ///     </para>
     /// </typeparam>
     /// 
-
     public interface IFullServiceAsync<TKey, TEntity, TEntityDTO> : IOpenServiceAsync<TKey, TEntity, TEntityDTO>
         where TEntity : class, IAbstractModel<TKey>, IDomainOf<TEntityDTO>
         where TEntityDTO : class, IAbstractModel<TKey>, IDTOOf<TEntity>
