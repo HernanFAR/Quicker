@@ -25,22 +25,27 @@ _work in progress_
 
 ## Pasos futuros
 
-Actualmente, el paquete se encuentra en desarrollo, por lo que aqui abajo hay una lista con los hitos a cumplir, y debajo de ella, los otros hitos a futuro.
+Actualmente, el paquete se encuentra en desarrollo, por lo que aqui abajo hay una lista con los hitos cumplidos, a cumplir, y futuros.
+
+Completados:
+- Abstracciones de servicios.
+- Diagrama de la arquitectura que te recomienda el framework
+
+Pendiente para la siguiente version menor:
+- Agregar loggers en el resto de servicios (Actualmente, solo en CloseService)
+- Completar las abstracciones de WebAPI Controllers.
+- Agregar una version en ingles de la documentacion de las funciones (Actualmente, es en español)
 
 Pendiente para la 1.0:
-
 - Agregar diagramas y explicaciones de la funcionalidad interna del framework
 - Agregar un equivalente en ingles del readme.md
-- Completar las abstracciones de servicios.
-- Completar las abstracciones de WebAPI Controllers.
 
 Pendientes para el futuro, si son posibles:
 
 - Agregar abstracciones de MVC Controllers
 - Agregar implementaciones con mas de una clave primaria.
 - Agregar un _soft delete_ opcional.
-- Agregar una implementacion de todo eso, Add a implementation of all in DPT pattern, for a multitenant solution
-- Agregar una _capa de preejecucion_ **opcional** para la validacion de parametros (AOP)
+- Agregar una implementacion de todo eso, en un patron DTP, para una solucion _multitenant_
 
 ## Agradecimientos
 
