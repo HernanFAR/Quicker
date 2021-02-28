@@ -1,4 +1,5 @@
-﻿using Quicker.Interfaces.Model;
+﻿using Microsoft.AspNetCore.Mvc;
+using Quicker.Interfaces.Model;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -33,7 +34,7 @@ namespace Quicker.Interfaces.WebApiController
         ///     Un <see cref="Task"/> que devuelve un <see cref="IEnumerable{T}"/> con tipo <typeparamref name="TEntity"/>.
         /// </returns>
         /// 
-        Task<IEnumerable<TEntity>> Read();
+        Task<ActionResult<IEnumerable<TEntity>>> Read();
 
         /// <summary>
         ///     Lee un elemento en la base de datos.
@@ -43,7 +44,7 @@ namespace Quicker.Interfaces.WebApiController
         /// </returns>
         /// <param name="key">Valor de la Primary key a encontrar en la base de datos.</param>
         /// 
-        Task<TEntity> Read(TKey key);
+        Task<ActionResult<TEntity>> Read(TKey key);
 
         /// <summary>
         ///     Lee elementos de la base de datos, de forma paginada.
@@ -54,7 +55,7 @@ namespace Quicker.Interfaces.WebApiController
         /// <param name="number">Cantidad de elementos a tomar de la base de datos.</param>
         /// <param name="page">Numero de pagina de los elementos</param>
         /// 
-        Task<IEnumerable<TEntity>> Paginate(int number, int page);
+        Task<ActionResult<IEnumerable<TEntity>>> Paginate(int number, int page);
 
         /// <summary>
         ///     Verifica la existencia de un recurso en la base ded atos, basandose en la PK
@@ -64,7 +65,7 @@ namespace Quicker.Interfaces.WebApiController
         /// </returns>
         /// <param name="key">PK del elemento a encontrar</param>
         /// 
-        Task<bool> CheckExistenceByKey(TKey key);
+        Task<ActionResult<bool>> CheckExistenceByKey(TKey key);
     }
 
     /// <summary>
@@ -107,7 +108,7 @@ namespace Quicker.Interfaces.WebApiController
         ///     Un <see cref="Task"/> que devuelve un <see cref="IEnumerable{T}"/> con tipo <typeparamref name="TEntityDTO"/>.
         /// </returns>
         /// 
-        Task<IEnumerable<TEntityDTO>> Read();
+        Task<ActionResult<IEnumerable<TEntityDTO>>> Read();
 
         /// <summary>
         ///     Lee un elemento en la base de datos.
@@ -117,7 +118,7 @@ namespace Quicker.Interfaces.WebApiController
         /// </returns>
         /// <param name="key">Valor de la Primary key a encontrar en la base de datos.</param>
         /// 
-        Task<TEntityDTO> Read(TKey key);
+        Task<ActionResult<TEntityDTO>> Read(TKey key);
 
         /// <summary>
         ///     Lee elementos de la base de datos, de forma paginada.
@@ -138,6 +139,6 @@ namespace Quicker.Interfaces.WebApiController
         /// </returns>
         /// <param name="key">PK del elemento a encontrar</param>
         /// 
-        Task<bool> CheckExistence(TKey key);
+        Task<ActionResult<bool>> CheckExistence(TKey key);
     }
 }
