@@ -1,17 +1,17 @@
-﻿using Quicker.Interfaces.Model;
-using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using Quicker.Interfaces.Model;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace Quicker.Interfaces.Service
+namespace Quicker.Interfaces.WebApiController
 {
     /// <summary>
-    ///     Interface para especificar un <em>servicio cerrado</em>, con entidades que no tienen un DTO relacionado.
+    ///     Interface para especificar un <em>controlador cerrado</em>, con entidades que no tienen un DTO relacionado.
     /// </summary>
     /// <remarks>
     ///     <para>
-    ///         Un <em>servicio cerrado</em> provee funciones de solo lectura de elementos en la base de datos, dando la R de el CRUD.
+    ///         Un <em>controlador cerrado</em> consume un servicio cerrado, que tiene funciones de solo lectura de 
+    ///         elementos en la base de datos, dando la R de el CRUD.
     ///     </para>
     /// </remarks>
     /// <typeparam name="TKey">Tipo de la PK en la base de datos</typeparam>
@@ -24,7 +24,7 @@ namespace Quicker.Interfaces.Service
     ///     </para>
     /// </typeparam>
     /// 
-    public interface ICloseServiceAsync<TKey, TEntity> 
+    public interface ICloseControllerAsync<TKey, TEntity>
         where TEntity : class, IAbstractModel<TKey>
     {
         /// <summary>
@@ -34,7 +34,7 @@ namespace Quicker.Interfaces.Service
         ///     Un <see cref="Task"/> que devuelve un <see cref="IEnumerable{T}"/> con tipo <typeparamref name="TEntity"/>.
         /// </returns>
         /// 
-        Task<IEnumerable<TEntity>> Read();
+        Task<ActionResult<IEnumerable<TEntity>>> Read();
 
         /// <summary>
         ///     Lee un elemento en la base de datos.
@@ -44,7 +44,7 @@ namespace Quicker.Interfaces.Service
         /// </returns>
         /// <param name="key">Valor de la Primary key a encontrar en la base de datos.</param>
         /// 
-        Task<TEntity> Read(TKey key);
+        Task<ActionResult<TEntity>> Read(TKey key);
 
         /// <summary>
         ///     Lee elementos de la base de datos, de forma paginada.
@@ -55,7 +55,7 @@ namespace Quicker.Interfaces.Service
         /// <param name="number">Cantidad de elementos a tomar de la base de datos.</param>
         /// <param name="page">Numero de pagina de los elementos</param>
         /// 
-        Task<IEnumerable<TEntity>> Paginate(int number, int page);
+        Task<ActionResult<IEnumerable<TEntity>>> Paginate(int number, int page);
 
         /// <summary>
         ///     Verifica la existencia de un recurso en la base ded atos, basandose en la PK
@@ -65,26 +65,16 @@ namespace Quicker.Interfaces.Service
         /// </returns>
         /// <param name="key">PK del elemento a encontrar</param>
         /// 
-        Task<bool> CheckExistenceByKey(TKey key);
-
-        /// <summary>
-        ///     Verifica la existencia de un recurso en la base de datos, basandose en condiciones 
-        ///     establecidas
-        /// </summary>
-        /// <returns>
-        ///     Un <see cref="Task"/> que retorna un <see cref="bool"/>.
-        /// </returns>
-        /// <param name="conditions">Condiciones para buscar el elemento</param>
-        /// 
-        Task<bool> CheckExistenceByConditions(params Expression<Func<TEntity, bool>>[] conditions);
+        Task<ActionResult<bool>> CheckExistenceByKey(TKey key);
     }
 
     /// <summary>
-    ///     Interface para especificar un <em>servicio cerrado</em>, con entidades que si tienen un DTO relacionado.
+    ///     Interface para especificar un <em>controlador cerrado</em>, con entidades que si tienen un DTO relacionado.
     /// </summary>
     /// <remarks>
     ///     <para>
-    ///         Un <em>servicio cerrado</em> provee funciones de solo lectura de elementos en la base de datos, dando la R de el CRUD.
+    ///         Un <em>controlador cerrado</em> consume un servicio cerrado, que tiene funciones de solo lectura de 
+    ///         elementos en la base de datos, dando la R de el CRUD.
     ///     </para>
     /// </remarks>
     /// <typeparam name="TKey">Tipo de la PK en la base de datos</typeparam>
@@ -107,7 +97,7 @@ namespace Quicker.Interfaces.Service
     ///     </para>
     /// </typeparam>
     /// 
-    public interface ICloseServiceAsync<TKey, TEntity, TEntityDTO>
+    public interface ICloseControllerAsync<TKey, TEntity, TEntityDTO>
         where TEntity : class, IAbstractModel<TKey>, IDomainOf<TEntityDTO>
         where TEntityDTO : class, IAbstractModel<TKey>, IDTOOf<TEntity>
     {
@@ -118,7 +108,7 @@ namespace Quicker.Interfaces.Service
         ///     Un <see cref="Task"/> que devuelve un <see cref="IEnumerable{T}"/> con tipo <typeparamref name="TEntityDTO"/>.
         /// </returns>
         /// 
-        Task<IEnumerable<TEntityDTO>> Read();
+        Task<ActionResult<IEnumerable<TEntityDTO>>> Read();
 
         /// <summary>
         ///     Lee un elemento en la base de datos.
@@ -128,7 +118,7 @@ namespace Quicker.Interfaces.Service
         /// </returns>
         /// <param name="key">Valor de la Primary key a encontrar en la base de datos.</param>
         /// 
-        Task<TEntityDTO> Read(TKey key);
+        Task<ActionResult<TEntityDTO>> Read(TKey key);
 
         /// <summary>
         ///     Lee elementos de la base de datos, de forma paginada.
@@ -139,7 +129,7 @@ namespace Quicker.Interfaces.Service
         /// <param name="number">Cantidad de elementos a tomar de la base de datos.</param>
         /// <param name="page">Numero de pagina de los elementos</param>
         /// 
-        Task<IEnumerable<TEntityDTO>> Paginate(int number, int page);
+        Task<ActionResult<IEnumerable<TEntityDTO>>> Paginate(int number, int page);
 
         /// <summary>
         ///     Verifica la existencia de un recurso en la base ded atos, basandose en la PK
@@ -149,17 +139,6 @@ namespace Quicker.Interfaces.Service
         /// </returns>
         /// <param name="key">PK del elemento a encontrar</param>
         /// 
-        Task<bool> CheckExistenceByKey(TKey key);
-
-        /// <summary>
-        ///     Verifica la existencia de un recurso en la base de datos, basandose en condiciones 
-        ///     establecidas
-        /// </summary>
-        /// <returns>
-        ///     Un <see cref="Task"/> que retorna un <see cref="bool"/>.
-        /// </returns>
-        /// <param name="conditions">Condiciones para buscar el elemento</param>
-        /// 
-        Task<bool> CheckExistenceByConditions(params Expression<Func<TEntity, bool>>[] conditions);
+        Task<ActionResult<bool>> CheckExistenceByKey(TKey key);
     }
 }

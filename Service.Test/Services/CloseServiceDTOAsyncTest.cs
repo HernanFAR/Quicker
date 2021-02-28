@@ -488,7 +488,7 @@ namespace Quicker.Test.Services
 
 
             // Act
-            var exist = await _Service.CheckExistence(key);
+            var exist = await _Service.CheckExistenceByKey(key);
 
             // Assert
             Assert.False(exist);
@@ -510,7 +510,7 @@ namespace Quicker.Test.Services
             await _Context.SaveChangesAsync();
 
             // Act
-            var exist = await _Service.CheckExistence(key);
+            var exist = await _Service.CheckExistenceByKey(key);
 
             // Assert
             Assert.True(exist);
