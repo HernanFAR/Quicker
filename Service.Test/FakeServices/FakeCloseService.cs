@@ -1,11 +1,8 @@
 ﻿using Quicker.Abstracts.Service;
-using Quicker.Configuration;
-using Quicker.Test.Repository;
 using System;
-using System.Collections.Generic;
-using System.Text;
+using Test.Common.Repository;
 
-namespace Quicker.Test.FakeServices
+namespace Quicker.Services.Test.Fake
 {
     public class FakeCloseService : CloseServiceAsync<int, TestModel>
     {

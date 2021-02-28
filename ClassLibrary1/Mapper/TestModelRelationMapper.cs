@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
-using Quicker.Test.Repository;
-using Quicker.Test.Repository.DTO;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Test.Common.Repository;
+using Test.Common.Repository.DTO;
 
-namespace Quicker.Test.Mapper
+namespace Test.Common.Mapper
 {
     public class TestModelRelationMapper : Profile
     {

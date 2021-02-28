@@ -3,24 +3,25 @@ using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Quicker.Abstracts.Service;
-using Quicker.Test.Mapper;
-using Quicker.Test.Repository;
-using Quicker.Test.Repository.DTO;
 using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Test.Common;
+using Test.Common.Mapper;
+using Test.Common.Repository;
+using Test.Common.Repository.DTO;
 using Xunit;
 
-namespace Quicker.Test.Services
+namespace Quicker.Services.Test
 {
-    public class FullServiceAsyncDTOTest : IDisposable
+    public class FullServiceDTOAsyncTest : IDisposable
     {
         private readonly TestContext _Context;
         private readonly IMapper _Mapper;
         private readonly FullServiceAsync<int, TestModelRelation, TestModelRelationDTO> _Service;
 
-        public FullServiceAsyncDTOTest()
+        public FullServiceDTOAsyncTest()
         {
             _Context = new ConnectionFactory().CreateContextForSQLite();
             _Mapper = new MapperConfiguration(config =>
@@ -40,7 +41,7 @@ namespace Quicker.Test.Services
             container.AddScoped<DbContext, TestContext>(e => _Context);
             container.AddScoped(e => _Mapper);
 
-            _Service = new FakeServices.FakeFullServiceDTO(container.BuildServiceProvider());
+            _Service = new Fake.FakeFullServiceDTO(container.BuildServiceProvider());
         }
 
         public void Dispose()

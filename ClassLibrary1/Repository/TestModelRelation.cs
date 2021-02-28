@@ -1,12 +1,12 @@
 ﻿using Quicker.Abstracts.Model;
 using Quicker.Interfaces.Model;
-using Quicker.Test.Repository.DTO;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using Test.Common.Repository.DTO;
 
-namespace Quicker.Test.Repository
+namespace Test.Common.Repository
 {
     public class TestModelRelation : AbstractModel<int>, IDomainOf<TestModelRelationDTO>
     {

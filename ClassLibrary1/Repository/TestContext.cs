@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
-namespace Quicker.Test.Repository
+namespace Test.Common.Repository
 {
     public class TestContext : DbContext
     {

@@ -1,14 +1,9 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
-using Quicker.Abstracts.Service;
-using Quicker.Configuration;
-using Quicker.Test.Repository;
-using Quicker.Test.Repository.DTO;
+﻿using Quicker.Abstracts.Service;
 using System;
-using System.Collections.Generic;
-using System.Text;
+using Test.Common.Repository;
+using Test.Common.Repository.DTO;
 
-namespace Quicker.Test.FakeServices
+namespace Quicker.Services.Test.Fake
 {
     public class FakeFullServiceDTO : FullServiceAsync<int, TestModelRelation, TestModelRelationDTO>
     {

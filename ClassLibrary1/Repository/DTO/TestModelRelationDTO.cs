@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace Quicker.Test.Repository.DTO
+namespace Test.Common.Repository.DTO
 {
     public class TestModelRelationDTO : AbstractModel<int>, IDTOOf<TestModelRelation>
     {

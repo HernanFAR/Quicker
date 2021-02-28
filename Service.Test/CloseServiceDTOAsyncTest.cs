@@ -2,18 +2,19 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Quicker.Abstracts.Service;
-using Quicker.Test.Mapper;
-using Quicker.Test.Repository;
-using Quicker.Test.Repository.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
+using Test.Common;
+using Test.Common.Mapper;
+using Test.Common.Repository;
+using Test.Common.Repository.DTO;
 using Xunit;
 
-namespace Quicker.Test.Services
+namespace Quicker.Services.Test
 {
     public class CloseServiceDTOAsyncTest : IDisposable
     {
@@ -40,7 +41,7 @@ namespace Quicker.Test.Services
             container.AddScoped<DbContext, TestContext>(e => _Context);
             container.AddScoped(e => _Mapper);
 
-            _Service = new FakeServices.FakeCloseServiceDTO(container.BuildServiceProvider());
+            _Service = new Fake.FakeCloseServiceDTO(container.BuildServiceProvider());
         }
 
         public void Dispose()

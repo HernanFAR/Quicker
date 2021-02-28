@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace Quicker.Test.Repository
+namespace Test.Common.Repository
 {
     public class TestModel : AbstractModel<int>
     {
