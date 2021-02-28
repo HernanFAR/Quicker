@@ -281,7 +281,8 @@ namespace Quicker.Abstracts.Service
             domain.CreatedAt = original.CreatedAt;
             domain.LastUpdated = DateTime.Now;
 
-            Context.Entry(entity).State = EntityState.Modified;
+            Context.Entry(original).State = EntityState.Detached;
+            Context.Entry(domain).State = EntityState.Modified;
             await Context.SaveChangesAsync();
 
             return entity;
