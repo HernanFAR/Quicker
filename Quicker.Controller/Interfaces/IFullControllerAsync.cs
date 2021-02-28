@@ -1,7 +1,7 @@
 ﻿using Quicker.Interfaces.Model;
 using System.Threading.Tasks;
 
-namespace Quicker.Controller.Interfaces
+namespace Quicker.Interfaces.WebApiController
 {
     /// <summary>
     ///     Interface para especificar un <em>servicio completo</em>, con entidades que no tienen un DTO relacionado.

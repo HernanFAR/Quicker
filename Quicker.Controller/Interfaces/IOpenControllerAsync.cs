@@ -1,11 +1,8 @@
 ﻿using Quicker.Interfaces.Model;
 using Quicker.Interfaces.Service;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace Quicker.Controller.Interfaces
+namespace Quicker.Interfaces.WebApiController
 {
     /// <summary>
     ///     Interface para especificar un <em>controlador abierto</em>, con entidades que no tienen un 
