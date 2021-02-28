@@ -361,6 +361,10 @@ namespace Quicker.Abstracts.Service
             entity.CreatedAt = DateTime.Now;
             entity.LastUpdated = DateTime.Now;
 
+            LogIfNotNull(LogLevel.Information,
+                "Volviendo DTO a entidad de Dominio..."
+            );
+
             var toCreate = ToDomain(entity);
 
             var tracked = Context.Set<TEntity>().Add(toCreate);
