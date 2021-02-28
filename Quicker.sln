@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quicker.Service", "Quicker\Quicker.Service.csproj", "{B56D162A-5016-429B-8BBC-9971B9CA306E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quicker.Test", "Service.Test\Quicker.Test.csproj", "{92F37053-FE94-4FA8-BFEC-A6AB3B4F9034}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quicker.Service.Test", "Service.Test\Quicker.Service.Test.csproj", "{92F37053-FE94-4FA8-BFEC-A6AB3B4F9034}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

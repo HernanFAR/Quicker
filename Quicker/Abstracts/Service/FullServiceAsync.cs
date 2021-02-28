@@ -7,6 +7,8 @@ using DA = System.ComponentModel.DataAnnotations;
 using Fluent = FluentValidation;
 using System.Collections.Generic;
 using FluentValidation.Results;
+using Microsoft.Extensions.Logging;
+using System.Linq;
 
 namespace Quicker.Abstracts.Service
 {
@@ -57,6 +59,10 @@ namespace Quicker.Abstracts.Service
 
             if (isValid)
                 return;
+
+            LogIfNotNull(LogLevel.Warning,
+                $"La entidad no es valida"
+            );
 
             List<ValidationFailure> validationFailures = new List<ValidationFailure>();
 
@@ -116,31 +122,79 @@ namespace Quicker.Abstracts.Service
         /// 
         public async Task<TEntity> Update(TKey key, TEntity entity)
         {
+            LogIfNotNull(LogLevel.Information,
+                $"Actualizando entidad de tipo {{{typeof(TEntity).Name}}} y {{Id}} {key}"
+            );
+
             if (entity is null)
             {
+                LogIfNotNull(LogLevel.Warning,
+                    "No es posible actualizar, la entidad es nula"
+                );
+
                 throw new ArgumentNullException(nameof(entity));
             }
 
+            if (key == null)
+            {
+                LogIfNotNull(LogLevel.Warning,
+                    "No es posible actualizar, la key es nula"
+                );
+
+                throw new ArgumentNullException(nameof(key));
+            }
+
             if (!entity.Id.Equals(key))
+            {
+                LogIfNotNull(LogLevel.Warning,
+                    "No es posible actualizar, la key de la entidad es diferente a la del parametro"
+                );
+
                 throw new InvalidOperationException(nameof(key));
+            }
 
             TEntity original = await Context.Set<TEntity>().FindAsync(key);
 
             if (original == null)
+            {
+                LogIfNotNull(LogLevel.Warning,
+                    $"No es posible actualizar, no existe ninguna entidad relacionada a la {{Id}} {key}"
+                );
+
                 return null;
+            }
+
+            LogIfNotNull(LogLevel.Information,
+                $"Validando la entidad..."
+            );
 
             ValidateObjectBeforeUpdating(entity);
+
+            LogIfNotNull(LogLevel.Information,
+                "Preseteando valores..."
+            );
+
             PresetPropertiesBeforeUpdating(entity, original);
 
             entity.CreatedAt = original.CreatedAt;
             entity.LastUpdated = DateTime.Now;
 
             Context.Entry(original).State = EntityState.Detached;
-            Context.Entry(entity).State = EntityState.Modified;
+
+            var tracked = Context.Entry(entity);
+            tracked.State = EntityState.Modified;
 
             await Context.SaveChangesAsync();
 
-            return entity;
+            var updated = await Query()
+                .Where(e => e.Id.Equals(tracked.Entity.Id))
+                .SingleOrDefaultAsync();
+
+            LogIfNotNull(LogLevel.Information,
+                $"Se ha actualizado con exito"
+            );
+
+            return updated;
         }
     }
     /// <summary>
@@ -186,8 +240,13 @@ namespace Quicker.Abstracts.Service
         ///     <see cref="Fluent.ValidationException"/>.
         /// </summary>
         /// <remarks>
-        ///     Por defecto, aunque use <see cref="Fluent.ValidationException"/> para la excepcion, 
-        ///     usa DataAnnotations para funcionar.
+        ///     <para>
+        ///         Por defecto, aunque use <see cref="Fluent.ValidationException"/> para la 
+        ///         excepcion, usa DataAnnotations para funcionar.
+        ///     </para>
+        ///     <para>
+        ///         En caso de hacerle un override, recuerda incluir el loggeo si la no es valida.
+        ///     </para>
         /// </remarks>
         /// <exception cref="Fluent.ValidationException" />
         /// <exception cref="ArgumentNullException" />
@@ -201,6 +260,10 @@ namespace Quicker.Abstracts.Service
 
             if (isValid)
                 return;
+
+            LogIfNotNull(LogLevel.Warning,
+                $"La entidad no es valida"
+            );
 
             List<ValidationFailure> validationFailures = new List<ValidationFailure>();
 
@@ -260,32 +323,85 @@ namespace Quicker.Abstracts.Service
         /// 
         public async Task<TEntityDTO> Update(TKey key, TEntityDTO entity)
         {
+            LogIfNotNull(LogLevel.Information,
+                $"Actualizando entidad de tipo {{{typeof(TEntity).Name}}} y {{Id}} {key}"
+            );
+
             if (entity is null)
             {
+                LogIfNotNull(LogLevel.Warning,
+                    "No es posible actualizar, la entidad es nula"
+                );
+
                 throw new ArgumentNullException(nameof(entity));
             }
 
+            if (key == null)
+            {
+                LogIfNotNull(LogLevel.Warning,
+                    "No es posible actualizar, la key es nula"
+                );
+
+                throw new ArgumentNullException(nameof(key));
+            }
+
             if (!entity.Id.Equals(key))
+            {
+                LogIfNotNull(LogLevel.Warning,
+                    "No es posible actualizar, la key de la entidad es diferente a la del parametro"
+                );
+
                 throw new InvalidOperationException(nameof(key));
+            }
 
             TEntity original = await Context.Set<TEntity>().FindAsync(key);
 
             if (original == null)
+            {
+                LogIfNotNull(LogLevel.Warning,
+                    $"No es posible actualizar, no existe ninguna entidad relacionada a la {{Id}} {key}"
+                );
+
                 return null;
+            }
+
+            LogIfNotNull(LogLevel.Information,
+                $"Validando la entidad..."
+            );
+
+            ValidateObjectBeforeUpdating(entity);
+
+            LogIfNotNull(LogLevel.Information,
+                "Volviendo DTO a entidad de Dominio..."
+            );
 
             var domain = ToDomain(entity);
 
-            ValidateObjectBeforeUpdating(entity);
+            LogIfNotNull(LogLevel.Information,
+                "Preseteando valores..."
+            );
+
             PresetPropertiesBeforeUpdating(domain, original);
 
             domain.CreatedAt = original.CreatedAt;
             domain.LastUpdated = DateTime.Now;
 
             Context.Entry(original).State = EntityState.Detached;
-            Context.Entry(domain).State = EntityState.Modified;
+            
+            var tracked = Context.Entry(domain);
+            tracked.State = EntityState.Modified;
+            
             await Context.SaveChangesAsync();
 
-            return entity;
+            var updated = await Query()
+                .Where(e => e.Id.Equals(tracked.Entity.Id))
+                .SingleOrDefaultAsync();
+
+            LogIfNotNull(LogLevel.Information,
+                $"Se ha actualizado con exito, pasando a DTO..."
+            );
+
+            return ToDTO(updated);
         }
     }
 }
