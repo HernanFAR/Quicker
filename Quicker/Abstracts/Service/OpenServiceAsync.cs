@@ -8,6 +8,7 @@ using Fluent = FluentValidation;
 using FluentValidation.Results;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace Quicker.Abstracts.Service
 {
@@ -42,8 +43,13 @@ namespace Quicker.Abstracts.Service
         ///     <see cref="Fluent.ValidationException"/>.
         /// </summary>
         /// <remarks>
-        ///     Por defecto, aunque use <see cref="Fluent.ValidationException"/> para la excepcion, 
-        ///     usa DataAnnotations para funcionar.
+        ///     <para>
+        ///         Por defecto, aunque use <see cref="Fluent.ValidationException"/> para la 
+        ///         excepcion, usa DataAnnotations para funcionar.
+        ///     </para>
+        ///     <para>
+        ///         En caso de hacerle un override, recuerda incluir el loggeo si la no es valida.
+        ///     </para>
         /// </remarks>
         /// <exception cref="Fluent.ValidationException" />
         /// <exception cref="ArgumentNullException" />
@@ -57,6 +63,10 @@ namespace Quicker.Abstracts.Service
 
             if (isValid)
                 return;
+
+            LogIfNotNull(LogLevel.Warning,
+                $"La entidad no es valida"
+            );
 
             List<ValidationFailure> validationFailures = new List<ValidationFailure>();
 
@@ -76,8 +86,7 @@ namespace Quicker.Abstracts.Service
         ///     Metodo para presetear los valores de la entidad que se creara.
         /// </summary>
         /// 
-        protected virtual void PresetPropertiesBeforeCreating(TEntity entity)
-        { }
+        protected virtual void PresetPropertiesBeforeCreating(TEntity entity) { }
 
         /// <summary>
         ///     <para>
@@ -112,12 +121,29 @@ namespace Quicker.Abstracts.Service
         /// 
         public virtual async Task<TEntity> Create(TEntity entity)
         {
+            LogIfNotNull(LogLevel.Information,
+                $"Creando entidad de tipo {{{typeof(TEntity).Name}}}"
+            );
+
             if (entity is null)
             {
+                LogIfNotNull(LogLevel.Warning,
+                    $"La entidad enviada es nula"
+                );
+
                 throw new ArgumentNullException(nameof(entity));
             }
 
+            LogIfNotNull(LogLevel.Information,
+                $"Validando la entidad..."
+            );
+
             ValidateObjectBeforeCreating(entity);
+            
+            LogIfNotNull(LogLevel.Information,
+                "Preseteando valores..."
+            );
+
             PresetPropertiesBeforeCreating(entity);
 
             entity.CreatedAt = DateTime.Now;
@@ -130,15 +156,26 @@ namespace Quicker.Abstracts.Service
                 .Where(e => e.Id.Equals(entry.Entity.Id))
                 .SingleOrDefaultAsync();
 
+            LogIfNotNull(LogLevel.Information,
+                $"Se ha creado con exito"
+            );
+
             return created;
         }
+
         /// <summary>
         ///     Filtro que se aplica para ver que elementos no borrar, en base a si tienen determinadas
         ///     propiedades, si no lo pasa, arroja un <see cref="InvalidOperationException"/>
         /// </summary>
+        /// <remarks>
+        ///     Si hacer un override a esta funcion, recuerda agregar loggin para cuando la entidad no 
+        ///     pase el filtro
+        /// </remarks>
         /// <exception cref="InvalidOperationException" />
         /// 
-        protected virtual void DeleteFilter(TEntity entity) { }
+        protected virtual void DeleteFilter(TEntity entity)
+        {
+        }
 
         /// <summary>
         ///     Borra el registro relacionado a la PK que al modelo pasado por parametro, si pasa el filtro, 
@@ -157,15 +194,39 @@ namespace Quicker.Abstracts.Service
         /// 
         public virtual async Task Delete(TKey key)
         {
+            LogIfNotNull(LogLevel.Information,
+                $"Borrando entidad de tipo {{{typeof(TEntity).Name}}} y {{Id}} {key}"
+            );
+
+            if (key == null)
+            {
+                LogIfNotNull(LogLevel.Warning,
+                    "No es posible buscar, la key es nula"
+                );
+
+                throw new ArgumentNullException(nameof(key));
+            }
+
             var entity = await Context.Set<TEntity>().FindAsync(key);
 
-            if (entity == null) throw new InvalidOperationException(nameof(entity));
+            if (entity == null)
+            {
+                LogIfNotNull(LogLevel.Warning,
+                    "No ha sido encontrada la entidad"
+                );
+
+                throw new InvalidOperationException(nameof(entity));
+            }
 
             DeleteFilter(entity);
 
             Context.Entry(entity).State = EntityState.Deleted;
 
             await Context.SaveChangesAsync();
+
+            LogIfNotNull(LogLevel.Information,
+                $"Se ha borrado con exito"
+            );
         }
     }
 
@@ -224,6 +285,10 @@ namespace Quicker.Abstracts.Service
             if (isValid)
                 return;
 
+            LogIfNotNull(LogLevel.Warning,
+                $"La entidad no es valida"
+            );
+
             List<ValidationFailure> validationFailures = new List<ValidationFailure>();
 
             errors.ForEach(e =>
@@ -268,7 +333,28 @@ namespace Quicker.Abstracts.Service
         /// 
         public virtual async Task<TEntityDTO> Create(TEntityDTO entity)
         {
+            LogIfNotNull(LogLevel.Information,
+                $"Creando entidad de tipo {{{typeof(TEntity).Name}}}"
+            );
+
+            if (entity is null)
+            {
+                LogIfNotNull(LogLevel.Warning,
+                    $"La entidad enviada es nula"
+                );
+
+                throw new ArgumentNullException(nameof(entity));
+            }
+
+            LogIfNotNull(LogLevel.Information,
+                $"Validando la entidad..."
+            );
+
             ValidateObjectBeforeCreating(entity);
+
+            LogIfNotNull(LogLevel.Information,
+                "Preseteando valores..."
+            );
 
             PresetPropertiesBeforeCreating(entity);
 
@@ -283,6 +369,10 @@ namespace Quicker.Abstracts.Service
             var created = await Query()
                 .Where(e => e.Id.Equals(tracked.Entity.Id))
                 .SingleOrDefaultAsync();
+
+            LogIfNotNull(LogLevel.Information,
+                $"Se ha creado con exito, pasando a DTO..."
+            );
 
             var dto = ToDTO(created);
 
@@ -313,15 +403,38 @@ namespace Quicker.Abstracts.Service
         /// 
         public virtual async Task Delete(TKey key)
         {
+            LogIfNotNull(LogLevel.Information,
+                $"Borrando entidad de tipo {{{typeof(TEntity).Name}}} y {{Id}} {key}"
+            );
+
+            if (key == null)
+            {
+                LogIfNotNull(LogLevel.Warning,
+                    "No es posible buscar, la key es nula"
+                );
+
+                throw new ArgumentNullException(nameof(key));
+            }
             var entity = await Context.Set<TEntity>().FindAsync(key);
 
-            if (entity == null) throw new InvalidOperationException(nameof(entity));
+            if (entity == null)
+            {
+                LogIfNotNull(LogLevel.Warning,
+                    "No ha sido encontrada la entidad"
+                );
+
+                throw new InvalidOperationException(nameof(entity));
+            }
 
             DeleteFilter(entity);
 
             Context.Entry(entity).State = EntityState.Deleted;
 
             await Context.SaveChangesAsync();
+
+            LogIfNotNull(LogLevel.Information,
+                $"Se ha borrado con exito"
+            );
         }
     }
 }
