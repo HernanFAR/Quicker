@@ -91,6 +91,43 @@ namespace Quicker.Controller.Interfaces
         Task<bool> CheckExistenceByConditions(params Expression<Func<TEntity, bool>>[] conditions);
     }
 
+    /// <summary>
+    ///     Interface para especificar un <em>controlador cerrado</em>, con entidades que si tienen un DTO relacionado.
+    /// </summary>
+    /// <remarks>
+    ///     <para>
+    ///         Un <em>controlador cerrado</em> consume un servicio cerrado, que tiene funciones de solo lectura de 
+    ///         elementos en la base de datos, dando la R de el CRUD.
+    ///     </para>
+    /// </remarks>
+    /// <typeparam name="TKey">Tipo de la PK en la base de datos</typeparam>
+    /// <typeparam name="TEntity">
+    ///     <para>
+    ///         Tipo de la entidad que debe devolver la base de datos. 
+    ///     </para>
+    ///     <para>
+    ///         Debe ser una clase, implementar <see cref="IAbstractModel{TKey}"/> y <see cref="IDTOOf{TDomain}"/>, 
+    ///         con TDomain de valor <typeparamref name="TEntityDTO"/>
+    ///     </para>
+    /// </typeparam>
+    /// <typeparam name="TEntityDTO">
+    ///     <para>
+    ///         Tipo de la entidad que debe devolver el servicio. 
+    ///     </para>
+    ///     <para>
+    ///         Debe ser una clase, implementar <see cref="IAbstractModel{TKey}"/> y <see cref="IDomainOf{TDTO}"/>, 
+    ///         con TDTO de valor <typeparamref name="TEntity"/>
+    ///     </para>
+    /// </typeparam>
+    /// <typeparam name="TService">
+    ///     <para>
+    ///         Servicio que consume el controlador para obtener la informacion. 
+    ///     </para>
+    ///     <para>
+    ///         Debe ser una clase e implementar <see cref="ICloseServiceAsync{TKey, TEntity}"/>.
+    ///     </para>
+    /// </typeparam>
+    /// 
     public interface ICloseControllerAsync<TKey, TEntity, TEntityDTO, TService>
         where TEntity : class, IAbstractModel<TKey>, IDomainOf<TEntityDTO>
         where TEntityDTO : class, IAbstractModel<TKey>, IDTOOf<TEntity>
