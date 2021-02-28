@@ -11,11 +11,19 @@ Por eso, el proposito de este micro-framework, es brindar una aproximacion en C#
 
 En esta instante, tiene estas dependencias:
 
-- EntityFrameworkCore: obligatorio, ya que ayuda con la capa de repositorio
-- AutoMapper: Opcional, ayuda con la implementacion de un mappeador de clases entre las capas
-- DataAnnotations: Opcional, ayuda con la implementacion de un validador de objetos
+* EntityFrameworkCore: Ya que ayuda con la capa de repositorio
+* AutoMapper: Ayuda con la implementacion de un mappeador de clases entre las capas. 
+  * Aunque, no es obligatorio usarlo pues puedes _overridear_ las funciones de mappeo para poner tu propio Mapeador. 
+* DataAnnotations: Se usa para validar los objectos.
+* FluentValidations: Se puede usar para validar objectos, aunque se tiene aca exclusivamente por la excepcion _ValidacionException_. 
+  * Por defecto, el sistema usa ValidationException de este paquete, para cuando hay problemas de validacion, __aunque use DataAnnotations__.
+  * En caso de que quieras usar solo este paquete, solo debes hacer un override a las funciones de validacion.
 
 ## Arquitectura de trabajo que provee
+
+![Imagen de la arquitectura](https://github.com/HernanFAR/Quicker/blob/master/img/Esp/Arquitectura.png?raw=true)
+
+En amarillo, los componentes en los que te ayuda el framework.
 
 _work in progress_
 
@@ -25,26 +33,31 @@ _work in progress_
 
 ## Pasos futuros
 
-Actualmente, el paquete se encuentra en desarrollo, por lo que aqui abajo hay una lista con los hitos a cumplir, y debajo de ella, los otros hitos a futuro.
+Actualmente, el paquete se encuentra en desarrollo, por lo que aqui abajo hay una lista con los hitos cumplidos, a cumplir, y futuros.
+
+Completados:
+- Abstracciones de servicios.
+- Diagrama de la arquitectura que te recomienda el framework
+
+Pendiente para la siguiente version menor:
+- Agregar loggers en el resto de servicios (Actualmente, solo en CloseService)
+- Completar las abstracciones de WebAPI Controllers.
+- Agregar una version en ingles de la documentacion de las funciones (Actualmente, es en español)
 
 Pendiente para la 1.0:
-
 - Agregar diagramas y explicaciones de la funcionalidad interna del framework
 - Agregar un equivalente en ingles del readme.md
-- Completar las abstracciones de servicios.
-- Completar las abstracciones de WebAPI Controllers.
 
 Pendientes para el futuro, si son posibles:
 
 - Agregar abstracciones de MVC Controllers
 - Agregar implementaciones con mas de una clave primaria.
 - Agregar un _soft delete_ opcional.
-- Agregar una implementacion de todo eso, Add a implementation of all in DPT pattern, for a multitenant solution
-- Agregar una _capa de preejecucion_ **opcional** para la validacion de parametros (AOP)
+- Agregar una implementacion de todo eso, en un patron DTP, para una solucion _multitenant_
 
 ## Agradecimientos
 
-- A Alvaro, por ser un apoyo muy grande desde que me converti en desarrollador profesional.
+- A Áhlvaro, por ser un apoyo muy grande desde que me converti en desarrollador profesional.
 
 ## Inspiraciones
 
