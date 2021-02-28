@@ -129,7 +129,7 @@ namespace Quicker.Interfaces.WebApiController
         /// <param name="number">Cantidad de elementos a tomar de la base de datos.</param>
         /// <param name="page">Numero de pagina de los elementos</param>
         /// 
-        Task<IEnumerable<TEntityDTO>> Paginate(int number, int page);
+        Task<ActionResult<IEnumerable<TEntityDTO>>> Paginate(int number, int page);
 
         /// <summary>
         ///     Verifica la existencia de un recurso en la base ded atos, basandose en la PK
@@ -139,6 +139,6 @@ namespace Quicker.Interfaces.WebApiController
         /// </returns>
         /// <param name="key">PK del elemento a encontrar</param>
         /// 
-        Task<ActionResult<bool>> CheckExistence(TKey key);
+        Task<ActionResult<bool>> CheckExistenceByKey(TKey key);
     }
 }
