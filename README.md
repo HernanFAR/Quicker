@@ -11,13 +11,13 @@ Por eso, el proposito de este micro-framework, es brindar una aproximacion en C#
 
 En esta instante, tiene estas dependencias:
 
-- EntityFrameworkCore: Ya que ayuda con la capa de repositorio
-- AutoMapper: Ayuda con la implementacion de un mappeador de clases entre las capas. 
--- Aunque, no es obligatorio usarlo pues puedes _overridear_ las funciones de mappeo para poner tu propio Mapeador. 
-- DataAnnotations: Se usa para validar los objectos.
-- FluentValidations: Se puede usar para validar objectos, aunque se tiene aca exclusivamente por la excepcion _ValidacionException_. 
--- Por defecto, el sistema usa ValidationException de este paquete, para cuando hay problemas de validacion, __aunque use DataAnnotations__.
--- Tambien, esto se hizo asi para facilitar la implementacion de FluentValidation, ya que si quieres usarla, solo debes hacer un override a las funciones de validacion.
+* EntityFrameworkCore: Ya que ayuda con la capa de repositorio
+* AutoMapper: Ayuda con la implementacion de un mappeador de clases entre las capas. 
+  * Aunque, no es obligatorio usarlo pues puedes _overridear_ las funciones de mappeo para poner tu propio Mapeador. 
+* DataAnnotations: Se usa para validar los objectos.
+* FluentValidations: Se puede usar para validar objectos, aunque se tiene aca exclusivamente por la excepcion _ValidacionException_. 
+  * Por defecto, el sistema usa ValidationException de este paquete, para cuando hay problemas de validacion, __aunque use DataAnnotations__.
+  * En caso de que quieras usar solo este paquete, solo debes hacer un override a las funciones de validacion.
 
 ## Arquitectura de trabajo que provee
 
