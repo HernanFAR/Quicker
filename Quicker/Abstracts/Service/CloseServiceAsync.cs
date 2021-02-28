@@ -177,6 +177,15 @@ namespace Quicker.Abstracts.Service
                 $"Leyendo los registros de tipo {{{typeof(TEntity).Name}}}, para buscar a la entidad de {{Id}} {key}"
             );
 
+            if (key == null)
+            {
+                LogIfNotNull(LogLevel.Warning,
+                    "No es posible buscar, la key es nula"
+                );
+
+                throw new ArgumentNullException(nameof(key));
+            }
+
             var query = Query();
 
             var entity = await ReadFilter(query)
@@ -266,6 +275,15 @@ namespace Quicker.Abstracts.Service
             LogIfNotNull(LogLevel.Information,
                 $"Buscando un elemento de {{ID}} {key}"
             );
+
+            if (key == null)
+            {
+                LogIfNotNull(LogLevel.Warning,
+                    "No es posible buscar, la key es nula"
+                );
+
+                throw new ArgumentNullException(nameof(key));
+            }
 
             var query = Query();
 
@@ -546,6 +564,15 @@ namespace Quicker.Abstracts.Service
                 $"Leyendo los registros de tipo {{{typeof(TEntity).Name}}}, para buscar a la entidad de {{Id}} {key}"
             );
 
+            if (key == null)
+            {
+                LogIfNotNull(LogLevel.Warning,
+                    "No es posible buscar, la key es nula"
+                );
+
+                throw new ArgumentNullException(nameof(key));
+            }
+
             var query = Query();
 
             var entity = await ReadFilter(query)
@@ -633,6 +660,15 @@ namespace Quicker.Abstracts.Service
             LogIfNotNull(LogLevel.Information,
                 $"Buscando un elemento de {{ID}} {key}"
             );
+
+            if (key == null)
+            {
+                LogIfNotNull(LogLevel.Warning,
+                    "No es posible buscar, la key es nula"
+                );
+
+                throw new ArgumentNullException(nameof(key));
+            }
 
             var query = Query();
 
