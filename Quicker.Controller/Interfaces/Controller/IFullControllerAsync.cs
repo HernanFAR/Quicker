@@ -81,6 +81,16 @@ namespace Quicker.Interfaces.WebApiController
         where TEntityDTO : class, IAbstractModel<TKey>, IDTOOf<TEntity>
     {
         /// <summary>
+        ///     Obtiene los nombres de las propiedades y los tipos de la entidad a editar.
+        /// </summary> 
+        /// <returns>
+        ///     Un <see cref="Task"/> que devuelve un <see cref="ActionResult"/> con un 
+        ///     <see cref="Dictionary{string, string}"/> con la informacion de la entidad.
+        /// </returns>
+        /// 
+        ActionResult<Dictionary<string, string>> Edit();
+
+        /// <summary>
         ///     Actualiza un elemento en la base de datos.
         /// </summary> 
         /// <returns>
@@ -89,6 +99,6 @@ namespace Quicker.Interfaces.WebApiController
         /// <param name="key">PK de la entidad a actualizar en la base de datos.</param>
         /// <param name="entity">Entidad a actualizar en la base de datos.</param>
         /// 
-        Task<TEntityDTO> Update(TKey key, TEntityDTO entity);
+        Task<ActionResult<TEntityDTO>> Update(TKey key, TEntityDTO entity);
     }
 }
