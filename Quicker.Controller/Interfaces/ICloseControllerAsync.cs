@@ -26,18 +26,9 @@ namespace Quicker.Controller.Interfaces
     ///         Debe ser una clase e implementar <see cref="IAbstractModel{TKey}"/>.
     ///     </para>
     /// </typeparam>
-    /// <typeparam name="TService">
-    ///     <para>
-    ///         Servicio que consume el controlador para obtener la informacion. 
-    ///     </para>
-    ///     <para>
-    ///         Debe ser una clase e implementar <see cref="ICloseServiceAsync{TKey, TEntity}"/>.
-    ///     </para>
-    /// </typeparam>
     /// 
-    public interface ICloseControllerAsync<TKey, TEntity, TService>
+    public interface ICloseControllerAsync<TKey, TEntity>
         where TEntity : class, IAbstractModel<TKey>
-        where TService : class, ICloseServiceAsync<TKey, TEntity>
     {
         /// <summary>
         ///     Lee todos los elementos de la base de datos.
@@ -119,19 +110,10 @@ namespace Quicker.Controller.Interfaces
     ///         con TDTO de valor <typeparamref name="TEntity"/>
     ///     </para>
     /// </typeparam>
-    /// <typeparam name="TService">
-    ///     <para>
-    ///         Servicio que consume el controlador para obtener la informacion. 
-    ///     </para>
-    ///     <para>
-    ///         Debe ser una clase e implementar <see cref="ICloseServiceAsync{TKey, TEntity}"/>.
-    ///     </para>
-    /// </typeparam>
     /// 
-    public interface ICloseControllerAsync<TKey, TEntity, TEntityDTO, TService>
+    public interface ICloseControllerAsync<TKey, TEntity, TEntityDTO>
         where TEntity : class, IAbstractModel<TKey>, IDomainOf<TEntityDTO>
         where TEntityDTO : class, IAbstractModel<TKey>, IDTOOf<TEntity>
-        where TService : class, ICloseServiceAsync<TKey, TEntity, TEntityDTO>
     {
         /// <summary>
         ///     Lee todos los elementos de la base de datos.
