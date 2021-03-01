@@ -21,4 +21,10 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ClassLibrary1\Test.Common.csproj" />
+    <ProjectReference Include="..\Quicker.Controller\Quicker.Controller.csproj" />
+    <ProjectReference Include="..\Service.Test\Quicker.Service.Test.csproj" />
+  </ItemGroup>
+
 </Project>
