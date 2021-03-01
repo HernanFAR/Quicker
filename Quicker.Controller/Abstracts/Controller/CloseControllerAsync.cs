@@ -1,21 +1,23 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Quicker.Controller.Constants;
 using Quicker.Interfaces.Model;
 using Quicker.Interfaces.Service;
 using Quicker.Interfaces.WebApiController;
 using System;
 using System.Collections.Generic;
+using System.Net.Mime;
 using System.Threading.Tasks;
 
 namespace Quicker.Abstracts.Controller
 {
 #warning Pendiente agregar documentacion
-
     [ApiController]
     public abstract class CloseControllerAsync<TKey, TEntity, TServiceInterface> : ControllerBase, ICloseControllerAsync<TKey, TEntity>
         where TEntity : class, IAbstractModel<TKey>
         where TServiceInterface : ICloseServiceAsync<TKey, TEntity>
     {
-        protected TServiceInterface Service { get; private set; }
+        protected TServiceInterface Service { get; }
 
         public CloseControllerAsync(TServiceInterface service)
         {
@@ -23,14 +25,21 @@ namespace Quicker.Abstracts.Controller
         }
 
         [HttpGet]
+        [Produces(ControllerConstants.JsonContentType)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<TEntity>>> Read()
             => Ok(await Service.Read());
 
         [HttpGet("{key}")]
+        [Produces(ControllerConstants.JsonContentType)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<TEntity>> Read([FromRoute] TKey key)
             => Ok(await Service.Read(key));
 
         [HttpGet("paginate")]
+        [Produces(ControllerConstants.JsonContentType)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public async Task<ActionResult<IEnumerable<TEntity>>> Paginate([FromQuery] int number, [FromQuery] int page)
         {
             ActionResult<IEnumerable<TEntity>> result;
@@ -48,6 +57,8 @@ namespace Quicker.Abstracts.Controller
         }
 
         [HttpGet("exists/{key}")]
+        [Produces(ControllerConstants.JsonContentType)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<bool>> CheckExistenceByKey([FromRoute] TKey key)
             => Ok(await Service.CheckExistenceByKey(key));
     }
@@ -66,14 +77,21 @@ namespace Quicker.Abstracts.Controller
         }
 
         [HttpGet]
+        [Produces(ControllerConstants.JsonContentType)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<TEntityDTO>>> Read()
             => Ok(await Service.Read());
 
         [HttpGet("{key}")]
+        [Produces(ControllerConstants.JsonContentType)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<TEntityDTO>> Read([FromRoute] TKey key)
             => Ok(await Service.Read(key));
 
         [HttpGet("paginate")]
+        [Produces(ControllerConstants.JsonContentType)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public async Task<ActionResult<IEnumerable<TEntityDTO>>> Paginate([FromQuery] int number, [FromQuery] int page)
         {
             ActionResult<IEnumerable<TEntityDTO>> result;
@@ -91,6 +109,8 @@ namespace Quicker.Abstracts.Controller
         }
 
         [HttpGet("exists/{key}")]
+        [Produces(ControllerConstants.JsonContentType)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<bool>> CheckExistenceByKey([FromRoute] TKey key)
             => Ok(await Service.CheckExistenceByKey(key));
     }
