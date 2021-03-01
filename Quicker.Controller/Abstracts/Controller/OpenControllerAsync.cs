@@ -1,6 +1,8 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Quicker.Controller.Constants;
 using Quicker.Interfaces.Model;
 using Quicker.Interfaces.Service;
 using Quicker.Interfaces.WebApiController;
@@ -20,6 +22,12 @@ namespace Quicker.Abstracts.Controller
             base(service) { }
 
         [HttpPost]
+        [Consumes(ControllerConstants.JsonContentType)]
+        [Produces(ControllerConstants.JsonContentType)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public async Task<ActionResult<TEntity>> Create([FromBody] TEntity entity)
         {
             ActionResult<TEntity> actionResult;
@@ -53,10 +61,18 @@ namespace Quicker.Abstracts.Controller
         }
 
         [HttpGet("new")]
+        [Produces(ControllerConstants.JsonContentType)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<Dictionary<string, string>> New()
             => Ok(Service.GetPropertyInformationForCreate());
 
         [HttpDelete]
+        [Consumes(ControllerConstants.JsonContentType)]
+        [Produces(ControllerConstants.JsonContentType)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public async Task<ActionResult> Delete([FromBody] TEntity entity)
         {
             ActionResult actionResult;
@@ -88,6 +104,11 @@ namespace Quicker.Abstracts.Controller
         }
 
         [HttpDelete("{key}")]
+        [Produces(ControllerConstants.JsonContentType)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public async Task<ActionResult> Delete(TKey key)
         {
             ActionResult actionResult;
@@ -129,6 +150,12 @@ namespace Quicker.Abstracts.Controller
             base(service) { }
 
         [HttpPost]
+        [Consumes(ControllerConstants.JsonContentType)]
+        [Produces(ControllerConstants.JsonContentType)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public async Task<ActionResult<TEntityDTO>> Create([FromBody] TEntityDTO entity)
         {
             ActionResult<TEntityDTO> actionResult;
@@ -162,10 +189,18 @@ namespace Quicker.Abstracts.Controller
         }
 
         [HttpGet("new")]
+        [Produces(ControllerConstants.JsonContentType)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<Dictionary<string, string>> New()
             => Ok(Service.GetPropertyInformationForCreate());
 
         [HttpDelete]
+        [Consumes(ControllerConstants.JsonContentType)]
+        [Produces(ControllerConstants.JsonContentType)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public async Task<ActionResult> Delete([FromBody] TEntityDTO entity)
         {
             ActionResult actionResult;
@@ -197,6 +232,12 @@ namespace Quicker.Abstracts.Controller
         }
 
         [HttpDelete("{key}")]
+        [Consumes(ControllerConstants.JsonContentType)]
+        [Produces(ControllerConstants.JsonContentType)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public async Task<ActionResult> Delete(TKey key)
         {
             ActionResult actionResult;

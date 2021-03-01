@@ -1,6 +1,8 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Quicker.Controller.Constants;
 using Quicker.Interfaces.Model;
 using Quicker.Interfaces.Service;
 using Quicker.Interfaces.WebApiController;
@@ -20,10 +22,19 @@ namespace Quicker.Abstracts.Controller
             base(service) { }
 
         [HttpGet("Edit")]
+        [Produces(ControllerConstants.JsonContentType)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<Dictionary<string, string>> Edit()
             => Ok(Service.GetPropertyInformationForUpdating());
 
         [HttpPut("{key}")]
+        [Consumes(ControllerConstants.JsonContentType)]
+        [Produces(ControllerConstants.JsonContentType)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public async Task<ActionResult<TEntity>> Update([FromQuery] TKey key, [FromBody] TEntity entity)
         {
             ActionResult<TEntity> actionResult;
@@ -39,7 +50,7 @@ namespace Quicker.Abstracts.Controller
             catch (InvalidOperationException ex)
             {
                 if (ex.Message == "key")
-                    actionResult = new StatusCodeResult(409);
+                    actionResult = StatusCode(StatusCodes.Status406NotAcceptable);
                 else
                     actionResult = Conflict(ex.Message);
             }
@@ -70,10 +81,19 @@ namespace Quicker.Abstracts.Controller
             base(service) { }
 
         [HttpGet("Edit")]
+        [Produces(ControllerConstants.JsonContentType)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<Dictionary<string, string>> Edit()
             => Ok(Service.GetPropertyInformationForUpdating());
 
         [HttpPut("{key}")]
+        [Consumes(ControllerConstants.JsonContentType)]
+        [Produces(ControllerConstants.JsonContentType)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public async Task<ActionResult<TEntityDTO>> Update([FromQuery] TKey key, [FromBody] TEntityDTO entity)
         {
             ActionResult<TEntityDTO> actionResult;
@@ -89,7 +109,7 @@ namespace Quicker.Abstracts.Controller
             catch (InvalidOperationException ex)
             {
                 if (ex.Message == "key")
-                    actionResult = new StatusCodeResult(409);
+                    actionResult = StatusCode(StatusCodes.Status406NotAcceptable);
                 else
                     actionResult = Conflict(ex.Message);
             }
