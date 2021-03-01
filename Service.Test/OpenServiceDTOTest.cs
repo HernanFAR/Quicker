@@ -15,13 +15,13 @@ using Xunit;
 
 namespace Quicker.Services.Test
 {
-    public class OpenServiceDTOAsyncTest : IDisposable
+    public class OpenServiceDTOTest : IDisposable
     {
         private readonly TestContext _Context;
         private readonly IMapper _Mapper;
         private readonly OpenServiceAsync<int, TestModelRelation, TestModelRelationDTO> _Service;
 
-        public OpenServiceDTOAsyncTest()
+        public OpenServiceDTOTest()
         {
             _Context = new ConnectionFactory().CreateContextForSQLite();
             _Mapper = new MapperConfiguration(config =>
