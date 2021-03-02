@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Quicker.Abstracts.Service
 {
+#warning Agregar funciones de filtro al crear
     /// <summary>
     ///     Implementacion principal de <see cref="IOpenServiceAsync{TKey, TEntity}"/>, que brinda 
     ///     funciones de ayuda para la creacion y borrado de datos.
@@ -230,6 +231,20 @@ namespace Quicker.Abstracts.Service
                 $"Se ha borrado con exito"
             );
         }
+
+#warning Agregar documentacion de este metodo
+        public Dictionary<string, string> GetPropertyInformationForCreate()
+        {
+            Dictionary<string, string> propertyTypes = new Dictionary<string, string>();
+
+            Type entityType = typeof(TEntity);
+            var propertyInfos = entityType.GetProperties();
+
+            foreach (var propertyInfo in propertyInfos)
+                propertyTypes.Add(propertyInfo.Name, propertyInfo.PropertyType.Name);
+
+            return propertyTypes;
+        }
     }
 
     /// <summary>
@@ -443,6 +458,20 @@ namespace Quicker.Abstracts.Service
             LogIfNotNull(LogLevel.Information,
                 $"Se ha borrado con exito"
             );
+        }
+
+#warning Agregar documentacion de este metodo
+        public Dictionary<string, string> GetPropertyInformationForCreate()
+        {
+            Dictionary<string, string> propertyTypes = new Dictionary<string, string>();
+
+            Type entityType = typeof(TEntityDTO);
+            var propertyInfos = entityType.GetProperties();
+
+            foreach (var propertyInfo in propertyInfos)
+                propertyTypes.Add(propertyInfo.Name, propertyInfo.PropertyType.Name);
+
+            return propertyTypes;
         }
     }
 }

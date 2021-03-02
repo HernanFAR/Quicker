@@ -12,6 +12,7 @@ using System.Linq;
 
 namespace Quicker.Abstracts.Service
 {
+#warning Agregar funciones de filtro al editar
     /// <summary>
     ///     Implementacion principal de <see cref="IFullServiceAsync{TKey, TEntity}"/>, que brinda 
     ///     funciones de ayuda para la creacion, actualizacion y borrado de datos.
@@ -195,6 +196,19 @@ namespace Quicker.Abstracts.Service
             );
 
             return updated;
+        }
+
+        public Dictionary<string, string> GetPropertyInformationForUpdating()
+        {
+            Dictionary<string, string> propertyTypes = new Dictionary<string, string>();
+
+            Type entityType = typeof(TEntity);
+            var propertyInfos = entityType.GetProperties();
+
+            foreach (var propertyInfo in propertyInfos)
+                propertyTypes.Add(propertyInfo.Name, propertyInfo.PropertyType.Name);
+
+            return propertyTypes;
         }
     }
     /// <summary>
@@ -402,6 +416,19 @@ namespace Quicker.Abstracts.Service
             );
 
             return ToDTO(updated);
+        }
+
+        public Dictionary<string, string> GetPropertyInformationForUpdating()
+        {
+            Dictionary<string, string> propertyTypes = new Dictionary<string, string>();
+
+            Type entityType = typeof(TEntityDTO);
+            var propertyInfos = entityType.GetProperties();
+
+            foreach (var propertyInfo in propertyInfos)
+                propertyTypes.Add(propertyInfo.Name, propertyInfo.PropertyType.Name);
+
+            return propertyTypes;
         }
     }
 }
