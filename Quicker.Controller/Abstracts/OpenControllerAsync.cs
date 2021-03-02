@@ -34,7 +34,7 @@ namespace Quicker.Abstracts.Controller
 
             try
             {
-                actionResult = Ok(await Service.Create(entity));
+                actionResult = StatusCode(StatusCodes.Status201Created, await Service.Create(entity));
             }
             catch (ArgumentNullException)
             {
