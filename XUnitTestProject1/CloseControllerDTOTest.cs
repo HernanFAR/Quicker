@@ -54,7 +54,7 @@ namespace Quicker.Controller.Test
         }
 
         [Fact]
-        public async Task Read_Success_ShouldReturnOK_WithZeroEntities()
+        public async Task Read_Success_ShouldReturnNoContent_WithZeroEntities()
         {
             // Act
             var response = await _Controller.Read();
