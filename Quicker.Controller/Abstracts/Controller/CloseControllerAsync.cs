@@ -7,7 +7,6 @@ using Quicker.Interfaces.WebApiController;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Mime;
 using System.Threading.Tasks;
 
 namespace Quicker.Abstracts.Controller
@@ -117,13 +116,42 @@ namespace Quicker.Abstracts.Controller
         [Produces(ControllerConstants.JsonContentType)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<TEntityDTO>>> Read()
-            => Ok(await Service.Read());
+        {
+            ActionResult<IEnumerable<TEntityDTO>> actionResult;
+
+            var entities = await Service.Read();
+
+            if (entities.ToList().Count == 0)
+                actionResult = NoContent();
+            else
+                actionResult = Ok(entities);
+
+            return actionResult;
+        }
 
         [HttpGet("{key}")]
         [Produces(ControllerConstants.JsonContentType)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<TEntityDTO>> Read([FromRoute] TKey key)
-            => Ok(await Service.Read(key));
+        {
+            ActionResult<TEntityDTO> actionResult;
+
+            try
+            {
+                var entity = await Service.Read(key);
+
+                if (entity == null)
+                    actionResult = NotFound();
+                else
+                    actionResult = Ok(entity);
+            }
+            catch (ArgumentException ex)
+            {
+                actionResult = UnprocessableEntity(ex.Message);
+            }
+
+            return actionResult;
+        }
 
         [HttpGet("paginate")]
         [Produces(ControllerConstants.JsonContentType)]
@@ -135,7 +163,12 @@ namespace Quicker.Abstracts.Controller
 
             try
             {
-                result = Ok(await Service.Paginate(number, page));
+                var entities = await Service.Paginate(number, page);
+
+                if (entities.ToList().Count == 0)
+                    result = NoContent();
+                else
+                    result = Ok(entities);
             }
             catch (ArgumentException ex)
             {
