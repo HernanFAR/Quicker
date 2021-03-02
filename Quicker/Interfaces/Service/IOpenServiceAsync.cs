@@ -58,6 +58,9 @@ namespace Quicker.Interfaces.Service
         /// <param name="key">PK de la entidad a borrar en la base de datos.</param>
         /// 
         Task Delete(TKey key);
+
+#warning agregar documentacion de este metodo
+        Dictionary<string, string> GetPropertyInformationForCreate();
     }
 
     /// <summary>
@@ -123,5 +126,8 @@ namespace Quicker.Interfaces.Service
         /// <param name="key">PK de la entidad a borrar en la base de datos.</param>
         /// 
         Task Delete(TKey key);
+
+#warning agregar documentacion de este metodo
+        Dictionary<string, string> GetPropertyInformationForCreate();
     }
 }
