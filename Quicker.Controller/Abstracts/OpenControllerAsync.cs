@@ -71,6 +71,7 @@ namespace Quicker.Abstracts.Controller
         [Produces(ControllerConstants.JsonContentType)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public async Task<ActionResult> Delete([FromBody] TEntity entity)
