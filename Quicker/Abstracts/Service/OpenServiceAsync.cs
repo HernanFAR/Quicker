@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Quicker.Abstracts.Service
 {
+#warning Agregar funciones de filtro al crear
     /// <summary>
     ///     Implementacion principal de <see cref="IOpenServiceAsync{TKey, TEntity}"/>, que brinda 
     ///     funciones de ayuda para la creacion y borrado de datos.
@@ -185,7 +186,17 @@ namespace Quicker.Abstracts.Service
         /// <exception cref="InvalidOperationException" />
         /// 
         public virtual Task Delete(TEntity entity)
-            => Delete(entity.Id);
+        {
+            if (entity == null) { 
+                LogIfNotNull(LogLevel.Warning,
+                    "No es posible buscar, la entidad es nula"
+                );
+
+                throw new ArgumentNullException(nameof(entity));
+            }
+
+            return Delete(entity.Id);
+        }
 
         /// <summary>
         ///     Borra el registro relacionado a la PK que se paso por parametro, si pasa el filtro, 
@@ -229,6 +240,25 @@ namespace Quicker.Abstracts.Service
             LogIfNotNull(LogLevel.Information,
                 $"Se ha borrado con exito"
             );
+        }
+
+#warning Agregar documentacion de este metodo
+        public Dictionary<string, string> GetPropertyInformationForCreate()
+        {
+            Dictionary<string, string> propertyTypes = new Dictionary<string, string>();
+
+            Type entityType = typeof(TEntity);
+            var propertyInfos = entityType.GetProperties();
+
+            foreach (var propertyInfo in propertyInfos)
+            {
+                var propertyType = propertyInfo.PropertyType;
+
+                if (!(propertyType.IsClass || propertyType.IsInterface) || propertyType == typeof(String))
+                    propertyTypes.Add(propertyInfo.Name, propertyInfo.PropertyType.Name);
+            }
+
+            return propertyTypes;
         }
     }
 
@@ -400,7 +430,18 @@ namespace Quicker.Abstracts.Service
         /// <exception cref="InvalidOperationException" />
         /// 
         public virtual Task Delete(TEntityDTO entity)
-            => Delete(entity.Id);
+        {
+            if (entity == null)
+            {
+                LogIfNotNull(LogLevel.Warning,
+                    "No es posible buscar, la entidad es nula"
+                );
+
+                throw new ArgumentNullException(nameof(entity));
+            }
+
+            return Delete(entity.Id);
+        }
 
         /// <summary>
         ///     Borra el registro relacionado a la PK que se paso por parametro, si pasa el filtro, 
@@ -443,6 +484,25 @@ namespace Quicker.Abstracts.Service
             LogIfNotNull(LogLevel.Information,
                 $"Se ha borrado con exito"
             );
+        }
+
+#warning Agregar documentacion de este metodo
+        public Dictionary<string, string> GetPropertyInformationForCreate()
+        {
+            Dictionary<string, string> propertyTypes = new Dictionary<string, string>();
+
+            Type entityType = typeof(TEntityDTO);
+            var propertyInfos = entityType.GetProperties();
+
+            foreach (var propertyInfo in propertyInfos)
+            {
+                var propertyType = propertyInfo.PropertyType;
+
+                if (!(propertyType.IsClass || propertyType.IsInterface) || propertyType == typeof(String))
+                    propertyTypes.Add(propertyInfo.Name, propertyInfo.PropertyType.Name);
+            }
+
+            return propertyTypes;
         }
     }
 }

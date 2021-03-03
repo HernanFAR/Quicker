@@ -1,4 +1,5 @@
 ﻿using Quicker.Interfaces.Model;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Quicker.Interfaces.Service
@@ -34,6 +35,9 @@ namespace Quicker.Interfaces.Service
         /// <param name="entity">Entidad a actualizar en la base de datos.</param>
         /// 
         Task<TEntity> Update(TKey key, TEntity entity);
+
+#warning Agregar documentacion de este metodo
+        Dictionary<string, string> GetPropertyInformationForUpdating();
     }
 
     /// <summary>
@@ -78,5 +82,8 @@ namespace Quicker.Interfaces.Service
         /// <param name="entity">Entidad a actualizar en la base de datos.</param>
         /// 
         Task<TEntityDTO> Update(TKey key, TEntityDTO entity);
+
+#warning Agregar documentacion de este metodo
+        Dictionary<string, string> GetPropertyInformationForUpdating();
     }
 }
