@@ -89,7 +89,10 @@ namespace Quicker.Abstracts.Controller
             }
             catch (InvalidOperationException ex)
             {
-                actionResult = Conflict(ex.Message);
+                if (ex.Message == "entity")
+                    actionResult = StatusCode(StatusCodes.Status406NotAcceptable);
+                else
+                    actionResult = Conflict(ex.Message);
             }
             catch (DbUpdateConcurrencyException ex)
             {
@@ -107,6 +110,7 @@ namespace Quicker.Abstracts.Controller
         [Produces(ControllerConstants.JsonContentType)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public async Task<ActionResult> Delete(TKey key)
@@ -125,7 +129,10 @@ namespace Quicker.Abstracts.Controller
             }
             catch (InvalidOperationException ex)
             {
-                actionResult = Conflict(ex.Message);
+                if (ex.Message == "entity")
+                    actionResult = StatusCode(StatusCodes.Status406NotAcceptable);
+                else
+                    actionResult = Conflict(ex.Message);
             }
             catch (DbUpdateConcurrencyException ex)
             {
