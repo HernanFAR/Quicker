@@ -185,7 +185,7 @@ namespace Quicker.Abstracts.Service
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="InvalidOperationException" />
         /// 
-        public virtual async Task Delete(TEntity entity)
+        public virtual Task Delete(TEntity entity)
         {
             if (entity == null) { 
                 LogIfNotNull(LogLevel.Warning,
@@ -195,7 +195,7 @@ namespace Quicker.Abstracts.Service
                 throw new ArgumentNullException(nameof(entity));
             }
 
-            await Delete(entity.Id);
+            return Delete(entity.Id);
         }
 
         /// <summary>
@@ -430,7 +430,18 @@ namespace Quicker.Abstracts.Service
         /// <exception cref="InvalidOperationException" />
         /// 
         public virtual Task Delete(TEntityDTO entity)
-            => Delete(entity.Id);
+        {
+            if (entity == null)
+            {
+                LogIfNotNull(LogLevel.Warning,
+                    "No es posible buscar, la entidad es nula"
+                );
+
+                throw new ArgumentNullException(nameof(entity));
+            }
+
+            return Delete(entity.Id);
+        }
 
         /// <summary>
         ///     Borra el registro relacionado a la PK que se paso por parametro, si pasa el filtro, 
@@ -484,7 +495,12 @@ namespace Quicker.Abstracts.Service
             var propertyInfos = entityType.GetProperties();
 
             foreach (var propertyInfo in propertyInfos)
-                propertyTypes.Add(propertyInfo.Name, propertyInfo.PropertyType.Name);
+            {
+                var propertyType = propertyInfo.PropertyType;
+
+                if (!(propertyType.IsClass || propertyType.IsInterface) || propertyType == typeof(String))
+                    propertyTypes.Add(propertyInfo.Name, propertyInfo.PropertyType.Name);
+            }
 
             return propertyTypes;
         }
