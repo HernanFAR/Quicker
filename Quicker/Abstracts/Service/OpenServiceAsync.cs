@@ -473,7 +473,7 @@ namespace Quicker.Abstracts.Service
         /// </summary>
         /// <exception cref="InvalidOperationException" />
         /// 
-        protected virtual void DeleteFilter(TEntity entity) { }
+        protected virtual void FilteringEntitiesBeforeDeleting(TEntity entity) { }
 
         /// <summary>
         ///     Borra el registro relacionado a la entidad que se paso por parametro, si pasa el 
@@ -528,7 +528,7 @@ namespace Quicker.Abstracts.Service
                 throw new InvalidOperationException(nameof(entity));
             }
 
-            DeleteFilter(entity);
+            FilteringEntitiesBeforeDeleting(entity);
 
             Context.Entry(entity).State = EntityState.Deleted;
 
