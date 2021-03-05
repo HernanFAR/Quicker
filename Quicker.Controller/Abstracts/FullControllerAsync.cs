@@ -32,6 +32,7 @@ namespace Quicker.Abstracts.Controller
         [Produces(ControllerConstants.JsonContentType)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
@@ -41,7 +42,12 @@ namespace Quicker.Abstracts.Controller
 
             try
             {
-                actionResult = Ok(await Service.Update(key, entity));
+                var updated = await Service.Update(key, entity);
+
+                if (updated != null)
+                    actionResult = Ok(updated);
+                else
+                    actionResult = NotFound();
             }
             catch (ArgumentNullException)
             {
@@ -100,7 +106,12 @@ namespace Quicker.Abstracts.Controller
 
             try
             {
-                actionResult = Ok(await Service.Update(key, entity));
+                var updated = await Service.Update(key, entity);
+
+                if (updated != null)
+                    actionResult = Ok(updated);
+                else
+                    actionResult = NotFound();
             }
             catch (ArgumentNullException)
             {
