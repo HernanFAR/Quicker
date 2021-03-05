@@ -206,7 +206,12 @@ namespace Quicker.Abstracts.Service
             var propertyInfos = entityType.GetProperties();
 
             foreach (var propertyInfo in propertyInfos)
-                propertyTypes.Add(propertyInfo.Name, propertyInfo.PropertyType.Name);
+            {
+                var propertyType = propertyInfo.PropertyType;
+
+                if (!(propertyType.IsClass || propertyType.IsInterface) || propertyType == typeof(String))
+                    propertyTypes.Add(propertyInfo.Name, propertyInfo.PropertyType.Name);
+            }
 
             return propertyTypes;
         }
