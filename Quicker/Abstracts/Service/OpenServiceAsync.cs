@@ -84,6 +84,20 @@ namespace Quicker.Abstracts.Service
         }
 
         /// <summary>
+        ///     Filtro que se aplica para ver que elementos no crear, en base a si tienen determinadas
+        ///     propiedades, si no lo pasa, arroja un <see cref="InvalidOperationException"/>
+        /// </summary>
+        /// <remarks>
+        ///     Si hacer un override a esta funcion, recuerda agregar loggin para cuando la entidad no 
+        ///     pase el filtro
+        /// </remarks>
+        /// <exception cref="InvalidOperationException" />
+        /// 
+        protected virtual void FilteringEntitiesBeforeCreating(TEntity entity)
+        {
+        }
+
+        /// <summary>
         ///     Metodo para presetear los valores de la entidad que se creara.
         /// </summary>
         /// 
@@ -140,6 +154,12 @@ namespace Quicker.Abstracts.Service
             );
 
             ValidateObjectBeforeCreating(entity);
+
+            LogIfNotNull(LogLevel.Information,
+                $"Comprobando si es posible crear..."
+            );
+
+            FilteringEntitiesBeforeCreating(entity);
             
             LogIfNotNull(LogLevel.Information,
                 "Preseteando valores..."
@@ -174,7 +194,7 @@ namespace Quicker.Abstracts.Service
         /// </remarks>
         /// <exception cref="InvalidOperationException" />
         /// 
-        protected virtual void DeleteFilter(TEntity entity)
+        protected virtual void FilteringEntitiesBeforeDeleting(TEntity entity)
         {
         }
 
@@ -231,7 +251,11 @@ namespace Quicker.Abstracts.Service
                 throw new InvalidOperationException(nameof(entity));
             }
 
-            DeleteFilter(entity);
+            LogIfNotNull(LogLevel.Information,
+                $"Comprobando si es posible borrar..."
+            );
+
+            FilteringEntitiesBeforeDeleting(entity);
 
             Context.Entry(entity).State = EntityState.Deleted;
 
@@ -242,7 +266,16 @@ namespace Quicker.Abstracts.Service
             );
         }
 
-#warning Agregar documentacion de este metodo
+        /// <summary>
+        ///     Retorna el tipo de todas las variables primitivas (O string) que tiene la clase.
+        ///     Este metodo es util sobre todo en WebAPI's en donde debes indicar al front que datos 
+        ///     incluye una entidad.
+        /// </summary>
+        /// <returns>
+        ///     Un <see cref="Dictionary{string, string}"/> con las key el nombre de la propiedad y value
+        ///     el tipo.
+        /// </returns>
+        /// 
         public Dictionary<string, string> GetPropertyInformationForCreate()
         {
             Dictionary<string, string> propertyTypes = new Dictionary<string, string>();
@@ -336,10 +369,24 @@ namespace Quicker.Abstracts.Service
         }
 
         /// <summary>
+        ///     Filtro que se aplica para ver que elementos no borrar, en base a si tienen determinadas
+        ///     propiedades, si no lo pasa, arroja un <see cref="InvalidOperationException"/>
+        /// </summary>
+        /// <remarks>
+        ///     Si hacer un override a esta funcion, recuerda agregar loggin para cuando la entidad no 
+        ///     pase el filtro
+        /// </remarks>
+        /// <exception cref="InvalidOperationException" />
+        /// 
+        protected virtual void FilteringEntitiesBeforeCreating(TEntity entity)
+        {
+        }
+
+        /// <summary>
         ///     Metodo para presetear los valores de la entidad que se creara.
         /// </summary>
         /// 
-        protected virtual void PresetPropertiesBeforeCreating(TEntityDTO entity)
+        protected virtual void PresetPropertiesBeforeCreating(TEntity entity)
         { }
 
         /// <summary>
@@ -384,12 +431,6 @@ namespace Quicker.Abstracts.Service
 
             ValidateObjectBeforeCreating(entity);
 
-            LogIfNotNull(LogLevel.Information,
-                "Preseteando valores..."
-            );
-
-            PresetPropertiesBeforeCreating(entity);
-
             entity.CreatedAt = DateTime.Now;
             entity.LastUpdated = DateTime.Now;
 
@@ -397,9 +438,21 @@ namespace Quicker.Abstracts.Service
                 "Volviendo DTO a entidad de Dominio..."
             );
 
-            var toCreate = ToDomain(entity);
+            var domain = ToDomain(entity);
 
-            var tracked = Context.Set<TEntity>().Add(toCreate);
+            LogIfNotNull(LogLevel.Information,
+                $"Comprobando si es posible crear..."
+            );
+
+            FilteringEntitiesBeforeCreating(domain);
+
+            LogIfNotNull(LogLevel.Information,
+                "Preseteando valores..."
+            );
+
+            PresetPropertiesBeforeCreating(domain);
+
+            var tracked = Context.Set<TEntity>().Add(domain);
             await Context.SaveChangesAsync();
 
             var created = await Query()
@@ -420,7 +473,7 @@ namespace Quicker.Abstracts.Service
         /// </summary>
         /// <exception cref="InvalidOperationException" />
         /// 
-        protected virtual void DeleteFilter(TEntity entity) { }
+        protected virtual void FilteringEntitiesBeforeDeleting(TEntity entity) { }
 
         /// <summary>
         ///     Borra el registro relacionado a la entidad que se paso por parametro, si pasa el 
@@ -475,7 +528,7 @@ namespace Quicker.Abstracts.Service
                 throw new InvalidOperationException(nameof(entity));
             }
 
-            DeleteFilter(entity);
+            FilteringEntitiesBeforeDeleting(entity);
 
             Context.Entry(entity).State = EntityState.Deleted;
 
@@ -486,7 +539,16 @@ namespace Quicker.Abstracts.Service
             );
         }
 
-#warning Agregar documentacion de este metodo
+        /// <summary>
+        ///     Retorna el tipo de todas las variables primitivas (O string) que tiene la clase.
+        ///     Este metodo es util sobre todo en WebAPI's en donde debes indicar al front que datos 
+        ///     incluye una entidad.
+        /// </summary>
+        /// <returns>
+        ///     Un <see cref="Dictionary{string, string}"/> con las key el nombre de la propiedad y value
+        ///     el tipo.
+        /// </returns>
+        /// 
         public Dictionary<string, string> GetPropertyInformationForCreate()
         {
             Dictionary<string, string> propertyTypes = new Dictionary<string, string>();

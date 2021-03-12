@@ -136,7 +136,7 @@ namespace Quicker.Services.Test
             Expression<Func<TestModelRelation, bool>> [] filter = { e => e.Name == "TestRelation4" };
 
             // Act
-            var result = await (Task<IEnumerable<TestModelRelationDTO>>)method.Invoke(_Service, new object[] { filter });
+            var result = await (Task<IEnumerable<TestModelRelationDTO>>)method.Invoke(_Service, new object[] { null, filter });
 
             // Assertion
             Assert.Equal(expCount, result.Count());
@@ -166,10 +166,48 @@ namespace Quicker.Services.Test
             };
 
             // Act
-            var result = await (Task<IEnumerable<TestModelRelationDTO>>)method.Invoke(_Service, new object[] { filter });
+            var result = await (Task<IEnumerable<TestModelRelationDTO>>)method.Invoke(_Service, new object[] { null, filter });
 
             // Assertion
             Assert.Equal(expCount, result.Count());
+        }
+
+        [Fact]
+        public async Task FindManyWith_Success_ShouldReturnEntityWithRelatedReferences()
+        {
+            // Arrange
+            int expCount = 5;
+            string relatedName = "Test1";
+            MethodInfo method = _Service.GetType().GetMethod("FindManyWith", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            _Context.TestModels.Add(new TestModel { Id = 1, Name = "Test1", Percent = 10 });
+            _Context.TestModels.Add(new TestModel { Id = 2, Name = "Test2", Percent = 20 });
+            _Context.TestModelRelations.Add(new TestModelRelation { Name = "TestRelation1", TestModelId = 1 });
+            _Context.TestModelRelations.Add(new TestModelRelation { Name = "TestRelation2", TestModelId = 1 });
+            _Context.TestModelRelations.Add(new TestModelRelation { Name = "TestRelation3", TestModelId = 1 });
+            _Context.TestModelRelations.Add(new TestModelRelation { Name = "TestRelation4", TestModelId = 1 });
+            _Context.TestModelRelations.Add(new TestModelRelation { Name = "TestRelation4", TestModelId = 1 });
+            _Context.TestModelRelations.Add(new TestModelRelation { Name = "TestRelation5", TestModelId = 2 });
+
+            await _Context.SaveChangesAsync();
+
+            Expression<Func<TestModelRelation, bool>>[] filter = {
+                e => e.TestModelNavigation.Percent == 10
+            };
+
+            Func<IQueryable<TestModelRelation>> query = () =>
+                _Context.TestModelRelations
+                .Include(e => e.TestModelNavigation)
+                .AsNoTracking();
+
+            // Act
+            var result = await (Task<IEnumerable<TestModelRelationDTO>>)method.Invoke(_Service, new object[] { query, filter });
+
+            // Assertion
+            Assert.Equal(expCount, result.Count());
+
+            foreach (var item in result)
+                Assert.Equal(relatedName, item.TestModel);
         }
 
         [Fact]
@@ -193,7 +231,7 @@ namespace Quicker.Services.Test
 
             // Act / Assertion
             var ex = await Assert.ThrowsAsync<ArgumentNullException>(
-                () => (Task<IEnumerable<TestModelRelationDTO>>) method.Invoke(_Service, new object[] { filter })
+                () => (Task<IEnumerable<TestModelRelationDTO>>) method.Invoke(_Service, new object[] { null, filter })
             );
         }
 
@@ -220,10 +258,46 @@ namespace Quicker.Services.Test
             };
 
             // Act
-            var result = await (Task<TestModelRelationDTO>)method.Invoke(_Service, new object[] { filter });
+            var result = await (Task<TestModelRelationDTO>)method.Invoke(_Service, new object[] { null, filter });
 
             // Assertion
             Assert.Equal(name, result.Name);
+        }
+
+        [Fact]
+        public async Task FindOneWith_Success_ShouldReturnEntityWithRelatedReferences()
+        {
+            // Arrange
+            string name = "TestRelation5";
+            string relatedName = "Test2";
+            MethodInfo method = _Service.GetType().GetMethod("FindOneWith", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            _Context.TestModels.Add(new TestModel { Id = 1, Name = "Test1", Percent = 10 });
+            _Context.TestModels.Add(new TestModel { Id = 2, Name = "Test2", Percent = 20 });
+            _Context.TestModelRelations.Add(new TestModelRelation { Name = "TestRelation1", TestModelId = 1 });
+            _Context.TestModelRelations.Add(new TestModelRelation { Name = "TestRelation2", TestModelId = 1 });
+            _Context.TestModelRelations.Add(new TestModelRelation { Name = "TestRelation3", TestModelId = 1 });
+            _Context.TestModelRelations.Add(new TestModelRelation { Name = "TestRelation4", TestModelId = 1 });
+            _Context.TestModelRelations.Add(new TestModelRelation { Name = "TestRelation4", TestModelId = 1 });
+            _Context.TestModelRelations.Add(new TestModelRelation { Name = "TestRelation5", TestModelId = 2 });
+
+            await _Context.SaveChangesAsync();
+
+            Expression<Func<TestModelRelation, bool>> [] filter = { 
+                e => e.TestModelNavigation.Percent == 20
+            };
+
+            Func<IQueryable<TestModelRelation>> query = () => 
+                _Context.TestModelRelations
+                .Include(e => e.TestModelNavigation)
+                .AsNoTracking();
+
+            // Act
+            var result = await (Task<TestModelRelationDTO>)method.Invoke(_Service, new object[] { query, filter });
+
+            // Assertion
+            Assert.Equal(name, result.Name);
+            Assert.Equal(relatedName, result.TestModel);
         }
 
         [Fact]
@@ -250,7 +324,7 @@ namespace Quicker.Services.Test
             };
 
             // Act
-            var result = await (Task<TestModelRelationDTO>)method.Invoke(_Service, new object[] { filter });
+            var result = await (Task<TestModelRelationDTO>)method.Invoke(_Service, new object[] { null, filter });
 
             // Assertion
             Assert.Equal(expName, result.Name);
@@ -266,7 +340,7 @@ namespace Quicker.Services.Test
 
             // Act / Assertion
             var ex = await Assert.ThrowsAsync<ArgumentNullException>(
-                () => (Task<TestModelRelationDTO>) method.Invoke(_Service, new object[] { filter })
+                () => (Task<TestModelRelationDTO>) method.Invoke(_Service, new object[] { null, filter })
             );
         }
 
@@ -291,7 +365,7 @@ namespace Quicker.Services.Test
 
             // Act / Assertion
             var ex = await Assert.ThrowsAsync<InvalidOperationException>(
-                () => (Task<TestModelRelationDTO>) method.Invoke(_Service, new object[] { filter })
+                () => (Task<TestModelRelationDTO>) method.Invoke(_Service, new object[] { null, filter })
             );
         }
 

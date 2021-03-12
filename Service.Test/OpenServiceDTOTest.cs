@@ -153,7 +153,7 @@ namespace Quicker.Services.Test
         {
             // Arrange
             MethodInfo method = _Service.GetType().GetMethod("PresetPropertiesBeforeCreating", BindingFlags.NonPublic | BindingFlags.Instance);
-            var model = new TestModelRelationDTO
+            var model = new TestModelRelation
             {
                 Name = "Test1",
                 TestModelId = 2
@@ -163,6 +163,26 @@ namespace Quicker.Services.Test
             // Act
             method.Invoke(_Service, new object[] { model });
             
+
+            // Asserttion
+            Assert.False(false);
+        }
+
+        [Fact]
+        public void FilteringEntitiesBeforeCreating_Success()
+        {
+            // Arrange
+            MethodInfo method = _Service.GetType().GetMethod("FilteringEntitiesBeforeCreating", BindingFlags.NonPublic | BindingFlags.Instance);
+            var model = new TestModelRelation
+            {
+                Name = "Test1",
+                TestModelId = 1
+            };
+
+
+            // Act
+            method.Invoke(_Service, new object[] { model });
+
 
             // Asserttion
             Assert.False(false);
@@ -293,10 +313,10 @@ namespace Quicker.Services.Test
         }
 
         [Fact]
-        public void DeleteFilter_Success()
+        public void FilteringEntitiesBeforeDeleting_Success()
         {
             // Arrange
-            MethodInfo method = _Service.GetType().GetMethod("DeleteFilter", BindingFlags.NonPublic | BindingFlags.Instance);
+            MethodInfo method = _Service.GetType().GetMethod("FilteringEntitiesBeforeDeleting", BindingFlags.NonPublic | BindingFlags.Instance);
             var model = new TestModelRelation
             {
                 Name = "Test1",

@@ -147,6 +147,32 @@ namespace Quicker.Services.Test
         }
 
         [Fact]
+        public void FilteringEntitiesBeforeUpdating_Success()
+        {
+            // Arrange
+            MethodInfo method = _Service.GetType().GetMethod("FilteringEntitiesBeforeUpdating", BindingFlags.NonPublic | BindingFlags.Instance);
+            var updated = new TestModelRelation
+            {
+                Name = "Test1",
+                TestModelId = 1
+            };
+            
+            var original = new TestModelRelation
+            {
+                Name = "Test1",
+                TestModelId = 1
+            };
+
+
+            // Act
+            method.Invoke(_Service, new object[] { updated, original });
+
+
+            // Asserttion
+            Assert.False(false);
+        }
+
+        [Fact]
         public void PresetPropertiesBeforeUpdating_Success()
         {
             // Arrange
