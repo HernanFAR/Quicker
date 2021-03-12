@@ -98,14 +98,14 @@ namespace Quicker.Abstracts.Service
         /// <exception cref="ArgumentNullException" />
         /// 
 
-        protected async Task<IEnumerable<TEntity>> FindManyWith(params Expression<Func<TEntity, bool>>[] conditions)
+        protected async Task<IEnumerable<TEntity>> FindManyWith(Func<IQueryable<TEntity>> queryFunction = null, params Expression<Func<TEntity, bool>>[] conditions)
         {
             if (conditions is null)
             {
                 throw new ArgumentNullException(nameof(conditions));
             }
 
-            var query = Query();
+            var query = queryFunction == null ? Query() : queryFunction();
 
             foreach (var condition in conditions)
             {
@@ -126,14 +126,14 @@ namespace Quicker.Abstracts.Service
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="InvalidOperationException" />
         /// 
-        protected async Task<TEntity> FindOneWith(params Expression<Func<TEntity, bool>>[] conditions)
+        protected async Task<TEntity> FindOneWith(Func<IQueryable<TEntity>> queryFunction = null, params Expression<Func<TEntity, bool>>[] conditions)
         {
             if (conditions is null)
             {
                 throw new ArgumentNullException(nameof(conditions));
             }
 
-            var query = Query();
+            var query = queryFunction == null ? Query() : queryFunction();
 
             foreach (var condition in conditions)
             {
@@ -486,14 +486,14 @@ namespace Quicker.Abstracts.Service
         /// <exception cref="ArgumentNullException" />
         /// 
 
-        protected async Task<IEnumerable<TEntityDTO>> FindManyWith(params Expression<Func<TEntity, bool>>[] conditions)
+        protected async Task<IEnumerable<TEntityDTO>> FindManyWith(Func<IQueryable<TEntity>> queryFunction = null, params Expression<Func<TEntity, bool>>[] conditions)
         {
             if (conditions is null)
             {
                 throw new ArgumentNullException(nameof(conditions));
             }
 
-            var query = Query();
+            var query = queryFunction == null ? Query() : queryFunction();
 
             foreach (var condition in conditions)
             {
@@ -514,14 +514,14 @@ namespace Quicker.Abstracts.Service
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="InvalidOperationException" />
         /// 
-        protected async Task<TEntityDTO> FindOneWith(params Expression<Func<TEntity, bool>>[] conditions)
+        protected async Task<TEntityDTO> FindOneWith(Func<IQueryable<TEntity>> queryFunction = null, params Expression<Func<TEntity, bool>>[] conditions)
         {
             if (conditions is null)
             {
                 throw new ArgumentNullException(nameof(conditions));
             }
 
-            var query = Query();
+            var query = queryFunction == null ? Query() : queryFunction();
 
             foreach (var condition in conditions)
             {

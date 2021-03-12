@@ -123,7 +123,7 @@ namespace Quicker.Services.Test
             Expression<Func<TestModel, bool>> [] filter = { e => e.Percent % 10 == 0 };
 
             // Act
-            var result = await (Task<IEnumerable<TestModel>>)method.Invoke(_Service, new object[] { filter });
+            var result = await (Task<IEnumerable<TestModel>>)method.Invoke(_Service, new object[] { null, filter });
 
             // Assertion
             Assert.Equal(expCount, result.Count());
@@ -150,7 +150,7 @@ namespace Quicker.Services.Test
             };
 
             // Act
-            var result = await (Task<IEnumerable<TestModel>>)method.Invoke(_Service, new object[] { filter });
+            var result = await (Task<IEnumerable<TestModel>>)method.Invoke(_Service, new object[] { null, filter });
 
             // Assertion
             Assert.Equal(expCount, result.Count());
@@ -174,7 +174,7 @@ namespace Quicker.Services.Test
 
             // Act / Assertion
             var ex = await Assert.ThrowsAsync<ArgumentNullException>(
-                () => (Task<IEnumerable<TestModel>>) method.Invoke(_Service, new object[] { filter })
+                () => (Task<IEnumerable<TestModel>>) method.Invoke(_Service, new object[] { null, filter })
             );
         }
 
@@ -196,7 +196,7 @@ namespace Quicker.Services.Test
             Expression<Func<TestModel, bool>> [] filter = { e => e.Percent == percent };
 
             // Act
-            var result = await (Task<TestModel>)method.Invoke(_Service, new object[] { filter });
+            var result = await (Task<TestModel>)method.Invoke(_Service, new object[] { null, filter });
 
             // Assertion
             Assert.Equal(percent, result.Percent);
@@ -222,7 +222,7 @@ namespace Quicker.Services.Test
             };
 
             // Act
-            var result = await (Task<TestModel>)method.Invoke(_Service, new object[] { filter });
+            var result = await (Task<TestModel>)method.Invoke(_Service, new object[] { null, filter });
 
             // Assertion
             Assert.NotNull(result);
@@ -246,7 +246,7 @@ namespace Quicker.Services.Test
 
             // Act / Assertion
             var ex = await Assert.ThrowsAsync<ArgumentNullException>(
-                () => (Task<TestModel>) method.Invoke(_Service, new object[] { filter })
+                () => (Task<TestModel>) method.Invoke(_Service, new object[] { null, filter })
             );
         }
 
@@ -270,7 +270,7 @@ namespace Quicker.Services.Test
 
             // Act / Assertion
             var ex = await Assert.ThrowsAsync<InvalidOperationException>(
-                () => (Task<TestModel>) method.Invoke(_Service, new object[] { filter })
+                () => (Task<TestModel>) method.Invoke(_Service, new object[] { null, filter })
             );
         }
 
