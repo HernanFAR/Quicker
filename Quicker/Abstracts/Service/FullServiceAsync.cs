@@ -79,6 +79,20 @@ namespace Quicker.Abstracts.Service
         }
 
         /// <summary>
+        ///     Filtro que se aplica para ver que elementos no actualizar, en base a si tienen determinadas
+        ///     propiedades, pudiendo ser de la entidad actualizada o de la original, si no lo pasa, 
+        ///     arroja un <see cref="InvalidOperationException"/>
+        /// </summary>
+        /// <remarks>
+        ///     Si hacer un override a esta funcion, recuerda agregar loggin para cuando la entidad no 
+        ///     pase el filtro
+        /// </remarks>
+        /// <exception cref="InvalidOperationException" />
+        /// 
+        protected virtual void FilteringEntitiesBeforeUpdating(TEntity updated, TEntity original) 
+        { }
+
+        /// <summary>
         ///     Metodo para presetear los valores de la entidad que se actualice.
         /// </summary>
         /// 
@@ -171,6 +185,12 @@ namespace Quicker.Abstracts.Service
             ValidateObjectBeforeUpdating(entity);
 
             LogIfNotNull(LogLevel.Information,
+                $"Comprobando si es posible actualizar..."
+            );
+
+            FilteringEntitiesBeforeUpdating(entity, original); 
+
+            LogIfNotNull(LogLevel.Information,
                 "Preseteando valores..."
             );
 
@@ -195,6 +215,34 @@ namespace Quicker.Abstracts.Service
             );
 
             return updated;
+        }
+
+        /// <summary>
+        ///     Retorna el tipo de todas las variables primitivas (O string) que tiene la clase.
+        ///     Este metodo es util sobre todo en WebAPI's en donde debes indicar al front que datos 
+        ///     incluye una entidad.
+        /// </summary>
+        /// <returns>
+        ///     Un <see cref="Dictionary{string, string}"/> con las key el nombre de la propiedad y value
+        ///     el tipo.
+        /// </returns>
+        /// 
+        public Dictionary<string, string> GetPropertyInformationForUpdating()
+        {
+            Dictionary<string, string> propertyTypes = new Dictionary<string, string>();
+
+            Type entityType = typeof(TEntity);
+            var propertyInfos = entityType.GetProperties();
+
+            foreach (var propertyInfo in propertyInfos)
+            {
+                var propertyType = propertyInfo.PropertyType;
+
+                if (!(propertyType.IsClass || propertyType.IsInterface) || propertyType == typeof(String))
+                    propertyTypes.Add(propertyInfo.Name, propertyInfo.PropertyType.Name);
+            }
+
+            return propertyTypes;
         }
     }
     /// <summary>
@@ -278,6 +326,20 @@ namespace Quicker.Abstracts.Service
 
             throw new Fluent.ValidationException(validationFailures);
         }
+
+        /// <summary>
+        ///     Filtro que se aplica para ver que elementos no actualizar, en base a si tienen determinadas
+        ///     propiedades, pudiendo ser de la entidad actualizada o de la original, si no lo pasa, 
+        ///     arroja un <see cref="InvalidOperationException"/>
+        /// </summary>
+        /// <remarks>
+        ///     Si hacer un override a esta funcion, recuerda agregar loggin para cuando la entidad no 
+        ///     pase el filtro
+        /// </remarks>
+        /// <exception cref="InvalidOperationException" />
+        /// 
+        protected virtual void FilteringEntitiesBeforeUpdating(TEntity updated, TEntity original)
+        { }
 
         /// <summary>
         ///     Metodo para presetear los valores de la entidad que se actualice.
@@ -378,6 +440,12 @@ namespace Quicker.Abstracts.Service
             var domain = ToDomain(entity);
 
             LogIfNotNull(LogLevel.Information,
+                $"Comprobando si es posible actualizar..."
+            );
+
+            FilteringEntitiesBeforeUpdating(domain, original);
+
+            LogIfNotNull(LogLevel.Information,
                 "Preseteando valores..."
             );
 
@@ -402,6 +470,29 @@ namespace Quicker.Abstracts.Service
             );
 
             return ToDTO(updated);
+        }
+
+        /// <summary>
+        ///     Retorna el tipo de todas las variables primitivas (O string) que tiene la clase.
+        ///     Este metodo es util sobre todo en WebAPI's en donde debes indicar al front que datos 
+        ///     incluye una entidad.
+        /// </summary>
+        /// <returns>
+        ///     Un <see cref="Dictionary{string, string}"/> con las key el nombre de la propiedad y value
+        ///     el tipo.
+        /// </returns>
+        /// 
+        public Dictionary<string, string> GetPropertyInformationForUpdating()
+        {
+            Dictionary<string, string> propertyTypes = new Dictionary<string, string>();
+
+            Type entityType = typeof(TEntityDTO);
+            var propertyInfos = entityType.GetProperties();
+
+            foreach (var propertyInfo in propertyInfos)
+                propertyTypes.Add(propertyInfo.Name, propertyInfo.PropertyType.Name);
+
+            return propertyTypes;
         }
     }
 }

@@ -1,8 +1,9 @@
-﻿using Quicker.Interfaces.Model;
+﻿using Microsoft.AspNetCore.Mvc;
+using Quicker.Interfaces.Model;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Quicker.Interfaces.Service
+namespace Quicker.Interfaces.WebApiController
 {
     /// <summary>
     ///     Interface para especificar un <em>servicio completo</em>, con entidades que no tienen un DTO relacionado.
@@ -22,9 +23,19 @@ namespace Quicker.Interfaces.Service
     ///     </para>
     /// </typeparam>
     /// 
-    public interface IFullServiceAsync<TKey, TEntity> : IOpenServiceAsync<TKey, TEntity>
+    public interface IFullControllerAsync<TKey, TEntity> : IOpenControllerAsync<TKey, TEntity>
         where TEntity : class, IAbstractModel<TKey>
     {
+        /// <summary>
+        ///     Obtiene los nombres de las propiedades y los tipos de la entidad a editar.
+        /// </summary> 
+        /// <returns>
+        ///     Un <see cref="Task"/> que devuelve un <see cref="ActionResult"/> con un 
+        ///     <see cref="Dictionary{string, string}"/> con la informacion de la entidad.
+        /// </returns>
+        /// 
+        ActionResult<Dictionary<string, string>> Edit();
+
         /// <summary>
         ///     Actualiza un elemento en la base de datos.
         /// </summary> 
@@ -34,10 +45,7 @@ namespace Quicker.Interfaces.Service
         /// <param name="key">PK de la entidad a actualizar en la base de datos.</param>
         /// <param name="entity">Entidad a actualizar en la base de datos.</param>
         /// 
-        Task<TEntity> Update(TKey key, TEntity entity);
-
-#warning Agregar documentacion de este metodo
-        Dictionary<string, string> GetPropertyInformationForUpdating();
+        Task<ActionResult<TEntity>> Update(TKey key, TEntity entity);
     }
 
     /// <summary>
@@ -68,10 +76,20 @@ namespace Quicker.Interfaces.Service
     ///     </para>
     /// </typeparam>
     /// 
-    public interface IFullServiceAsync<TKey, TEntity, TEntityDTO> : IOpenServiceAsync<TKey, TEntity, TEntityDTO>
+    public interface IFullControllerAsync<TKey, TEntity, TEntityDTO> : IOpenControllerAsync<TKey, TEntity, TEntityDTO>
         where TEntity : class, IAbstractModel<TKey>, IDomainOf<TEntityDTO>
         where TEntityDTO : class, IAbstractModel<TKey>, IDTOOf<TEntity>
     {
+        /// <summary>
+        ///     Obtiene los nombres de las propiedades y los tipos de la entidad a editar.
+        /// </summary> 
+        /// <returns>
+        ///     Un <see cref="Task"/> que devuelve un <see cref="ActionResult"/> con un 
+        ///     <see cref="Dictionary{string, string}"/> con la informacion de la entidad.
+        /// </returns>
+        /// 
+        ActionResult<Dictionary<string, string>> Edit();
+
         /// <summary>
         ///     Actualiza un elemento en la base de datos.
         /// </summary> 
@@ -81,9 +99,6 @@ namespace Quicker.Interfaces.Service
         /// <param name="key">PK de la entidad a actualizar en la base de datos.</param>
         /// <param name="entity">Entidad a actualizar en la base de datos.</param>
         /// 
-        Task<TEntityDTO> Update(TKey key, TEntityDTO entity);
-
-#warning Agregar documentacion de este metodo
-        Dictionary<string, string> GetPropertyInformationForUpdating();
+        Task<ActionResult<TEntityDTO>> Update(TKey key, TEntityDTO entity);
     }
 }

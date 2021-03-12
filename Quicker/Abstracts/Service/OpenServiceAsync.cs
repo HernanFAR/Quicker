@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Quicker.Abstracts.Service
 {
+#warning Agregar funciones de filtro al crear
     /// <summary>
     ///     Implementacion principal de <see cref="IOpenServiceAsync{TKey, TEntity}"/>, que brinda 
     ///     funciones de ayuda para la creacion y borrado de datos.
@@ -83,6 +84,20 @@ namespace Quicker.Abstracts.Service
         }
 
         /// <summary>
+        ///     Filtro que se aplica para ver que elementos no crear, en base a si tienen determinadas
+        ///     propiedades, si no lo pasa, arroja un <see cref="InvalidOperationException"/>
+        /// </summary>
+        /// <remarks>
+        ///     Si hacer un override a esta funcion, recuerda agregar loggin para cuando la entidad no 
+        ///     pase el filtro
+        /// </remarks>
+        /// <exception cref="InvalidOperationException" />
+        /// 
+        protected virtual void FilteringEntitiesBeforeCreating(TEntity entity)
+        {
+        }
+
+        /// <summary>
         ///     Metodo para presetear los valores de la entidad que se creara.
         /// </summary>
         /// 
@@ -139,6 +154,12 @@ namespace Quicker.Abstracts.Service
             );
 
             ValidateObjectBeforeCreating(entity);
+
+            LogIfNotNull(LogLevel.Information,
+                $"Comprobando si es posible crear..."
+            );
+
+            FilteringEntitiesBeforeCreating(entity);
             
             LogIfNotNull(LogLevel.Information,
                 "Preseteando valores..."
@@ -173,7 +194,7 @@ namespace Quicker.Abstracts.Service
         /// </remarks>
         /// <exception cref="InvalidOperationException" />
         /// 
-        protected virtual void DeleteFilter(TEntity entity)
+        protected virtual void FilteringEntitiesBeforeDeleting(TEntity entity)
         {
         }
 
@@ -181,15 +202,27 @@ namespace Quicker.Abstracts.Service
         ///     Borra el registro relacionado a la PK que al modelo pasado por parametro, si pasa el filtro, 
         ///     si no lo pasa, arroja un <see cref="InvalidOperationException"/>
         /// </summary>
+        /// <exception cref="ArgumentNullException" />
         /// <exception cref="InvalidOperationException" />
         /// 
         public virtual Task Delete(TEntity entity)
-            => Delete(entity.Id);
+        {
+            if (entity == null) { 
+                LogIfNotNull(LogLevel.Warning,
+                    "No es posible buscar, la entidad es nula"
+                );
+
+                throw new ArgumentNullException(nameof(entity));
+            }
+
+            return Delete(entity.Id);
+        }
 
         /// <summary>
         ///     Borra el registro relacionado a la PK que se paso por parametro, si pasa el filtro, 
         ///     si no lo pasa, arroja un <see cref="InvalidOperationException"/>
         /// </summary>
+        /// <exception cref="ArgumentNullException" />
         /// <exception cref="InvalidOperationException" />
         /// 
         public virtual async Task Delete(TKey key)
@@ -218,7 +251,11 @@ namespace Quicker.Abstracts.Service
                 throw new InvalidOperationException(nameof(entity));
             }
 
-            DeleteFilter(entity);
+            LogIfNotNull(LogLevel.Information,
+                $"Comprobando si es posible borrar..."
+            );
+
+            FilteringEntitiesBeforeDeleting(entity);
 
             Context.Entry(entity).State = EntityState.Deleted;
 
@@ -227,6 +264,34 @@ namespace Quicker.Abstracts.Service
             LogIfNotNull(LogLevel.Information,
                 $"Se ha borrado con exito"
             );
+        }
+
+        /// <summary>
+        ///     Retorna el tipo de todas las variables primitivas (O string) que tiene la clase.
+        ///     Este metodo es util sobre todo en WebAPI's en donde debes indicar al front que datos 
+        ///     incluye una entidad.
+        /// </summary>
+        /// <returns>
+        ///     Un <see cref="Dictionary{string, string}"/> con las key el nombre de la propiedad y value
+        ///     el tipo.
+        /// </returns>
+        /// 
+        public Dictionary<string, string> GetPropertyInformationForCreate()
+        {
+            Dictionary<string, string> propertyTypes = new Dictionary<string, string>();
+
+            Type entityType = typeof(TEntity);
+            var propertyInfos = entityType.GetProperties();
+
+            foreach (var propertyInfo in propertyInfos)
+            {
+                var propertyType = propertyInfo.PropertyType;
+
+                if (!(propertyType.IsClass || propertyType.IsInterface) || propertyType == typeof(String))
+                    propertyTypes.Add(propertyInfo.Name, propertyInfo.PropertyType.Name);
+            }
+
+            return propertyTypes;
         }
     }
 
@@ -304,10 +369,24 @@ namespace Quicker.Abstracts.Service
         }
 
         /// <summary>
+        ///     Filtro que se aplica para ver que elementos no borrar, en base a si tienen determinadas
+        ///     propiedades, si no lo pasa, arroja un <see cref="InvalidOperationException"/>
+        /// </summary>
+        /// <remarks>
+        ///     Si hacer un override a esta funcion, recuerda agregar loggin para cuando la entidad no 
+        ///     pase el filtro
+        /// </remarks>
+        /// <exception cref="InvalidOperationException" />
+        /// 
+        protected virtual void FilteringEntitiesBeforeCreating(TEntity entity)
+        {
+        }
+
+        /// <summary>
         ///     Metodo para presetear los valores de la entidad que se creara.
         /// </summary>
         /// 
-        protected virtual void PresetPropertiesBeforeCreating(TEntityDTO entity)
+        protected virtual void PresetPropertiesBeforeCreating(TEntity entity)
         { }
 
         /// <summary>
@@ -352,12 +431,6 @@ namespace Quicker.Abstracts.Service
 
             ValidateObjectBeforeCreating(entity);
 
-            LogIfNotNull(LogLevel.Information,
-                "Preseteando valores..."
-            );
-
-            PresetPropertiesBeforeCreating(entity);
-
             entity.CreatedAt = DateTime.Now;
             entity.LastUpdated = DateTime.Now;
 
@@ -365,9 +438,21 @@ namespace Quicker.Abstracts.Service
                 "Volviendo DTO a entidad de Dominio..."
             );
 
-            var toCreate = ToDomain(entity);
+            var domain = ToDomain(entity);
 
-            var tracked = Context.Set<TEntity>().Add(toCreate);
+            LogIfNotNull(LogLevel.Information,
+                $"Comprobando si es posible crear..."
+            );
+
+            FilteringEntitiesBeforeCreating(domain);
+
+            LogIfNotNull(LogLevel.Information,
+                "Preseteando valores..."
+            );
+
+            PresetPropertiesBeforeCreating(domain);
+
+            var tracked = Context.Set<TEntity>().Add(domain);
             await Context.SaveChangesAsync();
 
             var created = await Query()
@@ -388,21 +473,34 @@ namespace Quicker.Abstracts.Service
         /// </summary>
         /// <exception cref="InvalidOperationException" />
         /// 
-        protected virtual void DeleteFilter(TEntity entity) { }
+        protected virtual void FilteringEntitiesBeforeDeleting(TEntity entity) { }
 
         /// <summary>
         ///     Borra el registro relacionado a la entidad que se paso por parametro, si pasa el 
         ///     filtro, si no lo pasa, arroja un <see cref="InvalidOperationException"/>
         /// </summary>
+        /// <exception cref="ArgumentNullException" />
         /// <exception cref="InvalidOperationException" />
         /// 
         public virtual Task Delete(TEntityDTO entity)
-            => Delete(entity.Id);
+        {
+            if (entity == null)
+            {
+                LogIfNotNull(LogLevel.Warning,
+                    "No es posible buscar, la entidad es nula"
+                );
+
+                throw new ArgumentNullException(nameof(entity));
+            }
+
+            return Delete(entity.Id);
+        }
 
         /// <summary>
         ///     Borra el registro relacionado a la PK que se paso por parametro, si pasa el filtro, 
         ///     si no lo pasa, arroja un <see cref="InvalidOperationException"/>
         /// </summary>
+        /// <exception cref="ArgumentNullException" />
         /// <exception cref="InvalidOperationException" />
         /// 
         public virtual async Task Delete(TKey key)
@@ -430,7 +528,7 @@ namespace Quicker.Abstracts.Service
                 throw new InvalidOperationException(nameof(entity));
             }
 
-            DeleteFilter(entity);
+            FilteringEntitiesBeforeDeleting(entity);
 
             Context.Entry(entity).State = EntityState.Deleted;
 
@@ -439,6 +537,34 @@ namespace Quicker.Abstracts.Service
             LogIfNotNull(LogLevel.Information,
                 $"Se ha borrado con exito"
             );
+        }
+
+        /// <summary>
+        ///     Retorna el tipo de todas las variables primitivas (O string) que tiene la clase.
+        ///     Este metodo es util sobre todo en WebAPI's en donde debes indicar al front que datos 
+        ///     incluye una entidad.
+        /// </summary>
+        /// <returns>
+        ///     Un <see cref="Dictionary{string, string}"/> con las key el nombre de la propiedad y value
+        ///     el tipo.
+        /// </returns>
+        /// 
+        public Dictionary<string, string> GetPropertyInformationForCreate()
+        {
+            Dictionary<string, string> propertyTypes = new Dictionary<string, string>();
+
+            Type entityType = typeof(TEntityDTO);
+            var propertyInfos = entityType.GetProperties();
+
+            foreach (var propertyInfo in propertyInfos)
+            {
+                var propertyType = propertyInfo.PropertyType;
+
+                if (!(propertyType.IsClass || propertyType.IsInterface) || propertyType == typeof(String))
+                    propertyTypes.Add(propertyInfo.Name, propertyInfo.PropertyType.Name);
+            }
+
+            return propertyTypes;
         }
     }
 }

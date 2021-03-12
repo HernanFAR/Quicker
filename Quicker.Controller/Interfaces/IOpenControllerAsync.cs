@@ -1,19 +1,19 @@
-﻿using Quicker.Interfaces.Model;
-using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using Quicker.Interfaces.Model;
+using Quicker.Interfaces.Service;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace Quicker.Interfaces.Service
+namespace Quicker.Interfaces.WebApiController
 {
     /// <summary>
-    ///     Interface para especificar un <em>servicio abierto</em>, con entidades que no tienen
-    ///     un DTO relacionado.
+    ///     Interface para especificar un <em>controlador abierto</em>, con entidades que no tienen un 
+    ///     DTO relacionado.
     /// </summary>
     /// <remarks>
     ///     <para>
-    ///         Un <em>servicio abierto</em> provee funciones de lectura, escritura y borrado de
-    ///         elementos en la base de datos, dando la CRD de el CRUD.
+    ///         Un <em>controlador abierto</em> consume un servicio abierto, que tiene funciones de solo 
+    ///         lectura, escritura y borrado de elementos en la base de datos, dando la CRD de el CRUD.
     ///     </para>
     /// </remarks>
     /// <typeparam name="TKey">Tipo de la PK en la base de datos</typeparam>
@@ -26,9 +26,20 @@ namespace Quicker.Interfaces.Service
     ///     </para>
     /// </typeparam>
     /// 
-    public interface IOpenServiceAsync<TKey, TEntity> : ICloseServiceAsync<TKey, TEntity>
+    public interface IOpenControllerAsync<TKey, TEntity> : ICloseControllerAsync<TKey, TEntity>
         where TEntity : class, IAbstractModel<TKey>
     {
+        /// <summary>
+        ///     Obtiene los nombres de las propiedades y los tipos de la entidad a crear.
+        /// </summary> 
+        /// <returns>
+        ///     Un <see cref="Task"/> que devuelve un <see cref="ActionResult"/> con un 
+        ///     <see cref="Dictionary{string, string}"/> con la informacion de la entidad.
+        /// </returns>
+        /// <param name="entity">Entidad a crear en la base de datos.</param>
+        /// 
+        ActionResult<Dictionary<string, string>> New();
+
         /// <summary>
         ///     Crea un elemento en la base de datos.
         /// </summary> 
@@ -37,7 +48,7 @@ namespace Quicker.Interfaces.Service
         /// </returns>
         /// <param name="entity">Entidad a crear en la base de datos.</param>
         /// 
-        Task<TEntity> Create(TEntity entity);
+        Task<ActionResult<TEntity>> Create(TEntity entity);
 
         /// <summary>
         ///     Borra un elemento en la base de datos.
@@ -47,7 +58,7 @@ namespace Quicker.Interfaces.Service
         /// </returns>
         /// <param name="entity">Entidad a borrar en la base de datos.</param>
         /// 
-        Task Delete(TEntity entity);
+        Task<ActionResult> Delete(TEntity entity);
 
         /// <summary>
         ///     Borra un elemento en la base de datos.
@@ -57,20 +68,17 @@ namespace Quicker.Interfaces.Service
         /// </returns>
         /// <param name="key">PK de la entidad a borrar en la base de datos.</param>
         /// 
-        Task Delete(TKey key);
-
-#warning agregar documentacion de este metodo
-        Dictionary<string, string> GetPropertyInformationForCreate();
+        Task<ActionResult> Delete(TKey key);
     }
 
     /// <summary>
-    ///     Interface para especificar un <em>servicio abierto</em>, con entidades que si tienen
-    ///     un DTO relacionado.
+    ///     Interface para especificar un <em>controlador abierto</em>, con entidades que si tienen un 
+    ///     DTO relacionado.
     /// </summary>
     /// <remarks>
     ///     <para>
-    ///         Un <em>servicio abierto</em> provee funciones de lectura, escritura y borrado de
-    ///         elementos en la base de datos, dando la CRD de el CRUD.
+    ///         Un <em>controlador abierto</em> consume un servicio abierto, que tiene funciones de solo 
+    ///         lectura, escritura y borrado de elementos en la base de datos, dando la CRD de el CRUD.
     ///     </para>
     /// </remarks>
     /// <typeparam name="TKey">Tipo de la PK en la base de datos</typeparam>
@@ -93,7 +101,7 @@ namespace Quicker.Interfaces.Service
     ///     </para>
     /// </typeparam>
     /// 
-    public interface IOpenServiceAsync<TKey, TEntity, TEntityDTO> : ICloseServiceAsync<TKey, TEntity, TEntityDTO>
+    public interface IOpenControllerAsync<TKey, TEntity, TEntityDTO> : ICloseControllerAsync<TKey, TEntity, TEntityDTO>
         where TEntity : class, IAbstractModel<TKey>, IDomainOf<TEntityDTO>
         where TEntityDTO : class, IAbstractModel<TKey>, IDTOOf<TEntity>
     {
@@ -105,7 +113,7 @@ namespace Quicker.Interfaces.Service
         /// </returns>
         /// <param name="entity">Entidad a crear en la base de datos.</param>
         /// 
-        Task<TEntityDTO> Create(TEntityDTO entity);
+        Task<ActionResult<TEntityDTO>> Create(TEntityDTO entity);
 
         /// <summary>
         ///     Borra un elemento en la base de datos.
@@ -115,7 +123,7 @@ namespace Quicker.Interfaces.Service
         /// </returns>
         /// <param name="entity">Entidad a borrar en la base de datos.</param>
         /// 
-        Task Delete(TEntityDTO entity);
+        Task<ActionResult> Delete(TEntityDTO entity);
 
         /// <summary>
         ///     Borra un elemento en la base de datos.
@@ -125,9 +133,6 @@ namespace Quicker.Interfaces.Service
         /// </returns>
         /// <param name="key">PK de la entidad a borrar en la base de datos.</param>
         /// 
-        Task Delete(TKey key);
-
-#warning agregar documentacion de este metodo
-        Dictionary<string, string> GetPropertyInformationForCreate();
+        Task<ActionResult> Delete(TKey key);
     }
 }
