@@ -1,9 +1,11 @@
-﻿using Quicker.Abstracts.Controller;
+﻿using Microsoft.AspNetCore.Mvc;
+using Quicker.Abstracts.Controller;
 using Quicker.Services.Test.Fake;
 using Test.Common.Repository;
 
 namespace Quicker.Controller.Test.Fake
 {
+    [Route("api/[controller]")]
     public class FakeOpenController : OpenControllerAsync<int, TestModel, FakeOpenService>
     {
         public FakeOpenController(FakeOpenService service) : 
