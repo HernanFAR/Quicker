@@ -2,6 +2,20 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Authors>Hernán Álvarez</Authors>
+    <Description>Micro-framework para un desarrollo mas rapido (Quicker) del servicio del backend</Description>
+    <RepositoryUrl>https://github.com/HernanFAR/Quicker</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>crud, crud-generator, asp.net , asp.net core, mvc, webapi</PackageTags>
+    <Product>Quicker</Product>
+    <Copyright>Hernán Álvarez</Copyright>
+    <PackageReleaseNotes>Version 1.0.0 del paquete. Lista de funcionalidades: 
+
+Se agregaron las funcionalidades de servicios cerrados, abiertos y completos, con funciones de ayuda para cada uno.</PackageReleaseNotes>
+    <NeutralLanguage>es-CL</NeutralLanguage>
   </PropertyGroup>
 
   <ItemGroup>
