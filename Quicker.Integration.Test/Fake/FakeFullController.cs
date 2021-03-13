@@ -3,7 +3,7 @@ using Quicker.Abstracts.Controller;
 using Quicker.Services.Test.Fake;
 using Test.Common.Repository;
 
-namespace Quicker.Controller.Test.Fake
+namespace Quicker.Integration.Test.Fake
 {
     [Route("api/[controller]")]
     public class FakeFullController : FullControllerAsync<int, TestModel, FakeFullService>

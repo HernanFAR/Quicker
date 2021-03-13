@@ -4,12 +4,12 @@ using Quicker.Services.Test.Fake;
 using Test.Common.Repository;
 using Test.Common.Repository.DTO;
 
-namespace Quicker.Controller.Test.Fake
+namespace Quicker.Integration.Test.Fake
 {
     [Route("api/[controller]")]
-    public class FakeOpenControllerDTO : OpenControllerAsync<int, TestModelRelation, TestModelRelationDTO, FakeOpenServiceDTO>
+    public class FakeOpenDTOController : OpenControllerAsync<int, TestModelRelation, TestModelRelationDTO, FakeOpenServiceDTO>
     {
-        public FakeOpenControllerDTO(FakeOpenServiceDTO service) : 
+        public FakeOpenDTOController(FakeOpenServiceDTO service) : 
             base(service) { }
     }
 }
