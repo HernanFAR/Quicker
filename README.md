@@ -21,7 +21,7 @@ En esta instante, tiene estas dependencias:
 
 ## Arquitectura de trabajo que provee
 
-<img src="https://github.com/HernanFAR/Quicker/blob/master/img/Esp/Arquitectura.png?raw=true" alt="Imagen de la arquitectura" width="1173" height="570"/>
+<img src="https://github.com/HernanFAR/Quicker/blob/master/img/Esp/Arquitectura.png?raw=true" alt="Imagen de la arquitectura" width="1173" height="580"/>
 
 En amarillo, los componentes en los que te ayuda el framework.
 
