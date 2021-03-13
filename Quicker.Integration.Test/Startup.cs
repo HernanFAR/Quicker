@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -52,6 +53,11 @@ namespace Quicker.Integration.Test
             services.AddScoped<FakeOpenServiceDTO>();
             services.AddScoped<FakeFullService>();
             services.AddScoped<FakeFullServiceDTO>();
+
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            }); 
         }
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {

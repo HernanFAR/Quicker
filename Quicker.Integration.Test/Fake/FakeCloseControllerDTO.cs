@@ -7,9 +7,9 @@ using Test.Common.Repository.DTO;
 namespace Quicker.Integration.Test.Fake
 {
     [Route("api/[controller]")]
-    public class FakeCloseControllerDTO : CloseControllerAsync<int, TestModelRelation, TestModelRelationDTO, FakeCloseServiceDTO>
+    public class FakeCloseDTOController : CloseControllerAsync<int, TestModelRelation, TestModelRelationDTO, FakeCloseServiceDTO>
     {
-        public FakeCloseControllerDTO(FakeCloseServiceDTO service) : 
+        public FakeCloseDTOController(FakeCloseServiceDTO service) : 
             base(service) { }
     }
 }

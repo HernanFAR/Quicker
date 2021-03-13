@@ -16,20 +16,20 @@ using Xunit;
 
 namespace Quicker.Integration.Test
 {
-    public class CloseControllerDTOTest : IDisposable
+    public class CloseControllerTest : IDisposable
     {
         private readonly TestServer _Server;
         private readonly HttpClient _Client;
         private readonly string _BaseUri;
 
-        public CloseControllerDTOTest()
+        public CloseControllerTest()
         {
             _Server = new TestServer(new WebHostBuilder()
                .UseStartup<Startup>()
             );
 
             _Client = _Server.CreateClient();
-            _BaseUri = "/api/fakeclosedto";
+            _BaseUri = "/api/fakeclose";
         }
 
         public void Dispose()
