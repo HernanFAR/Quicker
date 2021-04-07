@@ -11,5 +11,6 @@ namespace Quicker.Service.Configuration
         public static readonly string Number = _Prepend +"NUMBER";
         public static readonly string Page = _Prepend + "PAGE";
         public static readonly string Conditions = _Prepend + "CONDITIONS";
+        public static readonly string Preaction = _Prepend + "PREACTION";
     }
 }
