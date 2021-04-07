@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -22,6 +23,8 @@ namespace Quicker.Abstracts.Component
 
         protected ILogger Logger { get; }
 
+        protected IMapper Mapper { get; }
+
         public ReadComponent(IServiceProvider service)
         {
             Context = service.GetRequiredService<DbContext>();
@@ -31,6 +34,11 @@ namespace Quicker.Abstracts.Component
             {
                 var factoryLogger = service.GetRequiredService<ILoggerFactory>();
                 Logger = factoryLogger.CreateLogger(GetType().FullName);
+            }
+            
+            if (configuration.UseAutoMapper)
+            {
+                Mapper = service.GetRequiredService<IMapper>();
             }
         }
 
@@ -43,7 +51,8 @@ namespace Quicker.Abstracts.Component
 
         protected virtual IQueryable<TEntity> ReadFilter(IQueryable<TEntity> entities) => entities;
 
-        protected abstract TEntityDTO ToDTO(TEntity model);
+        protected virtual TEntityDTO ToDTO(TEntity model)
+            => Mapper.Map<TEntity, TEntityDTO>(model);
 
         protected async Task<IEnumerable<TEntityDTO>> FindManyWith(
             Func<Task<bool>> action = null, 
