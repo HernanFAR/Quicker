@@ -1,8 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
 
 namespace Test.Common.Repository
 {
@@ -10,6 +7,10 @@ namespace Test.Common.Repository
     {
         public TestContext([NotNull] DbContextOptions options) : 
             base(options) { }
+
+        public DbSet<Category> Categories { get; set; }
+
+        public DbSet<Product> Products { get; set; }
 
         public DbSet<TestModel> TestModels { get; set; }
 
@@ -21,6 +22,21 @@ namespace Test.Common.Repository
 
             modelBuilder.Entity<TestModelRelation>(e => {
                 e.HasIndex(e => e.UniqueName)
+                    .IsUnique();
+            });
+
+            modelBuilder.Entity<Category>(e => 
+            {
+                e.HasIndex(e => e.Name)
+                    .IsUnique();
+            });
+
+            modelBuilder.Entity<Product>(e => 
+            {
+                e.HasIndex(e => e.Name)
+                    .IsUnique();
+
+                e.HasIndex(e => e.Code)
                     .IsUnique();
             });
         }
