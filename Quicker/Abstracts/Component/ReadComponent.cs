@@ -39,7 +39,14 @@ namespace Quicker.Abstracts.Component
                 .OrderBy(e => e.Id)
                 .AsNoTracking();
 
-        protected virtual IQueryable<TEntity> ReadFilter(IQueryable<TEntity> entities) => entities;
+        protected virtual IQueryable<TEntity> ReadFilter(IQueryable<TEntity> entities) {
+            if (entities is null)
+            {
+                throw new ArgumentNullException(QuickerExceptionConstants.Entities);
+            }
+
+            return entities;
+        }
 
         protected virtual async Task<IEnumerable<TEntity>> FindManyWithAsync(
             Func<Task<bool>> action = null, 
@@ -54,6 +61,12 @@ namespace Quicker.Abstracts.Component
                 throw new ArgumentNullException(QuickerExceptionConstants.Conditions);
             }
 
+            Logger?.Log(
+                LogLevel.Information,
+                $"Acción: {{{nameof(FindManyWithAsync)}}}, leyendo los registros de tipo {{{typeof(TEntity).Name}}}, " +
+                $"para buscar un elemento con condiciones especificas {(queryFunction == null ? "Funcion custom" : "Funcion Query")}."
+            );
+
             var query = queryFunction?.Invoke() ?? Query();
 
             foreach (var condition in conditions)
@@ -62,6 +75,11 @@ namespace Quicker.Abstracts.Component
             }
 
             var entities = await query.ToListAsync();
+
+            Logger?.Log(
+                LogLevel.Information,
+                $"Acción: {{{nameof(FindManyWithAsync)}}}, encontrados {{{entities.Count}}} elementos."
+            );
 
             return entities;
         } 
@@ -79,6 +97,12 @@ namespace Quicker.Abstracts.Component
                 throw new ArgumentNullException(QuickerExceptionConstants.Conditions);
             }
 
+            Logger?.Log(
+                LogLevel.Information,
+                $"Acción: {{{nameof(FindOneWithAsync)}}}, leyendo los registros de tipo {{{typeof(TEntity).Name}}}, " +
+                $"para buscar un elemento con condiciones especificas {(queryFunction == null ? "Funcion custom" : "Funcion Query")}."
+            );
+
             var query = queryFunction?.Invoke() ?? Query();
 
             foreach (var condition in conditions)
@@ -86,9 +110,24 @@ namespace Quicker.Abstracts.Component
                 query = query.Where(condition);
             }
 
-            var entities = await query.SingleOrDefaultAsync();
+            var entity = await query.SingleOrDefaultAsync();
 
-            return entities;
+            if (entity != null)
+            {
+                Logger?.Log(
+                    LogLevel.Information,
+                    $"Acción: {{{nameof(FindOneWithAsync)}}}, se ha encontrado un elemento."
+                );
+            }
+            else
+            {
+                Logger?.Log(
+                    LogLevel.Information,
+                    $"Acción: {{{nameof(FindOneWithAsync)}}}, no se ha encontrado un elemento."
+                );
+            }
+
+            return entity;
         }
 
         #endregion
@@ -151,7 +190,7 @@ namespace Quicker.Abstracts.Component
 
             if (conditions is null)
             {
-                throw new ArgumentNullException(nameof(conditions));
+                throw new ArgumentNullException(QuickerExceptionConstants.Conditions);
             }
 
             Logger?.Log(

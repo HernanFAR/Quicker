@@ -49,32 +49,37 @@ namespace Quicker.Abstracts.Component
                 .OrderBy(e => e.Id)
                 .AsNoTracking();
 
-        protected virtual IQueryable<TEntity> ReadFilter(IQueryable<TEntity> entities) => entities;
+        protected virtual IQueryable<TEntity> ReadFilter(IQueryable<TEntity> entities)
+        {
+            if (entities is null)
+            {
+                throw new ArgumentNullException(QuickerExceptionConstants.Entities);
+            }
+
+            return entities;
+        }
 
         protected virtual TEntityDTO ToDTO(TEntity model)
             => Mapper.Map<TEntity, TEntityDTO>(model);
 
-        protected async Task<IEnumerable<TEntityDTO>> FindManyWith(
+        protected async Task<IEnumerable<TEntityDTO>> FindManyWithAsync(
             Func<Task<bool>> action = null, 
             Func<IQueryable<TEntity>> queryFunction = null,
             params Expression<Func<TEntity, bool>>[] conditions
         )
         {
-            if (action != null)
-            {
-                Logger?.Log(
-                    LogLevel.Information,
-                    $"Acción: {{{nameof(CheckExistence)}}}, validando con pre-acción."
-                );
-
-                if (!await action?.Invoke())
-                    return default;
-            }
+            await ExecutingPreactionAsync(action, nameof(FindManyWithAsync));
 
             if (conditions is null)
             {
                 throw new ArgumentNullException(QuickerExceptionConstants.Conditions);
             }
+
+            Logger?.Log(
+                LogLevel.Information,
+                $"Acción: {{{nameof(FindManyWithAsync)}}}, leyendo los registros de tipo {{{typeof(TEntity).Name}}}, " +
+                $"para buscar un elemento con condiciones especificas {(queryFunction == null ? "Funcion custom" : "Funcion Query")}."
+            );
 
             var query = queryFunction?.Invoke() ?? Query();
 
@@ -85,30 +90,32 @@ namespace Quicker.Abstracts.Component
 
             var entities = await query.ToListAsync();
 
+            Logger?.Log(
+                LogLevel.Information,
+                $"Acción: {{{nameof(FindManyWithAsync)}}}, encontrados {{{entities.Count}}} elementos."
+            );
+
             return entities.Select(ToDTO);
         } 
 
-        protected async Task<TEntityDTO> FindOneWith(
+        protected async Task<TEntityDTO> FindOneWithAsync(
             Func<Task<bool>> action = null, 
             Func<IQueryable<TEntity>> queryFunction = null,
             params Expression<Func<TEntity, bool>>[] conditions
         )
         {
-            if (action != null)
-            {
-                Logger?.Log(
-                    LogLevel.Information,
-                    $"Acción: {{{nameof(CheckExistence)}}}, validando con pre-acción."
-                );
-
-                if (!await action?.Invoke())
-                    return default;
-            }
+            await ExecutingPreactionAsync(action, nameof(FindOneWithAsync));
 
             if (conditions is null)
             {
                 throw new ArgumentNullException(QuickerExceptionConstants.Conditions);
             }
+
+            Logger?.Log(
+                LogLevel.Information,
+                $"Acción: {{{nameof(FindOneWithAsync)}}}, leyendo los registros de tipo {{{typeof(TEntity).Name}}}, " +
+                $"para buscar un elemento con condiciones especificas {(queryFunction == null ? "Funcion custom" : "Funcion Query")}."
+            );
 
             var query = queryFunction?.Invoke() ?? Query();
 
@@ -117,34 +124,40 @@ namespace Quicker.Abstracts.Component
                 query = query.Where(condition);
             }
 
-            var entities = await query.SingleOrDefaultAsync();
+            var entity = await query.SingleOrDefaultAsync();
 
-            return ToDTO(entities);
+            if (entity != null)
+            {
+                Logger?.Log(
+                    LogLevel.Information,
+                    $"Acción: {{{nameof(FindOneWithAsync)}}}, se ha encontrado un elemento."
+                );
+            }
+            else
+            {
+                Logger?.Log(
+                    LogLevel.Information,
+                    $"Acción: {{{nameof(FindOneWithAsync)}}}, no se ha encontrado un elemento."
+                );
+            }
+
+            return ToDTO(entity);
         }
 
         #endregion
 
         #region Public methods
 
-        public virtual async Task<bool> CheckExistence(
+        public virtual async Task<bool> CheckExistenceAsync(
             TKey key, 
             Func<Task<bool>> action = null
         )
         {
-            if (action != null)
-            {
-                Logger?.Log(
-                    LogLevel.Information,
-                    $"Acción: {{{nameof(CheckExistence)}}}, validando con pre-acción."
-                );
-
-                if (!await action?.Invoke())
-                    return default;
-            }
+            await ExecutingPreactionAsync(action, nameof(CheckExistenceAsync));
 
             Logger?.Log(
                 LogLevel.Information,
-                $"Acción: {{{nameof(CheckExistence)}}}, leyendo los registros de tipo {{{typeof(TEntity).Name}}}, " +
+                $"Acción: {{{nameof(CheckExistenceAsync)}}}, leyendo los registros de tipo {{{typeof(TEntity).Name}}}, " +
                 $"para buscar un elemento de {{ID}} {key}."
             );
 
@@ -152,7 +165,7 @@ namespace Quicker.Abstracts.Component
             {
                 Logger?.Log(
                     LogLevel.Warning,
-                    $"Acción: {{{nameof(CheckExistence)}}}, no ha sido posible buscar, ya que la key es nula."
+                    $"Acción: {{{nameof(CheckExistenceAsync)}}}, no ha sido posible buscar, ya que la key es nula."
                 );
 
                 throw new ArgumentNullException(QuickerExceptionConstants.Key);
@@ -168,44 +181,35 @@ namespace Quicker.Abstracts.Component
             {
                 Logger?.Log(
                     LogLevel.Information,
-                    $"Acción: {{{nameof(CheckExistence)}}}, se ha encontrado el elemento."
+                    $"Acción: {{{nameof(CheckExistenceAsync)}}}, se ha encontrado el elemento."
                 );
             }
             else
             {
                 Logger?.Log(
                     LogLevel.Warning,
-                    $"Acción: {{{nameof(CheckExistence)}}}, no se ha encontrado el elemento."
+                    $"Acción: {{{nameof(CheckExistenceAsync)}}}, no se ha encontrado el elemento."
                 );
             }
 
             return exists;
         }
 
-        public virtual async Task<bool> CheckExistence(
+        public virtual async Task<bool> CheckExistenceAsync(
             Func<Task<bool>> action = null, 
             params Expression<Func<TEntity, bool>>[] conditions
         )
         {
-            if (action != null)
-            {
-                Logger?.Log(
-                    LogLevel.Information,
-                    $"Acción: {{{nameof(CheckExistence)}}}, validando con pre-acción."
-                );
-
-                if (!await action?.Invoke())
-                    return default;
-            }
+            await ExecutingPreactionAsync(action, nameof(CheckExistenceAsync));
 
             if (conditions is null)
             {
-                throw new ArgumentNullException(nameof(conditions));
+                throw new ArgumentNullException(QuickerExceptionConstants.Conditions);
             }
 
             Logger?.Log(
                 LogLevel.Information,
-                $"Acción: {{{nameof(CheckExistence)}}}, leyendo los registros de tipo {{{typeof(TEntity).Name}}}, " +
+                $"Acción: {{{nameof(CheckExistenceAsync)}}}, leyendo los registros de tipo {{{typeof(TEntity).Name}}}, " +
                 $"para buscar un elemento con filtros especificos."
             );
 
@@ -222,36 +226,27 @@ namespace Quicker.Abstracts.Component
             {
                 Logger?.Log(
                     LogLevel.Information,
-                    $"Acción: {{{nameof(CheckExistence)}}}, se ha encontrado el elemento."
+                    $"Acción: {{{nameof(CheckExistenceAsync)}}}, se ha encontrado el elemento."
                 );
             }
             else
             {
                 Logger?.Log(
                     LogLevel.Warning,
-                    $"Acción: {{{nameof(CheckExistence)}}}, no se ha encontrado el elemento."
+                    $"Acción: {{{nameof(CheckExistenceAsync)}}}, no se ha encontrado el elemento."
                 );
             }
 
             return exists;
         }
 
-        public virtual async Task<IEnumerable<TEntityDTO>> Read(Func<Task<bool>> action = null)
+        public virtual async Task<IEnumerable<TEntityDTO>> ReadAsync(Func<Task<bool>> action = null)
         {
-            if (action != null)
-            {
-                Logger?.Log(
-                    LogLevel.Information,
-                    $"Acción: {{{nameof(Read)}}}, validando con preacción."
-                );
-
-                if (!await action?.Invoke())
-                    return default;
-            }
+            await ExecutingPreactionAsync(action, nameof(ReadAsync));
 
             Logger?.Log(
                 LogLevel.Information,
-                $"Acción: {{{nameof(Read)}}}, leyendo los registros de tipo {{{typeof(TEntity).Name}}}"
+                $"Acción: {{{nameof(ReadAsync)}}}, leyendo los registros de tipo {{{typeof(TEntity).Name}}}"
             );
 
             var query = Query();
@@ -262,22 +257,13 @@ namespace Quicker.Abstracts.Component
             return entities.Select(ToDTO);
         }
 
-        public virtual async Task<TEntityDTO> Read(TKey key, Func<Task<bool>> action = null)
+        public virtual async Task<TEntityDTO> ReadAsync(TKey key, Func<Task<bool>> action = null)
         {
-            if (action != null)
-            {
-                Logger?.Log(
-                    LogLevel.Information,
-                    $"Acción: {{{nameof(Read)}}}, validando con pre-acción."
-                );
-
-                if (!await action?.Invoke())
-                    return default;
-            }
+            await ExecutingPreactionAsync(action, nameof(ReadAsync));
 
             Logger?.Log(
                 LogLevel.Information,
-                $"Acción: {{{nameof(Read)}}}, leyendo los registros de tipo {{{typeof(TEntity).Name}}}, " +
+                $"Acción: {{{nameof(ReadAsync)}}}, leyendo los registros de tipo {{{typeof(TEntity).Name}}}, " +
                 $"para buscar a la entidad de {{Id}}: {key}."
             );
 
@@ -285,7 +271,7 @@ namespace Quicker.Abstracts.Component
             {
                 Logger?.Log(
                     LogLevel.Warning,
-                    $"Acción: {{{nameof(Read)}}}, no ha sido posible buscar, ya que la key es nula."
+                    $"Acción: {{{nameof(ReadAsync)}}}, no ha sido posible buscar, ya que la key es nula."
                 );
 
                 throw new ArgumentNullException(QuickerExceptionConstants.Key);
@@ -301,7 +287,7 @@ namespace Quicker.Abstracts.Component
             {
                 Logger?.Log(
                     LogLevel.Information,
-                    $"Acción: {{{nameof(Read)}}}, se ha encontrado el elemento de {{Id}} {key}."
+                    $"Acción: {{{nameof(ReadAsync)}}}, se ha encontrado el elemento de {{Id}} {key}."
                 );
 
                 Context.Entry(entity).State = EntityState.Detached;
@@ -310,28 +296,19 @@ namespace Quicker.Abstracts.Component
             {
                 Logger?.Log(
                     LogLevel.Warning,
-                    $"Acción: {{{nameof(Read)}}}, no se ha encontrado el elemento de {{Id}} {key}."
+                    $"Acción: {{{nameof(ReadAsync)}}}, no se ha encontrado el elemento de {{Id}} {key}."
                 );
             }
 
             return ToDTO(entity);
         }
 
-        public virtual async Task<IEnumerable<TEntityDTO>> Paginate(
+        public virtual async Task<IEnumerable<TEntityDTO>> PaginateAsync(
             int page, int number = 10, 
             Func<Task<bool>> action = null
         )
         {
-            if (action != null)
-            {
-                Logger?.Log(
-                    LogLevel.Information,
-                    $"Acción: {{{nameof(Paginate)}}}, validando con pre-acción."
-                );
-
-                if (!await action?.Invoke())
-                    return default;
-            }
+            await ExecutingPreactionAsync(action, nameof(PaginateAsync));
 
             if (number < 1)
             {
@@ -345,7 +322,7 @@ namespace Quicker.Abstracts.Component
 
             Logger?.Log(
                 LogLevel.Information,
-                $"Acción: {{{nameof(Paginate)}}}, leyendo los registros de tipo {{{typeof(TEntity).Name}}}, " +
+                $"Acción: {{{nameof(PaginateAsync)}}}, leyendo los registros de tipo {{{typeof(TEntity).Name}}}, " +
                 $"para saltar {page * number} y tomar {number}."
             );
 
@@ -359,18 +336,37 @@ namespace Quicker.Abstracts.Component
             if (entities.Count != number)
             {
                 Logger?.Log(LogLevel.Information,
-                    $"Acción: {{{nameof(Paginate)}}}, se tomaron solo {number - entities.Count}, " +
+                    $"Acción: {{{nameof(PaginateAsync)}}}, se tomaron solo {number - entities.Count}, " +
                     $"ya que no habian {number}."
                 );
             }
             else if (entities.Count == 0)
             {
                 Logger?.Log(LogLevel.Warning,
-                    $"Acción: {{{nameof(Paginate)}}}, no se ha tomado ningun elemento."
+                    $"Acción: {{{nameof(PaginateAsync)}}}, no se ha tomado ningun elemento."
                 );
             }
 
             return entities.Select(ToDTO);
+        }
+
+        #endregion
+
+        #region Private methods
+
+        private async Task ExecutingPreactionAsync(Func<Task<bool>> action, string actionName)
+        {
+
+            if (action != null)
+            {
+                Logger?.Log(
+                    LogLevel.Information,
+                    $"Acción: {{{actionName}}}, validando con pre-acción."
+                );
+
+                if (!await action?.Invoke())
+                    throw new InvalidOperationException(QuickerExceptionConstants.Preaction);
+            }
         }
 
         #endregion
