@@ -14,6 +14,6 @@ namespace Microsoft.Extensions.DependencyInjection
         }
         
         public static void AddQuickerConfiguration(this IServiceCollection services) 
-            => AddQuickerConfiguration(null);
+            => services.AddQuickerConfiguration(null);
     }
 }
