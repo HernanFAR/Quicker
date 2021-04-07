@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace Quicker.Abstracts.Component
 {
-    public abstract class ReadComponent<TKey, TEntity, TEntityDTO> : IReadComponent<TKey, TEntity, TEntityDTO>
+    public class ReadComponent<TKey, TEntity, TEntityDTO> : IReadComponent<TKey, TEntity, TEntityDTO>
         where TEntity : class, IAbstractModel<TKey>, IDomainOf<TEntityDTO>
         where TEntityDTO : class, IAbstractModel<TKey>, IDTOOf<TEntity>
     {

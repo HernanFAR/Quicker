@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Quicker.Abstracts.Component
 {
-    public abstract class ReadComponent<TKey, TEntity> : IReadComponent<TKey, TEntity>
+    public class ReadComponent<TKey, TEntity> : IReadComponent<TKey, TEntity>
         where TEntity : class, IAbstractModel<TKey>
     {
         protected DbContext Context { get; }
@@ -41,7 +41,7 @@ namespace Quicker.Abstracts.Component
 
         protected virtual IQueryable<TEntity> ReadFilter(IQueryable<TEntity> entities) => entities;
 
-        protected async Task<IEnumerable<TEntity>> FindManyWith(
+        protected virtual async Task<IEnumerable<TEntity>> FindManyWith(
             Func<Task<bool>> action = null, 
             Func<IQueryable<TEntity>> queryFunction = null,
             params Expression<Func<TEntity, bool>>[] conditions
@@ -75,7 +75,7 @@ namespace Quicker.Abstracts.Component
             return entities;
         } 
 
-        protected async Task<TEntity> FindOneWith(
+        protected virtual async Task<TEntity> FindOneWith(
             Func<Task<bool>> action = null, 
             Func<IQueryable<TEntity>> queryFunction = null,
             params Expression<Func<TEntity, bool>>[] conditions
