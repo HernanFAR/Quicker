@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Quicker.Abstracts.Component;
+using Quicker.Service.Configuration;
 using Quicker.Service.Test.Fake.Component;
 using System;
 using System.Collections.Generic;
@@ -164,16 +165,93 @@ namespace Quicker.Test.Component.Read
 
             _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
 
-            int expCount = 3;
+            int expCount = 2;
             MethodInfo method = _Service.GetType().GetMethod("FindManyWith", BindingFlags.NonPublic | BindingFlags.Instance);
 
-            Expression<Func<Category, bool>>[] filter = { e => e.Name.Length > 2 };
+            Expression<Func<Category, bool>>[] filter = { e => e.Id > 1 };
 
             // Act
             var result = await (Task<IEnumerable<Category>>)method.Invoke(_Service, new object[] { null, null, filter });
 
             // Assertion
             Assert.Equal(expCount, result.Count());
+        }
+
+        [Fact]
+        public async Task FindManyWith_Success_ShouldReturnEmptyIEnumerable()
+        {
+            // Arrange
+            _Context = new ConnectionFactory().CreateContextForSQLite();
+
+            // Generador 
+            int id = 1;
+            var faker = new Faker<Category>()
+                .RuleFor(t => t.Id, _ => id++)
+                .RuleFor(t => t.Name, f => f.Lorem.Sentence(25));
+
+            _Context.Categories.AddRange(faker.Generate(3));
+
+            await _Context.SaveChangesAsync();
+
+            var container = new ServiceCollection()
+                .AddLogging();
+
+            container.AddQuickerConfiguration();
+            container.AddScoped<DbContext, TestContext>(e => _Context);
+
+            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+
+            int expCount = 0;
+            MethodInfo method = _Service.GetType().GetMethod("FindManyWith", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            Expression<Func<Category, bool>>[] filter = { e => e.Id > 5 };
+
+            // Act
+            var result = await (Task<IEnumerable<Category>>)method.Invoke(_Service, new object[] { null, null, filter });
+
+            // Assertion
+            Assert.Equal(expCount, result.Count());
+        }
+
+        [Fact]
+        public async Task FindManyWith_Success_ShouldReturnDefaultBecauseAction()
+        {
+            // Arrange
+            _Context = new ConnectionFactory().CreateContextForSQLite();
+
+            // Generador 
+            int id = 1;
+            var faker = new Faker<Category>()
+                .RuleFor(t => t.Id, _ => id++)
+                .RuleFor(t => t.Name, f => f.Lorem.Sentence(25));
+
+            _Context.Categories.AddRange(faker.Generate(3));
+
+            await _Context.SaveChangesAsync();
+
+            var container = new ServiceCollection()
+                .AddLogging();
+
+            container.AddQuickerConfiguration();
+            container.AddScoped<DbContext, TestContext>(e => _Context);
+
+            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+
+            MethodInfo method = _Service.GetType().GetMethod("FindManyWith", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            Func<Task<bool>> action = () =>
+            {
+                return Task.FromResult(false);
+            };
+
+            Expression<Func<Category, bool>>[] filter = { e => e.Id > 5 };
+
+            // Assertion
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+                () => (Task<IEnumerable<Category>>)method.Invoke(_Service, new object[] { action, null, filter })
+            );
+
+            Assert.Equal(QuickerExceptionConstants.Preaction, ex.Message);
         }
     }
 }
