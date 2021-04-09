@@ -34,6 +34,20 @@ namespace Quicker.Abstracts.Component
 
         #region Protected methods
 
+        protected async Task ExecutingPreConditionAsync(Func<Task<bool>> condition, string actionName)
+        {
+            if (condition != null)
+            {
+                Logger?.Log(
+                    LogLevel.Information,
+                    $"Acción: {{{actionName}}}, validando con pre-acción."
+                );
+
+                if (!await condition?.Invoke())
+                    throw new InvalidOperationException(QuickerExceptionConstants.Precondition);
+            }
+        }
+
         protected virtual IQueryable<TEntity> Query()
             => Context.Set<TEntity>()
                 .OrderBy(e => e.Id)
@@ -49,12 +63,12 @@ namespace Quicker.Abstracts.Component
         }
 
         protected virtual async Task<IEnumerable<TEntity>> FindManyWithAsync(
-            Func<Task<bool>> action = null, 
+            Func<Task<bool>> conditionFunc = null, 
             Func<IQueryable<TEntity>> queryFunction = null,
             params Expression<Func<TEntity, bool>>[] conditions
         )
         {
-            await ExecutingPreactionAsync(action, nameof(FindManyWithAsync));
+            await ExecutingPreConditionAsync(conditionFunc, nameof(FindManyWithAsync));
 
             if (conditions is null)
             {
@@ -85,12 +99,12 @@ namespace Quicker.Abstracts.Component
         } 
 
         protected virtual async Task<TEntity> FindOneWithAsync(
-            Func<Task<bool>> action = null, 
+            Func<Task<bool>> conditionFunc = null, 
             Func<IQueryable<TEntity>> queryFunction = null,
             params Expression<Func<TEntity, bool>>[] conditions
         )
         {
-            await ExecutingPreactionAsync(action, nameof(FindOneWithAsync));
+            await ExecutingPreConditionAsync(conditionFunc, nameof(FindOneWithAsync));
 
             if (conditions is null)
             {
@@ -136,10 +150,10 @@ namespace Quicker.Abstracts.Component
 
         public virtual async Task<bool> CheckExistenceAsync(
             TKey key, 
-            Func<Task<bool>> action = null
+            Func<Task<bool>> conditionFunc = null
         )
         {
-            await ExecutingPreactionAsync(action, nameof(CheckExistenceAsync));
+            await ExecutingPreConditionAsync(conditionFunc, nameof(CheckExistenceAsync));
 
             Logger?.Log(
                 LogLevel.Information,
@@ -182,11 +196,11 @@ namespace Quicker.Abstracts.Component
         }
 
         public virtual async Task<bool> CheckExistenceAsync(
-            Func<Task<bool>> action = null, 
+            Func<Task<bool>> conditionFunc = null, 
             params Expression<Func<TEntity, bool>>[] conditions
         )
         {
-            await ExecutingPreactionAsync(action, nameof(CheckExistenceAsync));
+            await ExecutingPreConditionAsync(conditionFunc, nameof(CheckExistenceAsync));
 
             if (conditions is null)
             {
@@ -226,9 +240,9 @@ namespace Quicker.Abstracts.Component
             return exists;
         }
 
-        public virtual async Task<IEnumerable<TEntity>> ReadAsync(Func<Task<bool>> action = null)
+        public virtual async Task<IEnumerable<TEntity>> ReadAsync(Func<Task<bool>> conditionFunc = null)
         {
-            await ExecutingPreactionAsync(action, nameof(ReadAsync));
+            await ExecutingPreConditionAsync(conditionFunc, nameof(ReadAsync));
 
             Logger?.Log(
                 LogLevel.Information,
@@ -240,12 +254,17 @@ namespace Quicker.Abstracts.Component
             var entities = await ReadFilter(query)
                 .ToListAsync();
 
+            Logger?.Log(
+                LogLevel.Information,
+                $"Acción: {{{nameof(ReadAsync)}}}, se han leido {{{entities.Count}}} registros."
+            );
+
             return entities;
         }
 
-        public virtual async Task<TEntity> ReadAsync(TKey key, Func<Task<bool>> action = null)
+        public virtual async Task<TEntity> ReadAsync(TKey key, Func<Task<bool>> conditionFunc = null)
         {
-            await ExecutingPreactionAsync(action, nameof(ReadAsync));
+            await ExecutingPreConditionAsync(conditionFunc, nameof(ReadAsync));
 
             Logger?.Log(
                 LogLevel.Information,
@@ -291,10 +310,10 @@ namespace Quicker.Abstracts.Component
 
         public virtual async Task<IEnumerable<TEntity>> PaginateAsync(
             int page, int number = 10, 
-            Func<Task<bool>> action = null
+            Func<Task<bool>> conditionFunc = null
         )
         {
-            await ExecutingPreactionAsync(action, nameof(PaginateAsync));
+            await ExecutingPreConditionAsync(conditionFunc, nameof(PaginateAsync));
 
             if (number < 1)
             {
@@ -334,25 +353,6 @@ namespace Quicker.Abstracts.Component
             }
 
             return entities;
-        }
-
-        #endregion
-
-        #region Private methods
-
-        private async Task ExecutingPreactionAsync(Func<Task<bool>> action, string actionName)
-        {
-
-            if (action != null)
-            {
-                Logger?.Log(
-                    LogLevel.Information,
-                    $"Acción: {{{actionName}}}, validando con pre-acción."
-                );
-
-                if (!await action?.Invoke())
-                    throw new InvalidOperationException(QuickerExceptionConstants.Preaction);
-            }
         }
 
         #endregion
