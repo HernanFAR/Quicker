@@ -1338,7 +1338,299 @@ namespace Quicker.Test.Component.Read
 
         #region PaginateAsync Test
 
+        [Fact]
+        public async Task PaginateAsync_Failure_ShouldThrowArgumentException_ByNumber()
+        {
+            // Arrange
+            int page = 0;
+            int number = 0;
+            _Context = new ConnectionFactory().CreateContextForSQLite();
 
+            var container = new ServiceCollection()
+                .AddLogging();
+
+            container.AddQuickerConfiguration();
+            container.AddScoped<DbContext, TestContext>(e => _Context);
+
+            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+
+            Func<Task<bool>> condition = null;
+
+            // Act
+            var ex = await Assert.ThrowsAnyAsync<ArgumentException>(
+                () => _Service.PaginateAsync(page, number, condition)
+            );
+
+            Assert.Equal(QuickerExceptionConstants.Number, ex.Message);
+        }
+
+        [Fact]
+        public async Task PaginateAsync_Failure_ShouldThrowArgumentException_ByPage()
+        {
+            // Arrange
+            int page = -1;
+            int number = 1;
+            _Context = new ConnectionFactory().CreateContextForSQLite();
+
+            var container = new ServiceCollection()
+                .AddLogging();
+
+            container.AddQuickerConfiguration();
+            container.AddScoped<DbContext, TestContext>(e => _Context);
+
+            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+
+            Func<Task<bool>> condition = null;
+
+            // Act
+            var ex = await Assert.ThrowsAnyAsync<ArgumentException>(
+                () => _Service.PaginateAsync(page, number, condition)
+            );
+
+            Assert.Equal(QuickerExceptionConstants.Page, ex.Message);
+        }
+
+        [Fact]
+        public async Task PaginateAsync_Failure_ShouldInvalidOperationException_ByPreCondition()
+        {
+            // Arrange
+            int page = 5;
+            int number = 3;
+            _Context = new ConnectionFactory().CreateContextForSQLite();
+
+            var container = new ServiceCollection()
+                .AddLogging();
+
+            container.AddQuickerConfiguration();
+            container.AddScoped<DbContext, TestContext>(e => _Context);
+
+            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+
+            Func<Task<bool>> condition = () => Task.FromResult(false);
+
+            // Act
+            var ex = await Assert.ThrowsAnyAsync<InvalidOperationException>(
+                () => _Service.PaginateAsync(page, number, condition)
+            );
+
+            Assert.Equal(QuickerExceptionConstants.Precondition, ex.Message);
+        }
+
+        [Fact]
+        public async Task PaginateAsync_Success_PageZero_ShouldReturnIEnumerableWithLengthFive_PassCondition()
+        {
+            // Arrange
+            int count = 5;
+            int page = 0;
+            int number = 10;
+            int expCount = 5;
+            _Context = new ConnectionFactory().CreateContextForSQLite();
+
+            // Generador
+            int id = 1;
+            var faker = new Faker<Category>()
+                .RuleFor(t => t.Id, _ => id++)
+                .RuleFor(t => t.Name, f => f.Lorem.Sentence(25));
+
+            _Context.Categories.AddRange(faker.Generate(count));
+
+            await _Context.SaveChangesAsync();
+
+            var container = new ServiceCollection()
+                .AddLogging();
+
+            container.AddQuickerConfiguration();
+            container.AddScoped<DbContext, TestContext>(e => _Context);
+
+            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+
+            Func<Task<bool>> condition = () => Task.FromResult(true);
+
+            // Act
+            var entities = await _Service.PaginateAsync(page, number, condition);
+
+            Assert.Equal(expCount, entities.Count());
+        }
+
+        [Fact]
+        public async Task PaginateAsync_Success_PageZero_ShouldReturnIEnumerableWithLengthFive()
+        {
+            // Arrange
+            int count = 5;
+            int page = 0;
+            int number = 10;
+            int expCount = 5;
+            _Context = new ConnectionFactory().CreateContextForSQLite();
+
+            // Generador
+            int id = 1;
+            var faker = new Faker<Category>()
+                .RuleFor(t => t.Id, _ => id++)
+                .RuleFor(t => t.Name, f => f.Lorem.Sentence(25));
+
+            _Context.Categories.AddRange(faker.Generate(count));
+
+            await _Context.SaveChangesAsync();
+
+            var container = new ServiceCollection()
+                .AddLogging();
+
+            container.AddQuickerConfiguration();
+            container.AddScoped<DbContext, TestContext>(e => _Context);
+
+            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+
+            Func<Task<bool>> condition = null;
+
+            // Act
+            var entities = await _Service.PaginateAsync(page, number, condition);
+
+            Assert.Equal(expCount, entities.Count());
+        }
+
+        [Fact]
+        public async Task PaginateAsync_Success_PageOne_ShouldReturnEmptyIEnumerable()
+        {
+            // Arrange
+            int count = 5;
+            int page = 1;
+            int number = 10;
+            int expCount = 0;
+            _Context = new ConnectionFactory().CreateContextForSQLite();
+
+            // Generador
+            int id = 1;
+            var faker = new Faker<Category>()
+                .RuleFor(t => t.Id, _ => id++)
+                .RuleFor(t => t.Name, f => f.Lorem.Sentence(25));
+
+            _Context.Categories.AddRange(faker.Generate(count));
+
+            await _Context.SaveChangesAsync();
+
+            var container = new ServiceCollection()
+                .AddLogging();
+
+            container.AddQuickerConfiguration();
+            container.AddScoped<DbContext, TestContext>(e => _Context);
+
+            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+
+            Func<Task<bool>> condition = null;
+
+            // Act
+            var entities = await _Service.PaginateAsync(page, number, condition);
+
+            Assert.Equal(expCount, entities.Count());
+        }
+
+        [Fact]
+        public async Task PaginateAsync_Success_TakeThree_PageZero_ShouldReturnIEnumerableWithLengthThree()
+        {
+            // Arrange
+            int count = 5;
+            int page = 0;
+            int number = 3;
+            int expCount = 3;
+            _Context = new ConnectionFactory().CreateContextForSQLite();
+
+            // Generador
+            int id = 1;
+            var faker = new Faker<Category>()
+                .RuleFor(t => t.Id, _ => id++)
+                .RuleFor(t => t.Name, f => f.Lorem.Sentence(25));
+
+            _Context.Categories.AddRange(faker.Generate(count));
+
+            await _Context.SaveChangesAsync();
+
+            var container = new ServiceCollection()
+                .AddLogging();
+
+            container.AddQuickerConfiguration();
+            container.AddScoped<DbContext, TestContext>(e => _Context);
+
+            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+
+            Func<Task<bool>> condition = null;
+
+            // Act
+            var entities = await _Service.PaginateAsync(page, number, condition);
+
+            Assert.Equal(expCount, entities.Count());
+        }
+
+        [Fact]
+        public async Task PaginateAsync_Success_TakeThree_PageOne_ShouldReturnIEnumerableWithLengthTwo()
+        {
+            // Arrange
+            int count = 5;
+            int page = 1;
+            int number = 3;
+            int expCount = 2;
+            _Context = new ConnectionFactory().CreateContextForSQLite();
+
+            // Generador
+            int id = 1;
+            var faker = new Faker<Category>()
+                .RuleFor(t => t.Id, _ => id++)
+                .RuleFor(t => t.Name, f => f.Lorem.Sentence(25));
+
+            _Context.Categories.AddRange(faker.Generate(count));
+
+            await _Context.SaveChangesAsync();
+
+            var container = new ServiceCollection()
+                .AddLogging();
+
+            container.AddQuickerConfiguration();
+            container.AddScoped<DbContext, TestContext>(e => _Context);
+
+            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+
+            Func<Task<bool>> condition = null;
+
+            // Act
+            var entities = await _Service.PaginateAsync(page, number, condition);
+
+            Assert.Equal(expCount, entities.Count());
+        }
+
+        [Fact]
+        public async Task PaginateAsync_Success_TakeThree_PageTwo_ShouldReturnEmptyIEnumerable()
+        {
+            // Arrange
+            int count = 5;
+            int page = 2;
+            int number = 3;
+            int expCount = 0;
+            _Context = new ConnectionFactory().CreateContextForSQLite();
+
+            // Generador
+            int id = 1;
+            var faker = new Faker<Category>()
+                .RuleFor(t => t.Id, _ => id++)
+                .RuleFor(t => t.Name, f => f.Lorem.Sentence(25));
+
+            _Context.Categories.AddRange(faker.Generate(count));
+
+            await _Context.SaveChangesAsync();
+
+            var container = new ServiceCollection()
+                .AddLogging();
+
+            container.AddQuickerConfiguration();
+            container.AddScoped<DbContext, TestContext>(e => _Context);
+
+            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+
+            Func<Task<bool>> condition = null;
+
+            // Act
+            var entities = await _Service.PaginateAsync(page, number, condition);
+
+            Assert.Equal(expCount, entities.Count());
+        }
 
         #endregion
     }
