@@ -365,7 +365,7 @@ namespace Quicker.Abstracts.Component
                 );
 
                 if (!await action?.Invoke())
-                    throw new InvalidOperationException(QuickerExceptionConstants.Preaction);
+                    throw new InvalidOperationException(QuickerExceptionConstants.Precondition);
             }
         }
 
