@@ -23,6 +23,62 @@ namespace Quicker.Test.Component.Read
 
         private ReadComponent<int, Category> _Service;
 
+        #region ExecutingPreConditionAsync Test
+
+        [Fact]
+        public async Task ExecutingPreConditionAsync_Failure_ShouldThrowInvalidOperation_ByCondition()
+        {
+            // Arrange
+            _Context = new ConnectionFactory().CreateContextForSQLite();
+
+            var container = new ServiceCollection()
+                .AddLogging();
+
+            container.AddQuickerConfiguration();
+            container.AddScoped<DbContext, TestContext>(e => _Context);
+
+            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+
+            MethodInfo method = _Service.GetType().GetMethod("ExecutingPreConditionAsync", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            Func<Task<bool>> condition = () => Task.FromResult(false);
+            string actionName = "Test";
+
+            // Assert - Act
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+                () => (Task)method.Invoke(_Service, new object[] { condition, actionName })
+            );
+
+            Assert.Equal(QuickerExceptionConstants.Precondition, ex.Message);
+        }
+
+        [Fact]
+        public async Task ExecutingPreConditionAsync_Success()
+        {
+            // Arrange
+            _Context = new ConnectionFactory().CreateContextForSQLite();
+
+            var container = new ServiceCollection()
+                .AddLogging();
+
+            container.AddQuickerConfiguration();
+            container.AddScoped<DbContext, TestContext>(e => _Context);
+
+            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+
+            MethodInfo method = _Service.GetType().GetMethod("ExecutingPreConditionAsync", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            Func<Task<bool>> condition = () => Task.FromResult(true);
+            string actionName = "Test";
+
+            // Assert - Act
+            await (Task)method.Invoke(_Service, new object[] { condition, actionName });
+
+            Assert.True(true);
+        }
+
+        #endregion
+
         #region Query Tests
 
         [Fact]
@@ -203,13 +259,13 @@ namespace Quicker.Test.Component.Read
 
             MethodInfo method = _Service.GetType().GetMethod("FindManyWithAsync", BindingFlags.NonPublic | BindingFlags.Instance);
 
-            Func<Task<bool>> action = null;
+            Func<Task<bool>> condition = null;
             Func<IQueryable<Category>> query = null;
             Expression<Func<Category, bool>>[] filter = null;
 
             // Assertion - Act
             var ex = await Assert.ThrowsAsync<ArgumentNullException>(
-                () => (Task<IEnumerable<Category>>)method.Invoke(_Service, new object[] { action, query, filter })
+                () => (Task<IEnumerable<Category>>)method.Invoke(_Service, new object[] { condition, query, filter })
             );
 
             Assert.Equal(QuickerExceptionConstants.Conditions, ex.ParamName);
@@ -242,12 +298,12 @@ namespace Quicker.Test.Component.Read
             int expCount = 2;
             MethodInfo method = _Service.GetType().GetMethod("FindManyWithAsync", BindingFlags.NonPublic | BindingFlags.Instance);
 
-            Func<Task<bool>> action = null;
+            Func<Task<bool>> condition = null;
             Func<IQueryable<Category>> query = null;
             Expression<Func<Category, bool>>[] filter = { e => e.Id > 1 };
 
             // Act
-            var result = await (Task<IEnumerable<Category>>)method.Invoke(_Service, new object[] { action, query, filter });
+            var result = await (Task<IEnumerable<Category>>)method.Invoke(_Service, new object[] { condition, query, filter });
 
             // Assertion
             Assert.Equal(expCount, result.Count());
@@ -280,12 +336,12 @@ namespace Quicker.Test.Component.Read
             int expCount = 0;
             MethodInfo method = _Service.GetType().GetMethod("FindManyWithAsync", BindingFlags.NonPublic | BindingFlags.Instance);
 
-            Func<Task<bool>> action = null;
+            Func<Task<bool>> condition = null;
             Func<IQueryable<Category>> query = null;
             Expression<Func<Category, bool>>[] filter = { e => e.Id > 5 };
 
             // Act
-            var result = await (Task<IEnumerable<Category>>)method.Invoke(_Service, new object[] { action, query, filter });
+            var result = await (Task<IEnumerable<Category>>)method.Invoke(_Service, new object[] { condition, query, filter });
 
             // Assertion
             Assert.Equal(expCount, result.Count());
@@ -318,7 +374,7 @@ namespace Quicker.Test.Component.Read
             int expCount = 1;
             MethodInfo method = _Service.GetType().GetMethod("FindManyWithAsync", BindingFlags.NonPublic | BindingFlags.Instance);
 
-            Func<Task<bool>> action = null;
+            Func<Task<bool>> condition = null;
             Func<IQueryable<Category>> query = null;
             Expression<Func<Category, bool>>[] filter = {
                 e => e.Id > 1,
@@ -326,14 +382,14 @@ namespace Quicker.Test.Component.Read
             };
 
             // Act
-            var result = await (Task<IEnumerable<Category>>)method.Invoke(_Service, new object[] { action, query, filter });
+            var result = await (Task<IEnumerable<Category>>)method.Invoke(_Service, new object[] { condition, query, filter });
 
             // Assertion
             Assert.Equal(expCount, result.Count());
         }
 
         [Fact]
-        public async Task FindManyWithAsync_Failure_ShouldThrowInvalidOperationException_ByPreaction()
+        public async Task FindManyWithAsync_Failure_ShouldThrowInvalidOperationException_ByPreCondition()
         {
             // Arrange
             _Context = new ConnectionFactory().CreateContextForSQLite();
@@ -370,7 +426,7 @@ namespace Quicker.Test.Component.Read
                 () => (Task<IEnumerable<Category>>)method.Invoke(_Service, new object[] { action, query, filter })
             );
 
-            Assert.Equal(QuickerExceptionConstants.Preaction, ex.Message);
+            Assert.Equal(QuickerExceptionConstants.Precondition, ex.Message);
         }
 
         [Fact]
@@ -400,19 +456,19 @@ namespace Quicker.Test.Component.Read
 
             MethodInfo method = _Service.GetType().GetMethod("FindManyWithAsync", BindingFlags.NonPublic | BindingFlags.Instance);
 
-            Func<Task<bool>> action = null;
+            Func<Task<bool>> condition = null;
             Func<IQueryable<Category>> query = () => _Context.Categories.Where(e => e.Id == 2);
             Expression<Func<Category, bool>>[] filter = { e => e.Id > 1 };
 
             // Act
-            var entities = await (Task<IEnumerable<Category>>)method.Invoke(_Service, new object[] { action, query, filter });
+            var entities = await (Task<IEnumerable<Category>>)method.Invoke(_Service, new object[] { condition, query, filter });
 
             Assert.Equal(expCount, entities.Count());
         }
 
         #endregion
 
-        #region FindOneWithAsync tests
+        #region FindOneWithAsync Tests
         
         [Fact]
         public async Task FindOneWithAsync_Failure_ShouldThrowArgumentNullException()
@@ -440,13 +496,13 @@ namespace Quicker.Test.Component.Read
 
             MethodInfo method = _Service.GetType().GetMethod("FindManyWithAsync", BindingFlags.NonPublic | BindingFlags.Instance);
 
-            Func<Task<bool>> action = null;
+            Func<Task<bool>> condition = null;
             Func<IQueryable<Category>> query = null;
             Expression<Func<Category, bool>>[] filter = null;
 
             // Assertion - Act
             var ex = await Assert.ThrowsAsync<ArgumentNullException>(
-                () => (Task<IEnumerable<Category>>)method.Invoke(_Service, new object[] { action, query, filter })
+                () => (Task<IEnumerable<Category>>)method.Invoke(_Service, new object[] { condition, query, filter })
             );
 
             Assert.Equal(QuickerExceptionConstants.Conditions, ex.ParamName);
@@ -478,12 +534,12 @@ namespace Quicker.Test.Component.Read
 
             MethodInfo method = _Service.GetType().GetMethod("FindOneWithAsync", BindingFlags.NonPublic | BindingFlags.Instance);
 
-            Func<Task<bool>> action = null;
+            Func<Task<bool>> condition = null;
             Func<IQueryable<Category>> query = null;
             Expression<Func<Category, bool>>[] filter = { e => e.Id == 1 };
 
             // Act
-            var result = await (Task<Category>)method.Invoke(_Service, new object[] { action, query, filter });
+            var result = await (Task<Category>)method.Invoke(_Service, new object[] { condition, query, filter });
 
             // Assertion
             Assert.NotNull(result);
@@ -530,6 +586,46 @@ namespace Quicker.Test.Component.Read
         }
 
         [Fact]
+        public async Task FindOneWithAsync_Success_TwoCondition_ReturnNull_PassPreCondition()
+        {
+            // Arrange
+            _Context = new ConnectionFactory().CreateContextForSQLite();
+
+            // Generador 
+            int id = 1;
+            var faker = new Faker<Category>()
+                .RuleFor(t => t.Id, _ => id++)
+                .RuleFor(t => t.Name, f => f.Lorem.Sentence(25));
+
+            _Context.Categories.AddRange(faker.Generate(25));
+
+            await _Context.SaveChangesAsync();
+
+            var container = new ServiceCollection()
+                .AddLogging();
+
+            container.AddQuickerConfiguration();
+            container.AddScoped<DbContext, TestContext>(e => _Context);
+
+            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+
+            MethodInfo method = _Service.GetType().GetMethod("FindOneWithAsync", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            Func<Task<bool>> condition = () => Task.FromResult(true);
+            Func<IQueryable<Category>> query = null;
+            Expression<Func<Category, bool>>[] filter = { 
+                e => e.Id > 15,
+                e => e.Id == 5 
+            };
+
+            // Act
+            var result = await (Task<Category>)method.Invoke(_Service, new object[] { condition, query, filter });
+
+            // Assertion
+            Assert.Null(result);
+        }
+
+        [Fact]
         public async Task FindOneWithAsync_Failure_ShouldThrowInvalidOperationException_ByPreaction()
         {
             // Arrange
@@ -555,7 +651,7 @@ namespace Quicker.Test.Component.Read
 
             MethodInfo method = _Service.GetType().GetMethod("FindOneWithAsync", BindingFlags.NonPublic | BindingFlags.Instance);
 
-            Func<Task<bool>> action = () =>
+            Func<Task<bool>> condition = () =>
             {
                 return Task.FromResult(false);
             };
@@ -564,10 +660,10 @@ namespace Quicker.Test.Component.Read
 
             // Assertion
             var ex = await Assert.ThrowsAsync<InvalidOperationException>(
-                () => (Task<Category>)method.Invoke(_Service, new object[] { action, query, filter })
+                () => (Task<Category>)method.Invoke(_Service, new object[] { condition, query, filter })
             );
 
-            Assert.Equal(QuickerExceptionConstants.Preaction, ex.Message);
+            Assert.Equal(QuickerExceptionConstants.Precondition, ex.Message);
         }
 
         [Fact]
@@ -596,7 +692,7 @@ namespace Quicker.Test.Component.Read
 
             MethodInfo method = _Service.GetType().GetMethod("FindOneWithAsync", BindingFlags.NonPublic | BindingFlags.Instance);
 
-            Func<Task<bool>> action = null;
+            Func<Task<bool>> condition = null;
             Func<IQueryable<Category>> query = () => _Context.Categories.Where(e => e.Id > 5);
             Expression<Func<Category, bool>>[] filter = 
             {
@@ -604,7 +700,7 @@ namespace Quicker.Test.Component.Read
             };
 
             // Act
-            var entity = await (Task<Category>)method.Invoke(_Service, new object[] { action, query, filter });
+            var entity = await (Task<Category>)method.Invoke(_Service, new object[] { condition, query, filter });
 
             Assert.NotNull(entity);
         }
@@ -638,10 +734,10 @@ namespace Quicker.Test.Component.Read
 
             _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
 
-            Func<Task<bool>> action = null;
+            Func<Task<bool>> condition = null;
 
             // Act
-            var exist = await _Service.CheckExistenceAsync(expId, action);
+            var exist = await _Service.CheckExistenceAsync(expId, condition);
 
             Assert.True(exist);
         }
@@ -671,16 +767,16 @@ namespace Quicker.Test.Component.Read
 
             _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
 
-            Func<Task<bool>> action = null;
+            Func<Task<bool>> condition = null;
 
             // Act
-            var exist = await _Service.CheckExistenceAsync(expId, action);
+            var exist = await _Service.CheckExistenceAsync(expId, condition);
 
             Assert.False(exist);
         }
 
         [Fact]
-        public async Task CheckExistenceAsync_WithKey_Failure_ShouldThrowInvalidOperationException_ByPreAction()
+        public async Task CheckExistenceAsync_WithKey_Success_ReturnFalse_PassPreCondition()
         {
             // Arrange
             _Context = new ConnectionFactory().CreateContextForSQLite();
@@ -704,14 +800,47 @@ namespace Quicker.Test.Component.Read
 
             _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
 
-            Func<Task<bool>> action = () => Task.FromResult(false);
+            Func<Task<bool>> condition = () => Task.FromResult(true);
+
+            // Act
+            var exist = await _Service.CheckExistenceAsync(expId, condition);
+
+            Assert.False(exist);
+        }
+
+        [Fact]
+        public async Task CheckExistenceAsync_WithKey_Failure_ShouldThrowInvalidOperationException_ByPreCondition()
+        {
+            // Arrange
+            _Context = new ConnectionFactory().CreateContextForSQLite();
+
+            // Generador
+            int expId = 26;
+            int id = 1;
+            var faker = new Faker<Category>()
+                .RuleFor(t => t.Id, _ => id++)
+                .RuleFor(t => t.Name, f => f.Lorem.Sentence(25));
+
+            _Context.Categories.AddRange(faker.Generate(25));
+
+            await _Context.SaveChangesAsync();
+
+            var container = new ServiceCollection()
+                .AddLogging();
+
+            container.AddQuickerConfiguration();
+            container.AddScoped<DbContext, TestContext>(e => _Context);
+
+            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+
+            Func<Task<bool>> condition = () => Task.FromResult(false);
 
             // Act
             var ex = await Assert.ThrowsAnyAsync<InvalidOperationException>(
-                () => _Service.CheckExistenceAsync(expId, action)
+                () => _Service.CheckExistenceAsync(expId, condition)
             );
 
-            Assert.Equal(QuickerExceptionConstants.Preaction, ex.Message);
+            Assert.Equal(QuickerExceptionConstants.Precondition, ex.Message);
         }
 
         #endregion
@@ -743,13 +872,13 @@ namespace Quicker.Test.Component.Read
 
             _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
 
-            Func<Task<bool>> action = null;
+            Func<Task<bool>> condition = null;
             Expression<Func<Category, bool>>[] conditions = {
                 e => e.Id == expId
             };
 
             // Act
-            var exist = await _Service.CheckExistenceAsync(action, conditions);
+            var exist = await _Service.CheckExistenceAsync(condition, conditions);
 
             Assert.True(exist);
         }
@@ -779,15 +908,86 @@ namespace Quicker.Test.Component.Read
 
             _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
 
-            Func<Task<bool>> action = null;
+            Func<Task<bool>> condition = null;
             Expression<Func<Category, bool>>[] conditions = {
                 e => e.Id == expId
             };
 
             // Act
-            var exist = await _Service.CheckExistenceAsync(action, conditions);
+            var exist = await _Service.CheckExistenceAsync(condition, conditions);
 
             Assert.False(exist);
+        }
+
+        [Fact]
+        public async Task CheckExistenceAsync_WithConditions_Success_ReturnFalse_PassPreCondition()
+        {
+            // Arrange
+            _Context = new ConnectionFactory().CreateContextForSQLite();
+
+            // Generador
+            int expId = 26;
+            int id = 1;
+            var faker = new Faker<Category>()
+                .RuleFor(t => t.Id, _ => id++)
+                .RuleFor(t => t.Name, f => f.Lorem.Sentence(25));
+
+            _Context.Categories.AddRange(faker.Generate(25));
+
+            await _Context.SaveChangesAsync();
+
+            var container = new ServiceCollection()
+                .AddLogging();
+
+            container.AddQuickerConfiguration();
+            container.AddScoped<DbContext, TestContext>(e => _Context);
+
+            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+
+            Func<Task<bool>> condition = () => Task.FromResult(true);
+            Expression<Func<Category, bool>>[] conditions = {
+                e => e.Id == expId
+            };
+
+            // Act
+            var exist = await _Service.CheckExistenceAsync(condition, conditions);
+
+            Assert.False(exist);
+        }
+
+        [Fact]
+        public async Task CheckExistenceAsync_WithConditions_Failure_ShouldThrowInvalidOperationException_ByPreCondition_ConditionsNull()
+        {
+            // Arrange
+            _Context = new ConnectionFactory().CreateContextForSQLite();
+
+            // Generador
+            int id = 1;
+            var faker = new Faker<Category>()
+                .RuleFor(t => t.Id, _ => id++)
+                .RuleFor(t => t.Name, f => f.Lorem.Sentence(25));
+
+            _Context.Categories.AddRange(faker.Generate(25));
+
+            await _Context.SaveChangesAsync();
+
+            var container = new ServiceCollection()
+                .AddLogging();
+
+            container.AddQuickerConfiguration();
+            container.AddScoped<DbContext, TestContext>(e => _Context);
+
+            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+
+            Func<Task<bool>> condition = () => Task.FromResult(true);
+            Expression<Func<Category, bool>>[] conditions = null;
+
+            // Act
+            var ex = await Assert.ThrowsAnyAsync<ArgumentNullException>(
+                () => _Service.CheckExistenceAsync(condition, conditions)
+            );
+
+            Assert.Equal(QuickerExceptionConstants.Conditions, ex.ParamName);
         }
 
         [Fact]
@@ -814,19 +1014,19 @@ namespace Quicker.Test.Component.Read
 
             _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
 
-            Func<Task<bool>> action = null;
+            Func<Task<bool>> condition = null;
             Expression<Func<Category, bool>>[] conditions = null;
 
             // Act
             var ex = await Assert.ThrowsAnyAsync<ArgumentNullException>(
-                () => _Service.CheckExistenceAsync(action, conditions)
+                () => _Service.CheckExistenceAsync(condition, conditions)
             );
 
             Assert.Equal(QuickerExceptionConstants.Conditions, ex.ParamName);
         }
 
         [Fact]
-        public async Task CheckExistenceAsync_WithConditions_Failure_ShouldThrowInvalidOperationException_ByPreAction()
+        public async Task CheckExistenceAsync_WithConditions_Failure_ShouldThrowInvalidOperationException_ByPreCondition()
         {
             // Arrange
             _Context = new ConnectionFactory().CreateContextForSQLite();
@@ -850,18 +1050,295 @@ namespace Quicker.Test.Component.Read
 
             _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
 
-            Func<Task<bool>> action = () => Task.FromResult(false);
+            Func<Task<bool>> condition = () => Task.FromResult(false);
             Expression<Func<Category, bool>>[] conditions = {
                 e => e.Id == expId
             };
 
             // Act
             var ex = await Assert.ThrowsAnyAsync<InvalidOperationException>(
-                () => _Service.CheckExistenceAsync(expId, action)
+                () => _Service.CheckExistenceAsync(expId, condition)
             );
 
-            Assert.Equal(QuickerExceptionConstants.Preaction, ex.Message);
+            Assert.Equal(QuickerExceptionConstants.Precondition, ex.Message);
         }
+
+        #endregion
+
+        #region ReadAsync Test
+
+        [Fact]
+        public async Task ReadAsync_Success_ShouldReturnIEnumerableWithLenghtFive() 
+        {
+            // Arrange
+            _Context = new ConnectionFactory().CreateContextForSQLite();
+
+            // Generador
+            int expCount = 5;
+            int id = 1;
+            var faker = new Faker<Category>()
+                .RuleFor(t => t.Id, _ => id++)
+                .RuleFor(t => t.Name, f => f.Lorem.Sentence(25));
+
+            _Context.Categories.AddRange(faker.Generate(expCount));
+
+            await _Context.SaveChangesAsync();
+
+            var container = new ServiceCollection()
+                .AddLogging();
+
+            container.AddQuickerConfiguration();
+            container.AddScoped<DbContext, TestContext>(e => _Context);
+
+            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+
+            Func<Task<bool>> condition = null;
+
+            // Act
+            var entities = await _Service.ReadAsync(condition);
+
+            Assert.Equal(expCount, entities.Count());
+        }
+
+        [Fact]
+        public async Task ReadAsync_Success_ShouldReturnEmptyIEnumerable() 
+        {
+            // Arrange
+            _Context = new ConnectionFactory().CreateContextForSQLite();
+
+            // Generador
+            int expCount = 0;
+            int id = 1;
+            var faker = new Faker<Category>()
+                .RuleFor(t => t.Id, _ => id++)
+                .RuleFor(t => t.Name, f => f.Lorem.Sentence(25));
+
+            _Context.Categories.AddRange(faker.Generate(expCount));
+
+            await _Context.SaveChangesAsync();
+
+            var container = new ServiceCollection()
+                .AddLogging();
+
+            container.AddQuickerConfiguration();
+            container.AddScoped<DbContext, TestContext>(e => _Context);
+
+            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+
+            Func<Task<bool>> condition = null;
+
+            // Act
+            var entities = await _Service.ReadAsync(condition);
+
+            Assert.Equal(expCount, entities.Count());
+        }
+
+        [Fact]
+        public async Task ReadAsync_Success_ShouldReturnEmptyIEnumerable_PassPreCondition() 
+        {
+            // Arrange
+            _Context = new ConnectionFactory().CreateContextForSQLite();
+
+            // Generador
+            int expCount = 0;
+            int id = 1;
+            var faker = new Faker<Category>()
+                .RuleFor(t => t.Id, _ => id++)
+                .RuleFor(t => t.Name, f => f.Lorem.Sentence(25));
+
+            _Context.Categories.AddRange(faker.Generate(expCount));
+
+            await _Context.SaveChangesAsync();
+
+            var container = new ServiceCollection()
+                .AddLogging();
+
+            container.AddQuickerConfiguration();
+            container.AddScoped<DbContext, TestContext>(e => _Context);
+
+            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+
+            Func<Task<bool>> condition = () => Task.FromResult(true);
+
+            // Act
+            var entities = await _Service.ReadAsync(condition);
+
+            Assert.Equal(expCount, entities.Count());
+        }
+
+        [Fact]
+        public async Task ReadAsync_Failure_ShouldReturnInvalidOperationException_ByPreCondition()
+        {
+            // Arrange
+            _Context = new ConnectionFactory().CreateContextForSQLite();
+
+            // Generador
+            int expCount = 0;
+            int id = 1;
+            var faker = new Faker<Category>()
+                .RuleFor(t => t.Id, _ => id++)
+                .RuleFor(t => t.Name, f => f.Lorem.Sentence(25));
+
+            _Context.Categories.AddRange(faker.Generate(expCount));
+
+            await _Context.SaveChangesAsync();
+
+            var container = new ServiceCollection()
+                .AddLogging();
+
+            container.AddQuickerConfiguration();
+            container.AddScoped<DbContext, TestContext>(e => _Context);
+
+            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+
+            Func<Task<bool>> condition = () => Task.FromResult(false);
+
+            // Act
+            var ex = await Assert.ThrowsAnyAsync<InvalidOperationException>(
+                () => _Service.ReadAsync(condition)
+            );
+
+            Assert.Equal(QuickerExceptionConstants.Precondition, ex.Message);
+        }
+
+        #endregion
+
+        #region ReadAsync One Test
+
+        [Fact]
+        public async Task ReadAsync_WithKey_Success_ShouldReturnCategory()
+        {
+            // Arrange
+            _Context = new ConnectionFactory().CreateContextForSQLite();
+
+            // Generador
+            int expCount = 5;
+            int expKey = 1;
+            int id = 1;
+            var faker = new Faker<Category>()
+                .RuleFor(t => t.Id, _ => id++)
+                .RuleFor(t => t.Name, f => f.Lorem.Sentence(25));
+
+            _Context.Categories.AddRange(faker.Generate(expCount));
+
+            await _Context.SaveChangesAsync();
+
+            var container = new ServiceCollection()
+                .AddLogging();
+
+            container.AddQuickerConfiguration();
+            container.AddScoped<DbContext, TestContext>(e => _Context);
+
+            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+
+            Func<Task<bool>> condition = null;
+
+            // Act
+            var entity = await _Service.ReadAsync(expKey, condition);
+
+            Assert.NotNull(entity);
+        }
+
+        [Fact]
+        public async Task ReadAsync_WithKey_Success_ShouldReturnNull()
+        {
+            // Arrange
+            _Context = new ConnectionFactory().CreateContextForSQLite();
+
+            // Generador
+            int expKey = 1;
+
+            var container = new ServiceCollection()
+                .AddLogging();
+
+            container.AddQuickerConfiguration();
+            container.AddScoped<DbContext, TestContext>(e => _Context);
+
+            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+
+            Func<Task<bool>> condition = null;
+
+            // Act
+            var entity = await _Service.ReadAsync(expKey, condition);
+
+            Assert.Null(entity);
+        }
+
+        [Fact]
+        public async Task ReadAsync_WithKey_Failure_ShouldThrowInvalidOperationException_ByPreCondition()
+        {
+            // Arrange
+            _Context = new ConnectionFactory().CreateContextForSQLite();
+
+            // Generador
+            int expCount = 5;
+            int expKey = 1;
+            int id = 1;
+            var faker = new Faker<Category>()
+                .RuleFor(t => t.Id, _ => id++)
+                .RuleFor(t => t.Name, f => f.Lorem.Sentence(25));
+
+            _Context.Categories.AddRange(faker.Generate(expCount));
+
+            await _Context.SaveChangesAsync();
+
+            var container = new ServiceCollection()
+                .AddLogging();
+
+            container.AddQuickerConfiguration();
+            container.AddScoped<DbContext, TestContext>(e => _Context);
+
+            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+
+            Func<Task<bool>> condition = () => Task.FromResult(false);
+
+            // Act
+            var ex = await Assert.ThrowsAnyAsync<InvalidOperationException>(
+                () => _Service.ReadAsync(expKey, condition)
+            );
+
+            Assert.Equal(QuickerExceptionConstants.Precondition, ex.Message);
+        }
+
+        [Fact]
+        public async Task ReadAsync_WithKey_Success_ShouldReturnCategory_PassCondition()
+        {
+            // Arrange
+            _Context = new ConnectionFactory().CreateContextForSQLite();
+
+            // Generador
+            int expCount = 5;
+            int expKey = 1;
+            int id = 1;
+            var faker = new Faker<Category>()
+                .RuleFor(t => t.Id, _ => id++)
+                .RuleFor(t => t.Name, f => f.Lorem.Sentence(25));
+
+            _Context.Categories.AddRange(faker.Generate(expCount));
+
+            await _Context.SaveChangesAsync();
+
+            var container = new ServiceCollection()
+                .AddLogging();
+
+            container.AddQuickerConfiguration();
+            container.AddScoped<DbContext, TestContext>(e => _Context);
+
+            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+
+            Func<Task<bool>> condition = () => Task.FromResult(true);
+
+            // Act
+            var entity = await _Service.ReadAsync(expKey, condition);
+
+            Assert.NotNull(entity);
+        }
+
+        #endregion
+
+        #region PaginateAsync Test
+
+
 
         #endregion
     }
