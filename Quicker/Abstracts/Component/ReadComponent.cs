@@ -34,7 +34,7 @@ namespace Quicker.Abstracts.Component
 
         #region Protected methods
 
-        protected async Task ExecutingPreConditionAsync(Func<Task<bool>> condition, string actionName)
+        protected virtual async Task ExecutingPreConditionAsync(Func<Task<bool>> condition, string actionName)
         {
             if (condition != null)
             {
@@ -53,7 +53,8 @@ namespace Quicker.Abstracts.Component
                 .OrderBy(e => e.Id)
                 .AsNoTracking();
 
-        protected virtual IQueryable<TEntity> ReadFilter(IQueryable<TEntity> entities) {
+        protected virtual IQueryable<TEntity> ReadFilter(IQueryable<TEntity> entities) 
+        {
             if (entities is null)
             {
                 throw new ArgumentNullException(QuickerExceptionConstants.Entities);
