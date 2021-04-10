@@ -17,7 +17,7 @@ using Xunit;
 
 namespace Quicker.Test.Component.Read
 {
-    public class NativeReadComponentTest
+    public class ReadComponentTest
     {
         private TestContext _Context;
 
@@ -37,7 +37,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             MethodInfo method = _Service.GetType().GetMethod("ExecutingPreConditionAsync", BindingFlags.NonPublic | BindingFlags.Instance);
 
@@ -64,7 +64,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             MethodInfo method = _Service.GetType().GetMethod("ExecutingPreConditionAsync", BindingFlags.NonPublic | BindingFlags.Instance);
 
@@ -93,7 +93,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             int expCount = 0;
             MethodInfo method = _Service.GetType().GetMethod("Query", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -127,7 +127,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             int expCount = 5;
             MethodInfo method = _Service.GetType().GetMethod("Query", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -155,7 +155,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             MethodInfo method = _Service.GetType().GetMethod("ReadFilter", BindingFlags.NonPublic | BindingFlags.Instance);
 
@@ -181,7 +181,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             int expCount = 0;
             MethodInfo method = _Service.GetType().GetMethod("ReadFilter", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -215,7 +215,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             int expCount = 5;
             MethodInfo method = _Service.GetType().GetMethod("ReadFilter", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -255,7 +255,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             MethodInfo method = _Service.GetType().GetMethod("FindManyWithAsync", BindingFlags.NonPublic | BindingFlags.Instance);
 
@@ -293,7 +293,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             int expCount = 2;
             MethodInfo method = _Service.GetType().GetMethod("FindManyWithAsync", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -331,7 +331,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             int expCount = 0;
             MethodInfo method = _Service.GetType().GetMethod("FindManyWithAsync", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -369,7 +369,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             int expCount = 1;
             MethodInfo method = _Service.GetType().GetMethod("FindManyWithAsync", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -410,7 +410,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             MethodInfo method = _Service.GetType().GetMethod("FindManyWithAsync", BindingFlags.NonPublic | BindingFlags.Instance);
 
@@ -452,7 +452,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             MethodInfo method = _Service.GetType().GetMethod("FindManyWithAsync", BindingFlags.NonPublic | BindingFlags.Instance);
 
@@ -492,7 +492,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             MethodInfo method = _Service.GetType().GetMethod("FindManyWithAsync", BindingFlags.NonPublic | BindingFlags.Instance);
 
@@ -530,7 +530,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             MethodInfo method = _Service.GetType().GetMethod("FindOneWithAsync", BindingFlags.NonPublic | BindingFlags.Instance);
 
@@ -567,7 +567,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             MethodInfo method = _Service.GetType().GetMethod("FindOneWithAsync", BindingFlags.NonPublic | BindingFlags.Instance);
 
@@ -607,7 +607,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             MethodInfo method = _Service.GetType().GetMethod("FindOneWithAsync", BindingFlags.NonPublic | BindingFlags.Instance);
 
@@ -647,7 +647,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             MethodInfo method = _Service.GetType().GetMethod("FindOneWithAsync", BindingFlags.NonPublic | BindingFlags.Instance);
 
@@ -688,7 +688,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             MethodInfo method = _Service.GetType().GetMethod("FindOneWithAsync", BindingFlags.NonPublic | BindingFlags.Instance);
 
@@ -732,7 +732,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             Func<Task<bool>> condition = null;
 
@@ -765,7 +765,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             Func<Task<bool>> condition = null;
 
@@ -798,7 +798,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             Func<Task<bool>> condition = () => Task.FromResult(true);
 
@@ -831,7 +831,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             Func<Task<bool>> condition = () => Task.FromResult(false);
 
@@ -870,7 +870,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             Func<Task<bool>> condition = null;
             Expression<Func<Category, bool>>[] conditions = {
@@ -906,7 +906,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             Func<Task<bool>> condition = null;
             Expression<Func<Category, bool>>[] conditions = {
@@ -942,7 +942,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             Func<Task<bool>> condition = () => Task.FromResult(true);
             Expression<Func<Category, bool>>[] conditions = {
@@ -977,7 +977,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             Func<Task<bool>> condition = () => Task.FromResult(true);
             Expression<Func<Category, bool>>[] conditions = null;
@@ -1012,7 +1012,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             Func<Task<bool>> condition = null;
             Expression<Func<Category, bool>>[] conditions = null;
@@ -1048,7 +1048,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             Func<Task<bool>> condition = () => Task.FromResult(false);
             Expression<Func<Category, bool>>[] conditions = {
@@ -1090,7 +1090,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             Func<Task<bool>> condition = null;
 
@@ -1123,7 +1123,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             Func<Task<bool>> condition = null;
 
@@ -1156,7 +1156,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             Func<Task<bool>> condition = () => Task.FromResult(true);
 
@@ -1189,7 +1189,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             Func<Task<bool>> condition = () => Task.FromResult(false);
 
@@ -1229,7 +1229,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             Func<Task<bool>> condition = null;
 
@@ -1254,7 +1254,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             Func<Task<bool>> condition = null;
 
@@ -1288,7 +1288,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             Func<Task<bool>> condition = () => Task.FromResult(false);
 
@@ -1324,7 +1324,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             Func<Task<bool>> condition = () => Task.FromResult(true);
 
@@ -1352,7 +1352,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             Func<Task<bool>> condition = null;
 
@@ -1378,7 +1378,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             Func<Task<bool>> condition = null;
 
@@ -1404,7 +1404,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             Func<Task<bool>> condition = () => Task.FromResult(false);
 
@@ -1442,7 +1442,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             Func<Task<bool>> condition = () => Task.FromResult(true);
 
@@ -1478,7 +1478,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             Func<Task<bool>> condition = null;
 
@@ -1514,7 +1514,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             Func<Task<bool>> condition = null;
 
@@ -1550,7 +1550,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             Func<Task<bool>> condition = null;
 
@@ -1586,7 +1586,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             Func<Task<bool>> condition = null;
 
@@ -1622,7 +1622,7 @@ namespace Quicker.Test.Component.Read
             container.AddQuickerConfiguration();
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
-            _Service = new FakeNativeReadComponent(container.BuildServiceProvider());
+            _Service = new ReadComponent(container.BuildServiceProvider());
 
             Func<Task<bool>> condition = null;
 
