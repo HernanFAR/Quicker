@@ -1,11 +1,13 @@
 ﻿using Quicker.Abstracts.Model;
 using Quicker.Interfaces.Model;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Test.Common.Repository.DTO;
+using System.Text;
 
-namespace Test.Common.Repository
+namespace Test.Common.Repository.DTO
 {
-    public class Product : AbstractModel<int>, IDomainOf<ProductDTO>
+    public class ProductDTO : AbstractModel<int>, IDTOOf<Product>
     {
         [Required, StringLength(128, MinimumLength = 2)]
         public string Name { get; set; }
@@ -19,6 +21,6 @@ namespace Test.Common.Repository
 
         public int CategoryId { get; set; }
 
-        public Category Category { get; set; }
+        public string Category { get; set; }
     }
 }
