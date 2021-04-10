@@ -12,11 +12,12 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Test.Common;
+using Test.Common.Mapper;
 using Test.Common.Repository;
 using Test.Common.Repository.DTO;
 using Xunit;
 
-namespace Quicker.Test.Component
+namespace Quicker.Test.Component.Read
 {
     public class ReadComponentDTOTest
     {
@@ -36,6 +37,10 @@ namespace Quicker.Test.Component
                 .AddLogging();
 
             container.AddQuickerConfiguration();
+            container.AddAutoMapper(e =>
+            {
+                e.AddProfile<ProductMapper>();
+            });
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
             _Service = new ReadComponentDTO(container.BuildServiceProvider());
@@ -63,6 +68,10 @@ namespace Quicker.Test.Component
                 .AddLogging();
 
             container.AddQuickerConfiguration();
+            container.AddAutoMapper(e =>
+            {
+                e.AddProfile<ProductMapper>();
+            });
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
             _Service = new ReadComponentDTO(container.BuildServiceProvider());
@@ -92,6 +101,10 @@ namespace Quicker.Test.Component
                 .AddLogging();
 
             container.AddQuickerConfiguration();
+            container.AddAutoMapper(e =>
+            {
+                e.AddProfile<ProductMapper>();
+            });
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
             _Service = new ReadComponentDTO(container.BuildServiceProvider());
@@ -100,7 +113,7 @@ namespace Quicker.Test.Component
             MethodInfo method = _Service.GetType().GetMethod("Query", BindingFlags.NonPublic | BindingFlags.Instance);
 
             // Category
-            var result = (IQueryable<Category>)method.Invoke(_Service, new object[] { });
+            var result = (IQueryable<Product>)method.Invoke(_Service, new object[] { });
 
             // Assertion
             Assert.Equal(expCount, result.Count());
@@ -114,27 +127,43 @@ namespace Quicker.Test.Component
 
             // Generador 
             int id = 1;
-            var faker = new Faker<Category>()
+            var categoryFaker = new Faker<Category>()
                 .RuleFor(t => t.Id, _ => id++)
                 .RuleFor(t => t.Name, f => f.Lorem.Sentence(25));
 
-            _Context.Categories.AddRange(faker.Generate(5));
+            _Context.Categories.AddRange(categoryFaker.Generate(5));
+            _Context.SaveChanges();
 
+            id = 0;
+            int generate = 5;
+            var productFaker = new Faker<Product>()
+                .RuleFor(t => t.Id, _ => id++)
+                .RuleFor(t => t.Name, f => f.Lorem.Sentence(25))
+                .RuleFor(t => t.Count, f => f.Random.Int(1))
+                .RuleFor(t => t.Price, f => f.Random.Decimal(1m, 12500m))
+                .RuleFor(t => t.Code, f => f.UniqueIndex.ToString())
+                .RuleFor(t => t.CategoryId, f => f.Random.Int(1, 5));
+
+            _Context.Products.AddRange(productFaker.Generate(generate));
             _Context.SaveChanges();
 
             var container = new ServiceCollection()
                 .AddLogging();
 
             container.AddQuickerConfiguration();
+            container.AddAutoMapper(e =>
+            {
+                e.AddProfile<ProductMapper>();
+            });
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
             _Service = new ReadComponentDTO(container.BuildServiceProvider());
 
-            int expCount = 5;
+            int expCount = generate;
             MethodInfo method = _Service.GetType().GetMethod("Query", BindingFlags.NonPublic | BindingFlags.Instance);
 
             // Category
-            var result = (IQueryable<Category>)method.Invoke(_Service, new object[] { });
+            var result = (IQueryable<Product>)method.Invoke(_Service, new object[] { });
 
             // Assertion
             Assert.Equal(expCount, result.Count());
@@ -154,6 +183,10 @@ namespace Quicker.Test.Component
                 .AddLogging();
 
             container.AddQuickerConfiguration();
+            container.AddAutoMapper(e =>
+            {
+                e.AddProfile<ProductMapper>();
+            });
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
             _Service = new ReadComponentDTO(container.BuildServiceProvider());
@@ -162,7 +195,7 @@ namespace Quicker.Test.Component
 
             // Assertion
             var invEx = Assert.Throws<TargetInvocationException>(
-                () => (IQueryable<Category>)method.Invoke(_Service, new object[] { null })
+                () => (IQueryable<Product>)method.Invoke(_Service, new object[] { null })
             );
 
             var ex = invEx.InnerException as ArgumentNullException;
@@ -180,6 +213,10 @@ namespace Quicker.Test.Component
                 .AddLogging();
 
             container.AddQuickerConfiguration();
+            container.AddAutoMapper(e =>
+            {
+                e.AddProfile<ProductMapper>();
+            });
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
             _Service = new ReadComponentDTO(container.BuildServiceProvider());
@@ -188,7 +225,7 @@ namespace Quicker.Test.Component
             MethodInfo method = _Service.GetType().GetMethod("ReadFilter", BindingFlags.NonPublic | BindingFlags.Instance);
 
             // Act
-            var result = (IQueryable<Category>)method.Invoke(_Service, new object[] { _Context.Categories });
+            var result = (IQueryable<Product>)method.Invoke(_Service, new object[] { _Context.Products });
 
             // Assertion
             Assert.Equal(expCount, result.Count());
@@ -202,18 +239,34 @@ namespace Quicker.Test.Component
 
             // Generador 
             int id = 1;
-            var faker = new Faker<Category>()
+            var categoryFaker = new Faker<Category>()
                 .RuleFor(t => t.Id, _ => id++)
                 .RuleFor(t => t.Name, f => f.Lorem.Sentence(25));
 
-            _Context.Categories.AddRange(faker.Generate(5));
+            _Context.Categories.AddRange(categoryFaker.Generate(5));
+            _Context.SaveChanges();
 
+            id = 0;
+            int generate = 5;
+            var productFaker = new Faker<Product>()
+                .RuleFor(t => t.Id, _ => id++)
+                .RuleFor(t => t.Name, f => f.Lorem.Sentence(25))
+                .RuleFor(t => t.Count, f => f.Random.Int(1))
+                .RuleFor(t => t.Price, f => f.Random.Decimal(1m, 12500m))
+                .RuleFor(t => t.Code, f => f.UniqueIndex.ToString())
+                .RuleFor(t => t.CategoryId, f => f.Random.Int(1, 5));
+
+            _Context.Products.AddRange(productFaker.Generate(generate));
             _Context.SaveChanges();
 
             var container = new ServiceCollection()
                 .AddLogging();
 
             container.AddQuickerConfiguration();
+            container.AddAutoMapper(e =>
+            {
+                e.AddProfile<ProductMapper>();
+            });
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
             _Service = new ReadComponentDTO(container.BuildServiceProvider());
@@ -224,7 +277,7 @@ namespace Quicker.Test.Component
             await _Context.SaveChangesAsync();
 
             // Act
-            var result = (IQueryable<Category>)method.Invoke(_Service, new object[] { _Context.Categories });
+            var result = (IQueryable<Product>)method.Invoke(_Service, new object[] { _Context.Products });
 
             // Assertion
             Assert.Equal(expCount, result.Count());
@@ -240,20 +293,14 @@ namespace Quicker.Test.Component
             // Arrange
             _Context = new ConnectionFactory().CreateContextForSQLite();
 
-            // Generador 
-            int id = 1;
-            var faker = new Faker<Category>()
-                .RuleFor(t => t.Id, _ => id++)
-                .RuleFor(t => t.Name, f => f.Lorem.Sentence(25));
-
-            _Context.Categories.AddRange(faker.Generate(3));
-
-            await _Context.SaveChangesAsync();
-
             var container = new ServiceCollection()
                 .AddLogging();
 
             container.AddQuickerConfiguration();
+            container.AddAutoMapper(e =>
+            {
+                e.AddProfile<ProductMapper>();
+            });
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
             _Service = new ReadComponentDTO(container.BuildServiceProvider());
@@ -266,45 +313,61 @@ namespace Quicker.Test.Component
 
             // Assertion - Act
             var ex = await Assert.ThrowsAsync<ArgumentNullException>(
-                () => (Task<IEnumerable<Category>>)method.Invoke(_Service, new object[] { condition, query, filter })
+                () => (Task<IEnumerable<ProductDTO>>)method.Invoke(_Service, new object[] { condition, query, filter })
             );
 
             Assert.Equal(QuickerExceptionConstants.Conditions, ex.ParamName);
         }
 
         [Fact]
-        public async Task FindManyWithAsync_Success_OneCondition_ShouldReturnIEnumerableWithThreeElements()
+        public async Task FindManyWithAsync_Success_OneCondition_ShouldReturnIEnumerableWithFourElements()
         {
             // Arrange
             _Context = new ConnectionFactory().CreateContextForSQLite();
 
             // Generador 
             int id = 1;
-            var faker = new Faker<Category>()
+            var categoryFaker = new Faker<Category>()
                 .RuleFor(t => t.Id, _ => id++)
                 .RuleFor(t => t.Name, f => f.Lorem.Sentence(25));
 
-            _Context.Categories.AddRange(faker.Generate(3));
+            _Context.Categories.AddRange(categoryFaker.Generate(5));
+            _Context.SaveChanges();
 
-            await _Context.SaveChangesAsync();
+            id = 0;
+            int generate = 5;
+            var productFaker = new Faker<Product>()
+                .RuleFor(t => t.Id, _ => id++)
+                .RuleFor(t => t.Name, f => f.Lorem.Sentence(25))
+                .RuleFor(t => t.Count, f => f.Random.Int(1))
+                .RuleFor(t => t.Price, f => f.Random.Decimal(1m, 12500m))
+                .RuleFor(t => t.Code, f => f.UniqueIndex.ToString())
+                .RuleFor(t => t.CategoryId, f => f.Random.Int(1, 5));
+
+            _Context.Products.AddRange(productFaker.Generate(generate));
+            _Context.SaveChanges();
 
             var container = new ServiceCollection()
                 .AddLogging();
 
             container.AddQuickerConfiguration();
+            container.AddAutoMapper(e =>
+            {
+                e.AddProfile<ProductMapper>();
+            });
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
             _Service = new ReadComponentDTO(container.BuildServiceProvider());
 
-            int expCount = 2;
+            int expCount = 4;
             MethodInfo method = _Service.GetType().GetMethod("FindManyWithAsync", BindingFlags.NonPublic | BindingFlags.Instance);
 
             Func<Task<bool>> condition = null;
-            Func<IQueryable<Category>> query = null;
-            Expression<Func<Category, bool>>[] filter = { e => e.Id > 1 };
+            Func<IQueryable<Product>> query = null;
+            Expression<Func<Product, bool>>[] filter = { e => e.Id > 1 };
 
             // Act
-            var result = await (Task<IEnumerable<Category>>)method.Invoke(_Service, new object[] { condition, query, filter });
+            var result = await (Task<IEnumerable<ProductDTO>>)method.Invoke(_Service, new object[] { condition, query, filter });
 
             // Assertion
             Assert.Equal(expCount, result.Count());
@@ -318,18 +381,34 @@ namespace Quicker.Test.Component
 
             // Generador 
             int id = 1;
-            var faker = new Faker<Category>()
+            var categoryFaker = new Faker<Category>()
                 .RuleFor(t => t.Id, _ => id++)
                 .RuleFor(t => t.Name, f => f.Lorem.Sentence(25));
 
-            _Context.Categories.AddRange(faker.Generate(3));
+            _Context.Categories.AddRange(categoryFaker.Generate(5));
+            _Context.SaveChanges();
 
-            await _Context.SaveChangesAsync();
+            id = 0;
+            int generate = 5;
+            var productFaker = new Faker<Product>()
+                .RuleFor(t => t.Id, _ => id++)
+                .RuleFor(t => t.Name, f => f.Lorem.Sentence(25))
+                .RuleFor(t => t.Count, f => f.Random.Int(1))
+                .RuleFor(t => t.Price, f => f.Random.Decimal(1m, 12500m))
+                .RuleFor(t => t.Code, f => f.UniqueIndex.ToString())
+                .RuleFor(t => t.CategoryId, f => f.Random.Int(1, 5));
+
+            _Context.Products.AddRange(productFaker.Generate(generate));
+            _Context.SaveChanges();
 
             var container = new ServiceCollection()
                 .AddLogging();
 
             container.AddQuickerConfiguration();
+            container.AddAutoMapper(e =>
+            {
+                e.AddProfile<ProductMapper>();
+            });
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
             _Service = new ReadComponentDTO(container.BuildServiceProvider());
@@ -338,11 +417,11 @@ namespace Quicker.Test.Component
             MethodInfo method = _Service.GetType().GetMethod("FindManyWithAsync", BindingFlags.NonPublic | BindingFlags.Instance);
 
             Func<Task<bool>> condition = null;
-            Func<IQueryable<Category>> query = null;
-            Expression<Func<Category, bool>>[] filter = { e => e.Id > 5 };
+            Func<IQueryable<Product>> query = null;
+            Expression<Func<Product, bool>>[] filter = { e => e.Id > 5 };
 
             // Act
-            var result = await (Task<IEnumerable<Category>>)method.Invoke(_Service, new object[] { condition, query, filter });
+            var result = await (Task<IEnumerable<ProductDTO>>)method.Invoke(_Service, new object[] { condition, query, filter });
 
             // Assertion
             Assert.Equal(expCount, result.Count());
@@ -356,18 +435,34 @@ namespace Quicker.Test.Component
 
             // Generador 
             int id = 1;
-            var faker = new Faker<Category>()
+            var categoryFaker = new Faker<Category>()
                 .RuleFor(t => t.Id, _ => id++)
                 .RuleFor(t => t.Name, f => f.Lorem.Sentence(25));
 
-            _Context.Categories.AddRange(faker.Generate(3));
+            _Context.Categories.AddRange(categoryFaker.Generate(5));
+            _Context.SaveChanges();
 
-            await _Context.SaveChangesAsync();
+            id = 0;
+            int generate = 5;
+            var productFaker = new Faker<Product>()
+                .RuleFor(t => t.Id, _ => id++)
+                .RuleFor(t => t.Name, f => f.Lorem.Sentence(25))
+                .RuleFor(t => t.Count, f => f.Random.Int(1))
+                .RuleFor(t => t.Price, f => f.Random.Decimal(1m, 12500m))
+                .RuleFor(t => t.Code, f => f.UniqueIndex.ToString())
+                .RuleFor(t => t.CategoryId, f => f.Random.Int(1, 5));
+
+            _Context.Products.AddRange(productFaker.Generate(generate));
+            _Context.SaveChanges();
 
             var container = new ServiceCollection()
                 .AddLogging();
 
             container.AddQuickerConfiguration();
+            container.AddAutoMapper(e =>
+            {
+                e.AddProfile<ProductMapper>();
+            });
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
             _Service = new ReadComponentDTO(container.BuildServiceProvider());
@@ -376,14 +471,14 @@ namespace Quicker.Test.Component
             MethodInfo method = _Service.GetType().GetMethod("FindManyWithAsync", BindingFlags.NonPublic | BindingFlags.Instance);
 
             Func<Task<bool>> condition = null;
-            Func<IQueryable<Category>> query = null;
-            Expression<Func<Category, bool>>[] filter = {
+            Func<IQueryable<Product>> query = null;
+            Expression<Func<Product, bool>>[] filter = {
                 e => e.Id > 1,
                 e => e.Id < 3
             };
 
             // Act
-            var result = await (Task<IEnumerable<Category>>)method.Invoke(_Service, new object[] { condition, query, filter });
+            var result = await (Task<IEnumerable<ProductDTO>>)method.Invoke(_Service, new object[] { condition, query, filter });
 
             // Assertion
             Assert.Equal(expCount, result.Count());
@@ -395,20 +490,14 @@ namespace Quicker.Test.Component
             // Arrange
             _Context = new ConnectionFactory().CreateContextForSQLite();
 
-            // Generador 
-            int id = 1;
-            var faker = new Faker<Category>()
-                .RuleFor(t => t.Id, _ => id++)
-                .RuleFor(t => t.Name, f => f.Lorem.Sentence(25));
-
-            _Context.Categories.AddRange(faker.Generate(3));
-
-            await _Context.SaveChangesAsync();
-
             var container = new ServiceCollection()
                 .AddLogging();
 
             container.AddQuickerConfiguration();
+            container.AddAutoMapper(e =>
+            {
+                e.AddProfile<ProductMapper>();
+            });
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
             _Service = new ReadComponentDTO(container.BuildServiceProvider());
@@ -419,12 +508,12 @@ namespace Quicker.Test.Component
             {
                 return Task.FromResult(false);
             };
-            Func<IQueryable<Category>> query = null;
-            Expression<Func<Category, bool>>[] filter = { e => e.Id > 5 };
+            Func<IQueryable<Product>> query = null;
+            Expression<Func<Product, bool>>[] filter = { e => e.Id > 5 };
 
             // Assertion
             var ex = await Assert.ThrowsAsync<InvalidOperationException>(
-                () => (Task<IEnumerable<Category>>)method.Invoke(_Service, new object[] { action, query, filter })
+                () => (Task<IEnumerable<ProductDTO>>)method.Invoke(_Service, new object[] { action, query, filter })
             );
 
             Assert.Equal(QuickerExceptionConstants.Precondition, ex.Message);
@@ -434,23 +523,39 @@ namespace Quicker.Test.Component
         public async Task FindManyWithAsync_Success_CustomQuery()
         {
             // Arrange
+            int expCount = 1;
             _Context = new ConnectionFactory().CreateContextForSQLite();
 
             // Generador 
             int id = 1;
-            int expCount = 1;
-            var faker = new Faker<Category>()
+            var categoryFaker = new Faker<Category>()
                 .RuleFor(t => t.Id, _ => id++)
                 .RuleFor(t => t.Name, f => f.Lorem.Sentence(25));
 
-            _Context.Categories.AddRange(faker.Generate(3));
+            _Context.Categories.AddRange(categoryFaker.Generate(5));
+            _Context.SaveChanges();
 
-            await _Context.SaveChangesAsync();
+            id = 0;
+            int generate = 5;
+            var productFaker = new Faker<Product>()
+                .RuleFor(t => t.Id, _ => id++)
+                .RuleFor(t => t.Name, f => f.Lorem.Sentence(25))
+                .RuleFor(t => t.Count, f => f.Random.Int(1))
+                .RuleFor(t => t.Price, f => f.Random.Decimal(1m, 12500m))
+                .RuleFor(t => t.Code, f => f.UniqueIndex.ToString())
+                .RuleFor(t => t.CategoryId, f => f.Random.Int(1, 5));
+
+            _Context.Products.AddRange(productFaker.Generate(generate));
+            _Context.SaveChanges();
 
             var container = new ServiceCollection()
                 .AddLogging();
 
             container.AddQuickerConfiguration();
+            container.AddAutoMapper(e =>
+            {
+                e.AddProfile<ProductMapper>();
+            });
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
             _Service = new ReadComponentDTO(container.BuildServiceProvider());
@@ -458,11 +563,11 @@ namespace Quicker.Test.Component
             MethodInfo method = _Service.GetType().GetMethod("FindManyWithAsync", BindingFlags.NonPublic | BindingFlags.Instance);
 
             Func<Task<bool>> condition = null;
-            Func<IQueryable<Category>> query = () => _Context.Categories.Where(e => e.Id == 2);
-            Expression<Func<Category, bool>>[] filter = { e => e.Id > 1 };
+            Func<IQueryable<Product>> query = () => _Context.Products.Where(e => e.Id == 2);
+            Expression<Func<Product, bool>>[] filter = { e => e.Id > 1 };
 
             // Act
-            var entities = await (Task<IEnumerable<Category>>)method.Invoke(_Service, new object[] { condition, query, filter });
+            var entities = await (Task<IEnumerable<ProductDTO>>)method.Invoke(_Service, new object[] { condition, query, filter });
 
             Assert.Equal(expCount, entities.Count());
         }
@@ -477,20 +582,14 @@ namespace Quicker.Test.Component
             // Arrange
             _Context = new ConnectionFactory().CreateContextForSQLite();
 
-            // Generador 
-            int id = 1;
-            var faker = new Faker<Category>()
-                .RuleFor(t => t.Id, _ => id++)
-                .RuleFor(t => t.Name, f => f.Lorem.Sentence(25));
-
-            _Context.Categories.AddRange(faker.Generate(3));
-
-            await _Context.SaveChangesAsync();
-
             var container = new ServiceCollection()
                 .AddLogging();
 
             container.AddQuickerConfiguration();
+            container.AddAutoMapper(e =>
+            {
+                e.AddProfile<ProductMapper>();
+            });
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
             _Service = new ReadComponentDTO(container.BuildServiceProvider());
@@ -498,12 +597,12 @@ namespace Quicker.Test.Component
             MethodInfo method = _Service.GetType().GetMethod("FindManyWithAsync", BindingFlags.NonPublic | BindingFlags.Instance);
 
             Func<Task<bool>> condition = null;
-            Func<IQueryable<Category>> query = null;
-            Expression<Func<Category, bool>>[] filter = null;
+            Func<IQueryable<Product>> query = null;
+            Expression<Func<Product, bool>>[] filter = null;
 
             // Assertion - Act
             var ex = await Assert.ThrowsAsync<ArgumentNullException>(
-                () => (Task<IEnumerable<Category>>)method.Invoke(_Service, new object[] { condition, query, filter })
+                () => (Task<IEnumerable<ProductDTO>>)method.Invoke(_Service, new object[] { condition, query, filter })
             );
 
             Assert.Equal(QuickerExceptionConstants.Conditions, ex.ParamName);
@@ -517,18 +616,34 @@ namespace Quicker.Test.Component
 
             // Generador 
             int id = 1;
-            var faker = new Faker<Category>()
+            var categoryFaker = new Faker<Category>()
                 .RuleFor(t => t.Id, _ => id++)
                 .RuleFor(t => t.Name, f => f.Lorem.Sentence(25));
 
-            _Context.Categories.AddRange(faker.Generate(25));
+            _Context.Categories.AddRange(categoryFaker.Generate(5));
+            _Context.SaveChanges();
 
-            await _Context.SaveChangesAsync();
+            id = 0;
+            int generate = 5;
+            var productFaker = new Faker<Product>()
+                .RuleFor(t => t.Id, _ => id++)
+                .RuleFor(t => t.Name, f => f.Lorem.Sentence(25))
+                .RuleFor(t => t.Count, f => f.Random.Int(1))
+                .RuleFor(t => t.Price, f => f.Random.Decimal(1m, 12500m))
+                .RuleFor(t => t.Code, f => f.UniqueIndex.ToString())
+                .RuleFor(t => t.CategoryId, f => f.Random.Int(1, 5));
+
+            _Context.Products.AddRange(productFaker.Generate(generate));
+            _Context.SaveChanges();
 
             var container = new ServiceCollection()
                 .AddLogging();
 
             container.AddQuickerConfiguration();
+            container.AddAutoMapper(e =>
+            {
+                e.AddProfile<ProductMapper>();
+            });
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
             _Service = new ReadComponentDTO(container.BuildServiceProvider());
@@ -536,11 +651,11 @@ namespace Quicker.Test.Component
             MethodInfo method = _Service.GetType().GetMethod("FindOneWithAsync", BindingFlags.NonPublic | BindingFlags.Instance);
 
             Func<Task<bool>> condition = null;
-            Func<IQueryable<Category>> query = null;
-            Expression<Func<Category, bool>>[] filter = { e => e.Id == 1 };
+            Func<IQueryable<Product>> query = null;
+            Expression<Func<Product, bool>>[] filter = { e => e.Id == 1 };
 
             // Act
-            var result = await (Task<Category>)method.Invoke(_Service, new object[] { condition, query, filter });
+            var result = await (Task<ProductDTO>)method.Invoke(_Service, new object[] { condition, query, filter });
 
             // Assertion
             Assert.NotNull(result);
@@ -554,18 +669,34 @@ namespace Quicker.Test.Component
 
             // Generador 
             int id = 1;
-            var faker = new Faker<Category>()
+            var categoryFaker = new Faker<Category>()
                 .RuleFor(t => t.Id, _ => id++)
                 .RuleFor(t => t.Name, f => f.Lorem.Sentence(25));
 
-            _Context.Categories.AddRange(faker.Generate(25));
+            _Context.Categories.AddRange(categoryFaker.Generate(5));
+            _Context.SaveChanges();
 
-            await _Context.SaveChangesAsync();
+            id = 0;
+            int generate = 5;
+            var productFaker = new Faker<Product>()
+                .RuleFor(t => t.Id, _ => id++)
+                .RuleFor(t => t.Name, f => f.Lorem.Sentence(25))
+                .RuleFor(t => t.Count, f => f.Random.Int(1))
+                .RuleFor(t => t.Price, f => f.Random.Decimal(1m, 12500m))
+                .RuleFor(t => t.Code, f => f.UniqueIndex.ToString())
+                .RuleFor(t => t.CategoryId, f => f.Random.Int(1, 5));
+
+            _Context.Products.AddRange(productFaker.Generate(generate));
+            _Context.SaveChanges();
 
             var container = new ServiceCollection()
                 .AddLogging();
 
             container.AddQuickerConfiguration();
+            container.AddAutoMapper(e =>
+            {
+                e.AddProfile<ProductMapper>();
+            });
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
             _Service = new ReadComponentDTO(container.BuildServiceProvider());
@@ -573,14 +704,14 @@ namespace Quicker.Test.Component
             MethodInfo method = _Service.GetType().GetMethod("FindOneWithAsync", BindingFlags.NonPublic | BindingFlags.Instance);
 
             Func<Task<bool>> action = null;
-            Func<IQueryable<Category>> query = null;
-            Expression<Func<Category, bool>>[] filter = { 
+            Func<IQueryable<Product>> query = null;
+            Expression<Func<Product, bool>>[] filter = { 
                 e => e.Id > 15,
                 e => e.Id == 5 
             };
 
             // Act
-            var result = await (Task<Category>)method.Invoke(_Service, new object[] { action, query, filter });
+            var result = await (Task<ProductDTO>)method.Invoke(_Service, new object[] { action, query, filter });
 
             // Assertion
             Assert.Null(result);
@@ -594,18 +725,34 @@ namespace Quicker.Test.Component
 
             // Generador 
             int id = 1;
-            var faker = new Faker<Category>()
+            var categoryFaker = new Faker<Category>()
                 .RuleFor(t => t.Id, _ => id++)
                 .RuleFor(t => t.Name, f => f.Lorem.Sentence(25));
 
-            _Context.Categories.AddRange(faker.Generate(25));
+            _Context.Categories.AddRange(categoryFaker.Generate(5));
+            _Context.SaveChanges();
 
-            await _Context.SaveChangesAsync();
+            id = 0;
+            int generate = 5;
+            var productFaker = new Faker<Product>()
+                .RuleFor(t => t.Id, _ => id++)
+                .RuleFor(t => t.Name, f => f.Lorem.Sentence(25))
+                .RuleFor(t => t.Count, f => f.Random.Int(1))
+                .RuleFor(t => t.Price, f => f.Random.Decimal(1m, 12500m))
+                .RuleFor(t => t.Code, f => f.UniqueIndex.ToString())
+                .RuleFor(t => t.CategoryId, f => f.Random.Int(1, 5));
+
+            _Context.Products.AddRange(productFaker.Generate(generate));
+            _Context.SaveChanges();
 
             var container = new ServiceCollection()
                 .AddLogging();
 
             container.AddQuickerConfiguration();
+            container.AddAutoMapper(e =>
+            {
+                e.AddProfile<ProductMapper>();
+            });
             container.AddScoped<DbContext, TestContext>(e => _Context);
 
             _Service = new ReadComponentDTO(container.BuildServiceProvider());
