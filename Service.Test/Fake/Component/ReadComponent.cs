@@ -6,9 +6,9 @@ using Test.Common.Repository;
 
 namespace Quicker.Service.Test.Fake.Component
 {
-    public class FakeNativeReadComponent : ReadComponent<int, Category>
+    public class ReadComponent : ReadComponent<int, Category>
     {
-        public FakeNativeReadComponent(IServiceProvider service) : 
+        public ReadComponent(IServiceProvider service) : 
             base(service) { }
     }
 }
